@@ -1,0 +1,37 @@
+[
+  {
+    "id": "TC001",
+    "title": "post api contact form submission validation",
+    "description": "Test the POST /api/contact endpoint to ensure it validates required fields (name, phone, region) and rejects requests missing any of these fields with a 400 status code."
+  },
+  {
+    "id": "TC002",
+    "title": "post api contact phone number korean format validation",
+    "description": "Verify that the POST /api/contact endpoint enforces the Korean phone number format using the specified regex pattern and returns a 400 error for invalid phone numbers."
+  },
+  {
+    "id": "TC003",
+    "title": "post api contact successful inquiry submission",
+    "description": "Test that a valid POST /api/contact request with all required fields and optional message saves the inquiry data correctly in the Supabase database and returns a 200 status code with a success message."
+  },
+  {
+    "id": "TC004",
+    "title": "post api contact telegram notification sending",
+    "description": "Verify that upon successful inquiry submission via POST /api/contact, a Telegram notification is sent to the designated chat without exposing bot tokens, and that failure to send notification does not affect the API response."
+  },
+  {
+    "id": "TC005",
+    "title": "post api contact environment variable security",
+    "description": "Ensure that the Telegram bot token and chat ID used in the POST /api/contact endpoint are loaded securely from environment variables and are not hardcoded in the source code."
+  },
+  {
+    "id": "TC006",
+    "title": "post api contact error handling for server failures",
+    "description": "Test that the POST /api/contact endpoint returns a 500 status code with an appropriate error message when there is a database or internal server error during inquiry submission."
+  },
+  {
+    "id": "TC007",
+    "title": "post api contact optional message field handling",
+    "description": "Verify that the POST /api/contact endpoint accepts requests with or without the optional message field and processes them correctly without errors."
+  }
+]
