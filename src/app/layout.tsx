@@ -88,7 +88,7 @@ export default function RootLayout({
     <html lang="ko">
       <head>
         <meta name="naver-site-verification" content="b8a6791951a6258cdf21d6f27ac056f93e1aad99" />
-        <meta name="google-site-verification" content="TDSCWHi6eg67qLEBYWMUJkGzr5J2qJeH8jqDB2jLn5I" />
+        <meta name="google-site-verification" content="FiHPYcjLehLtiuxnpgBlMONppK_l4AWasa-lryKV_2g" />
         <link rel="canonical" href="https://www.xn--2e0bm8utzck3fsyi7rvktd.com" />
       </head>
       <body className={inter.className}>
