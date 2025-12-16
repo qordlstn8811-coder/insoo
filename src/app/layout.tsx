@@ -5,6 +5,7 @@ import "./globals.css";
 import Chatbot from "@/components/Chatbot";
 import FloatingButtons from "@/components/FloatingButtons";
 import CallPopup from "@/components/CallPopup";
+import StickyCallBar from "@/components/StickyCallBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -156,6 +157,7 @@ export default function RootLayout({
         <Chatbot />
         <FloatingButtons />
         <CallPopup />
+        <StickyCallBar />
       </body>
     </html>
   );
