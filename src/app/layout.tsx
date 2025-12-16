@@ -88,7 +88,7 @@ export default function RootLayout({
     <html lang="ko">
       <head>
         <meta name="naver-site-verification" content="네이버인증코드를입력하세요" />
-        <meta name="google-site-verification" content="구글인증코드를입력하세요" />
+        <meta name="google-site-verification" content="FiHPYcjLehLtiuxnpgBlMONppK_l4AWasa-lryKV_2g" />
         <link rel="canonical" href="https://전북하수구막힘.com" />
       </head>
       <body className={inter.className}>
