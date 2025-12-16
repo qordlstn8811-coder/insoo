@@ -87,7 +87,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        <meta name="naver-site-verification" content="네이버인증코드를입력하세요" />
+        <meta name="naver-site-verification" content="bc291a6b041037e547d7d1cf51e19c1a36a9e3a5" />
         <meta name="google-site-verification" content="TDSCWHi6eg67qLEBYWMUJkGzr5J2qJeH8jqDB2jLn5I" />
         <link rel="canonical" href="https://전북하수구막힘.com" />
       </head>
