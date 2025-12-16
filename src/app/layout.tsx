@@ -9,7 +9,7 @@ import CallPopup from "@/components/CallPopup";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://전북하수구막힘.com'),
+  metadataBase: new URL('https://www.xn--2e0bm8utzck3fsyi7rvktd.com'),
   title: "전북배관 | 전주 하수구막힘 변기막힘 싱크대막힘 24시 긴급출동",
   description: "전주, 군산, 익산, 완주, 정읍, 남원, 김제 전라북도 전지역 하수구막힘, 변기막힘, 싱크대막힘, 고압세척, 배관내시경 전문. 30분 내 긴급출동! 합리적인 정찰제 가격. 010-8184-3496",
   keywords: [
@@ -36,12 +36,12 @@ export const metadata: Metadata = {
     telephone: true,
   },
   alternates: {
-    canonical: "https://전북하수구막힘.com",
+    canonical: "https://www.xn--2e0bm8utzck3fsyi7rvktd.com",
   },
   openGraph: {
     type: 'website',
     locale: 'ko_KR',
-    url: 'https://전북하수구막힘.com',
+    url: 'https://www.xn--2e0bm8utzck3fsyi7rvktd.com',
     siteName: '전북배관',
     title: '전북배관 | 전주 하수구막힘 변기막힘 24시 긴급출동',
     description: '전주, 군산, 익산 전라북도 전지역 하수구막힘, 변기막힘, 싱크대막힘 전문. 30분 내 긴급출동! 010-8184-3496',
@@ -87,9 +87,9 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        <meta name="naver-site-verification" content="bc291a6b041037e547d7d1cf51e19c1a36a9e3a5" />
+        <meta name="naver-site-verification" content="b8a6791951a6258cdf21d6f27ac056f93e1aad99" />
         <meta name="google-site-verification" content="TDSCWHi6eg67qLEBYWMUJkGzr5J2qJeH8jqDB2jLn5I" />
-        <link rel="canonical" href="https://전북하수구막힘.com" />
+        <link rel="canonical" href="https://www.xn--2e0bm8utzck3fsyi7rvktd.com" />
       </head>
       <body className={inter.className}>
         <script
@@ -99,9 +99,9 @@ export default function RootLayout({
               '@context': 'https://schema.org',
               '@type': 'PlumbingService',
               name: '전북배관',
-              image: 'https://전북하수구막힘.com/images/logo.png',
-              '@id': 'https://전북하수구막힘.com',
-              url: 'https://전북하수구막힘.com',
+              image: 'https://www.xn--2e0bm8utzck3fsyi7rvktd.com/images/logo.png',
+              '@id': 'https://www.xn--2e0bm8utzck3fsyi7rvktd.com',
+              url: 'https://www.xn--2e0bm8utzck3fsyi7rvktd.com',
               telephone: '010-8184-3496',
               description: '전주, 군산, 익산 전라북도 전지역 하수구막힘, 변기막힘, 싱크대막힘 24시 긴급출동',
               areaServed: {

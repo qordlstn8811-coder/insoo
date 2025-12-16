@@ -3,7 +3,7 @@ import { MetadataRoute } from 'next';
 import { jeonbukRegions } from '@/data/regions';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = 'https://전북하수구막힘.com'; // 도메인 설정 완료
+    const baseUrl = 'https://www.xn--2e0bm8utzck3fsyi7rvktd.com'; // 도메인 설정 완료
 
     // 기본 페이지
     const routes = [
