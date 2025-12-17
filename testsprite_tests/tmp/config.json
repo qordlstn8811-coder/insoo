@@ -1,0 +1,19 @@
+{
+  "status": "commited",
+  "type": "backend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3000/api/generate-post",
+  "backendAuthType": "public",
+  "executionArgs": {
+    "projectName": "jeonbuk-hasugu",
+    "projectPath": "c:\\Users\\admin\\Desktop\\배관홈페이지\\jeonbuk-hasugu",
+    "testIds": [
+      "TC_FE_001"
+    ],
+    "additionalInstruction": "Use playwright to navigate to http://localhost:3000. Click the link with text '시공사례'. Verify URL is http://localhost:3000/cases.",
+    "envs": {
+      "API_KEY": "sk-user-b2cxMH2NQERPGdLXO-CrBhRgjKn0X663kMlvXACvwjerUCbkK7mPeq6kxx7BykQVs1t797M0FC6G3CnM7fD5TmTxiXrOag6cg7mPfwNUyyaiKXSGDhbx5W8ueAnbFrSBfFU"
+    }
+  },
+  "proxy": "http://e1299bcc-b33e-490b-a749-80bbd0154880:8lV849TUwL6qgA4kjscaR4ttpg4Qea3w@tun.testsprite.com:8080"
+}

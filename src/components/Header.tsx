@@ -61,6 +61,9 @@ export default function Header() {
                         <Link href="/about" className="text-gray-700 hover:text-blue-600 font-medium">
                             업체소개
                         </Link>
+                        <Link href="/cases" className="text-gray-700 hover:text-blue-600 font-medium">
+                            시공사례
+                        </Link>
                         <Link href="/contact" className="text-gray-700 hover:text-blue-600 font-medium">
                             상담문의
                         </Link>
@@ -102,9 +105,8 @@ export default function Header() {
 
             {/* 모바일 메뉴 패널 */}
             <div
-                className={`lg:hidden absolute top-full left-0 w-full bg-white shadow-xl border-t transition-all duration-300 ease-in-out ${
-                    mobileMenuOpen ? 'max-h-[80vh] opacity-100 overflow-y-auto' : 'max-h-0 opacity-0 overflow-hidden'
-                }`}
+                className={`lg:hidden absolute top-full left-0 w-full bg-white shadow-xl border-t transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-[80vh] opacity-100 overflow-y-auto' : 'max-h-0 opacity-0 overflow-hidden'
+                    }`}
             >
                 <nav className="px-4 py-4 space-y-2">
                     {/* 서비스 드롭다운 */}
@@ -159,6 +161,13 @@ export default function Header() {
                         onClick={() => setMobileMenuOpen(false)}
                     >
                         업체소개
+                    </Link>
+                    <Link
+                        href="/cases"
+                        className="block py-3 px-4 text-gray-700 font-medium hover:bg-blue-50 rounded-lg"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        시공사례
                     </Link>
                     <Link
                         href="/contact"

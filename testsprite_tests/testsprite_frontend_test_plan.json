@@ -1,0 +1,36 @@
+[
+  {
+    "id": "TC_FE_001",
+    "title": "Navigation to Cases Page",
+    "description": "User clicks '시공사례' link in header. Should navigate to /cases page.",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Click '시공사례' link in navigation menu"
+      },
+      {
+        "type": "assertion",
+        "description": "URL should be /cases"
+      },
+      {
+        "type": "assertion",
+        "description": "Page title should contain '시공사례'"
+      }
+    ]
+  },
+  {
+    "id": "TC_FE_002",
+    "title": "Cases List Display",
+    "description": "Verify that blog posts are displayed as cards on the /cases page.",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /cases"
+      },
+      {
+        "type": "assertion",
+        "description": "Should see post cards if posts exist, or empty state message if no posts."
+      }
+    ]
+  }
+]
