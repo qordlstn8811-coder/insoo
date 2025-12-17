@@ -3,7 +3,13 @@ import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://example.supabase.co';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'example-key';
+const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+const supabaseKey = serviceRoleKey || anonKey || 'example-key';
+
+// Debug: Log which key is being used (do not log actual key)
+console.log(`[API] Using key type: ${serviceRoleKey ? 'SERVICE_ROLE (Admin)' : 'ANON (Public)'}`);
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -71,14 +77,15 @@ export async function POST(request: Request) {
         const { data, error } = await supabase
             .from('inquiries')
             .insert([
-                { name, phone, region, message, created_at: new Date().toISOString() },
-            ])
-            .select();
+                { name, phone, region, message },
+            ]);
+
+        // .select() was removed because it triggers RLS violation for anonymous users (who can Insert but not Select)
 
         if (error) {
             console.error('Supabase Error:', error);
             return NextResponse.json(
-                { error: '데이터 저장 중 오류가 발생했습니다.' },
+                { error: '데이터 저장 중 오류가 발생했습니다.', details: error },
                 { status: 500 }
             );
         }

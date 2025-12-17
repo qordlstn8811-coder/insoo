@@ -46,7 +46,7 @@ export const WavyBackground = ({
         }
     };
 
-    const animationId = useRef<number>();
+    const animationId = useRef<number | null>(null);
     const isMobileRef = useRef<boolean>(false);
 
     const init = () => {
