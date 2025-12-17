@@ -1,0 +1,16 @@
+name: External Cron Trigger
+
+on:
+  schedule:
+    # 30분마다 실행 (Vercel 무료 제한 우회용)
+    - cron: '*/30 * * * *'
+  workflow_dispatch: # 수동 실행 버튼도 추가
+
+jobs:
+  trigger-cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Vercel Cron Endpoint
+        run: |
+          curl -X GET https://jeonbuk-hasugu-final123.vercel.app/api/cron \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
