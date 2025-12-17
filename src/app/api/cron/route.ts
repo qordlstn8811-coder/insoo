@@ -12,7 +12,7 @@ const supabase = createClient(
 );
 
 // 사용자 설정 (나중에 DB화 가능)
-const DAILY_TARGET = 20; // 하루 목표 발행량
+const DAILY_TARGET = 100; // 하루 목표 발행량 (100개로 상향)
 
 export async function GET(request: Request) {
     try {
