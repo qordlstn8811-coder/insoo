@@ -2,8 +2,8 @@ name: External Cron Trigger
 
 on:
   schedule:
-    # 30분마다 실행 (Vercel 무료 제한 우회용)
-    - cron: '*/30 * * * *'
+    # 10분마다 실행 (하루 100개 목표 달성을 위해 빈도 증가)
+    - cron: '*/10 * * * *'
   workflow_dispatch: # 수동 실행 버튼도 추가
 
 jobs:
