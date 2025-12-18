@@ -327,6 +327,33 @@ export default function AdminPage() {
                                     <span className="text-gray-500">개</span>
                                 </div>
                             </div>
+
+                            {/* 생성 간격 설정 */}
+                            <div>
+                                <label className="mb-1 block text-sm font-bold text-gray-700">생성 간격 (초)</label>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        value={minDelay}
+                                        onChange={(e) => setMinDelay(Number(e.target.value))}
+                                        disabled={isLooping}
+                                        className="flex-1 text-center rounded-lg border border-gray-300 p-3 font-bold text-gray-900 outline-none focus:border-blue-500"
+                                        placeholder="최소"
+                                    />
+                                    <span className="text-gray-500">~</span>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        value={maxDelay}
+                                        onChange={(e) => setMaxDelay(Number(e.target.value))}
+                                        disabled={isLooping}
+                                        className="flex-1 text-center rounded-lg border border-gray-300 p-3 font-bold text-gray-900 outline-none focus:border-blue-500"
+                                        placeholder="최대"
+                                    />
+                                    <span className="text-gray-500 font-bold">초</span>
+                                </div>
+                            </div>
                             {!isLooping ? (
                                 <button
                                     onClick={startLoop}
