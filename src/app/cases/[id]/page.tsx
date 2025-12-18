@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import SaveShareButtons from '@/components/SaveShareButtons';
 
 // 동적 메타데이터 생성 (SEO)
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
@@ -87,39 +88,66 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
-                    __html: JSON.stringify({
-                        '@context': 'https://schema.org',
-                        '@type': 'Article',
-                        headline: post.title,
-                        description: post.content?.substring(0, 160).replace(/<[^>]*>?/gm, ''),
-                        image: post.image_url,
-                        datePublished: post.created_at,
-                        dateModified: post.created_at,
-                        author: {
-                            '@type': 'Organization',
-                            name: '전북배관',
-                            url: 'https://xn--2e0bm8utzck3fsyi7rvktd.com',
-                            telephone: '010-8184-3496',
-                            address: {
-                                '@type': 'PostalAddress',
-                                addressRegion: '전북',
-                                addressCountry: 'KR'
+                    __html: JSON.stringify([
+                        {
+                            '@context': 'https://schema.org',
+                            '@type': 'Article',
+                            headline: post.title,
+                            description: post.content?.substring(0, 160).replace(/<[^>]*>?/gm, ''),
+                            image: post.image_url,
+                            datePublished: post.created_at,
+                            dateModified: post.created_at,
+                            author: {
+                                '@type': 'Organization',
+                                name: '전북배관',
+                                url: 'https://xn--2e0bm8utzck3fsyi7rvktd.com',
+                            },
+                            publisher: {
+                                '@type': 'Organization',
+                                name: '전북배관',
+                                logo: {
+                                    '@type': 'ImageObject',
+                                    url: 'https://xn--2e0bm8utzck3fsyi7rvktd.com/icon.png'
+                                }
+                            },
+                            mainEntity: {
+                                '@type': 'FAQPage',
+                                mainEntity: [
+                                    {
+                                        '@type': 'Question',
+                                        name: '배관 막힘 해결 비용은 얼마인가요?',
+                                        acceptedAnswer: {
+                                            '@type': 'Answer',
+                                            text: '현장 상황에 따라 다르지만, 전북배관은 정찰제로 운영되며 사전 견적을 제공합니다. 010-8184-3496으로 문의주세요.'
+                                        }
+                                    }
+                                ]
                             }
                         },
-                        publisher: {
-                            '@type': 'Organization',
-                            name: '전북배관',
-                            logo: {
-                                '@type': 'ImageObject',
-                                url: 'https://xn--2e0bm8utzck3fsyi7rvktd.com/icon.png'
-                            }
-                        },
-                        mainEntityOfPage: {
-                            '@type': 'WebPage',
-                            '@id': `https://xn--2e0bm8utzck3fsyi7rvktd.com/cases/${post.id}`
-                        },
-                        keywords: `${post.keyword}, 전북배관, 배관막힘, 하수구막힘, 긴급출동`
-                    })
+                        {
+                            '@context': 'https://schema.org',
+                            '@type': 'BreadcrumbList',
+                            itemListElement: [
+                                {
+                                    '@type': 'ListItem',
+                                    position: 1,
+                                    name: 'Home',
+                                    item: 'https://xn--2e0bm8utzck3fsyi7rvktd.com'
+                                },
+                                {
+                                    '@type': 'ListItem',
+                                    position: 2,
+                                    name: '시공사례',
+                                    item: 'https://xn--2e0bm8utzck3fsyi7rvktd.com/cases'
+                                },
+                                {
+                                    '@type': 'ListItem',
+                                    position: 3,
+                                    name: post.title
+                                }
+                            ]
+                        }
+                    ])
                 }}
             />
 
@@ -162,6 +190,9 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
                     className="prose prose-lg prose-blue mx-auto max-w-none bg-white p-0 md:p-8"
                     dangerouslySetInnerHTML={{ __html: post.content || '' }}
                 />
+
+                {/* 저장 및 공유 버튼 (Retention) */}
+                <SaveShareButtons title={post.title} />
 
                 {/* 하단 상담 유도 */}
                 <div className="mt-16 rounded-2xl bg-blue-50 p-8 text-center ring-1 ring-blue-100">
