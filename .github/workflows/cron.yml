@@ -11,8 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Call Vercel Cron Endpoint
-        env:
-          CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
           curl -X GET https://www.xn--2e0bm8utzck3fsyi7rvktd.com/api/cron \
-          -H "Authorization: Bearer $CRON_SECRET"
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
