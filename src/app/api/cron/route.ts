@@ -15,7 +15,7 @@ const supabase = createClient(
 export async function GET(request: Request) {
     try {
         // 1. 설정 로드
-        const settings = await SettingsService.getSettings();
+        const settings = await SettingsService.getSettings(supabase);
 
         // 2. 자동화 ON/OFF 체크
         if (!settings.isActive) {
@@ -49,7 +49,8 @@ export async function GET(request: Request) {
             .from('posts')
             .select('*', { count: 'exact', head: true })
             .gte('created_at', today.toISOString())
-            .neq('status', 'system'); // 시스템 설정 글 제외
+            .neq('status', 'draft') // 시스템 설정(draft) 및 임시저장 글 제외
+            .neq('title', 'SYSTEM_CRON_CONFIG'); // 안전장치: 설정 글 확실히 제외
 
         if (error) throw error;
 

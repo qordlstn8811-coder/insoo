@@ -1,5 +1,4 @@
-
-import { supabase } from './supabase';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export interface CronSettings {
     isActive: boolean;
@@ -15,24 +14,26 @@ const DEFAULT_SETTINGS: CronSettings = {
     endTime: '23:00'
 };
 
-const SETTINGS_ID = 'system-cron-settings'; // 고정 ID (UUID 형식이 아니라면 에러날 수 있으니 확인 필요. Supabase는 보통 UUID. 
-// 안전하게 타이틀로 조회하거나, 최초 생성 후 ID를 고정해서 쓰는 방식 사용. 
-// 여기서는 "title"이 "SYSTEM_CONFIG"인 row를 찾아서 사용.
-
 export const SettingsService = {
-    async getSettings(): Promise<CronSettings> {
+    async getSettings(client: SupabaseClient): Promise<CronSettings> {
         try {
-            const { data, error } = await supabase
+            const { data, error } = await client
                 .from('posts')
                 .select('content')
-                .eq('title', 'SYSTEM_CRON_CONFIG') // 식별자
-                .eq('status', 'system')           // 식별자
+                .eq('title', 'SYSTEM_CRON_CONFIG')
                 .single();
 
             if (error || !data) {
                 // 없으면 생성 (첫 실행 시)
                 console.log('설정이 없어 기본값을 생성합니다.');
-                await this.updateSettings(DEFAULT_SETTINGS);
+                // 재귀 호출 방지를 위해 여기서 직접 insert
+                await client.from('posts').insert({
+                    title: 'SYSTEM_CRON_CONFIG',
+                    content: JSON.stringify(DEFAULT_SETTINGS),
+                    status: 'draft', // 'system' 대신 'draft' 사용 (Enum 충돌 방지)
+                    keyword: 'SYSTEM',
+                    category: 'SYSTEM'
+                });
                 return DEFAULT_SETTINGS;
             }
 
@@ -43,10 +44,9 @@ export const SettingsService = {
         }
     },
 
-    async updateSettings(newSettings: CronSettings): Promise<void> {
+    async updateSettings(client: SupabaseClient, newSettings: CronSettings): Promise<void> {
         // Upsert logic
-        // 먼저 존재하는지 확인
-        const { data } = await supabase
+        const { data } = await client
             .from('posts')
             .select('id')
             .eq('title', 'SYSTEM_CRON_CONFIG')
@@ -54,22 +54,22 @@ export const SettingsService = {
 
         if (data) {
             // Update
-            await supabase
+            await client
                 .from('posts')
                 .update({
                     content: JSON.stringify(newSettings),
-                    status: 'system', // public 목록에 안 뜨게
+                    status: 'draft', 
                     updated_at: new Date().toISOString()
                 })
                 .eq('id', data.id);
         } else {
             // Insert
-            await supabase
+            await client
                 .from('posts')
                 .insert({
                     title: 'SYSTEM_CRON_CONFIG',
                     content: JSON.stringify(newSettings),
-                    status: 'system',
+                    status: 'draft',
                     keyword: 'SYSTEM',
                     category: 'SYSTEM'
                 });

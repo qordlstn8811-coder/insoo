@@ -153,13 +153,13 @@ export default function AdminPage() {
 
     // 설정 불러오기
     const fetchSettings = async () => {
-        const current = await SettingsService.getSettings();
+        const current = await SettingsService.getSettings(supabase);
         setSettings(current);
     };
 
     // 설정 업데이트 핸들러
     const updateSettings = async (newSettings: CronSettings) => {
-        await SettingsService.updateSettings(newSettings);
+        await SettingsService.updateSettings(supabase, newSettings);
         setSettings(newSettings);
     };
 
