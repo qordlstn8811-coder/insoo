@@ -12,5 +12,5 @@ jobs:
     steps:
       - name: Call Vercel Cron Endpoint
         run: |
-          curl -X GET https://jeonbuk-hasugu-final123.vercel.app/api/cron \
+          curl -X GET https://www.xn--2e0bm8utzck3fsyi7rvktd.com/api/cron \
           -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

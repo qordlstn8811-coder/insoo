@@ -54,7 +54,11 @@ export async function GET(request: Request) {
         // 랜덤 Skip 기능 (50% 확률로 실행) -> 하루 48번 찔러도 24번만 실행됨 (얼추 20개 맞춤)
         // 만약 너무 적게 발행되면 안 되니까, 저녁 시간대에는 확률을 높이는 로직도 가능하지만 일단 단순하게.
 
-        const shouldRun = Math.random() > 0.3; // 70% 확률로 실행 (조금 더 적극적으로 발행)
+        // 4. 실행 확률 로직 (제거 - 100개 목표 달성을 위해 매번 실행)
+        // const shouldRun = Math.random() > 0.3; // 제거
+
+        // 100개 목표를 위해 무조건 실행 (목표 달성 시 위에서 리턴됨)
+        const shouldRun = true;
 
         if (!shouldRun && currentCount < DAILY_TARGET) {
             return NextResponse.json({
