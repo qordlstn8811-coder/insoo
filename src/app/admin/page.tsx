@@ -3,6 +3,102 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import Image from 'next/image';
+import { SettingsService, CronSettings } from '@/lib/settings';
+
+// 별도 컴포넌트로 분리하여 관리 (클린 코드)
+function AutomationSettingsCard({ isActive, targetCount, startTime, endTime, onUpdate }: any) {
+    const [localActive, setLocalActive] = useState(isActive);
+    const [localTarget, setLocalTarget] = useState(targetCount);
+    const [localStart, setLocalStart] = useState(startTime);
+    const [localEnd, setLocalEnd] = useState(endTime);
+    const [isSaving, setIsSaving] = useState(false);
+
+    // 부모 상태가 바뀌면 로컬도 동기화 (초기 로딩 시)
+    useEffect(() => {
+        setLocalActive(isActive);
+        setLocalTarget(targetCount);
+        setLocalStart(startTime);
+        setLocalEnd(endTime);
+    }, [isActive, targetCount, startTime, endTime]);
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        await onUpdate({
+            isActive: localActive,
+            dailyTarget: localTarget,
+            startTime: localStart,
+            endTime: localEnd
+        });
+        setIsSaving(false);
+        alert('설정이 저장되었습니다.');
+    };
+
+    return (
+        <div className="rounded-2xl border border-blue-200 bg-blue-50 p-6 shadow-sm">
+            <h2 className="mb-4 text-xl font-bold flex items-center gap-2 text-blue-900">
+                🤖 자동화 제어 (Cron)
+                <span className={`px-2 py-0.5 text-xs rounded-full ${localActive ? 'bg-green-500 text-white' : 'bg-gray-400 text-white'}`}>
+                    {localActive ? 'ON' : 'OFF'}
+                </span>
+            </h2>
+
+            <div className="space-y-4">
+                {/* ON/OFF 스위치 */}
+                <div className="flex items-center justify-between bg-white p-4 rounded-xl border border-blue-100">
+                    <span className="font-bold text-gray-700">자동 발행 상태</span>
+                    <button
+                        onClick={() => setLocalActive(!localActive)}
+                        className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${localActive ? 'bg-blue-600' : 'bg-gray-300'}`}
+                    >
+                        <span className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${localActive ? 'translate-x-7' : 'translate-x-1'}`} />
+                    </button>
+                </div>
+
+                {/* 하루 목표량 */}
+                <div>
+                    <label className="mb-1 block text-sm font-bold text-gray-700">하루 목표 발행량</label>
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="number"
+                            value={localTarget}
+                            onChange={(e) => setLocalTarget(Number(e.target.value))}
+                            className="w-full text-right rounded-lg border border-gray-300 p-3 font-bold text-gray-900 outline-none focus:border-blue-500"
+                        />
+                        <span className="text-gray-500">개</span>
+                    </div>
+                </div>
+
+                {/* 가동 시간 */}
+                <div>
+                    <label className="mb-1 block text-sm font-bold text-gray-700">가동 시간 (0시~24시)</label>
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="time"
+                            value={localStart}
+                            onChange={(e) => setLocalStart(e.target.value)}
+                            className="flex-1 rounded-lg border border-gray-300 p-2 text-center"
+                        />
+                        <span className="text-gray-500">~</span>
+                        <input
+                            type="time"
+                            value={localEnd}
+                            onChange={(e) => setLocalEnd(e.target.value)}
+                            className="flex-1 rounded-lg border border-gray-300 p-2 text-center"
+                        />
+                    </div>
+                </div>
+
+                <button
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="w-full rounded-xl bg-blue-600 py-3 font-bold text-white shadow-md transition hover:bg-blue-700 disabled:opacity-50"
+                >
+                    {isSaving ? '저장 중...' : '설정 저장하기'}
+                </button>
+            </div>
+        </div>
+    );
+}
 
 export default function AdminPage() {
     // 상태 관리
@@ -12,7 +108,14 @@ export default function AdminPage() {
     const [posts, setPosts] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 
-    // 생성 관련 상태
+    // Cron 설정 상태
+    const [settings, setSettings] = useState<CronSettings>({
+        isActive: true,
+        dailyTarget: 100,
+        startTime: '08:00',
+        endTime: '22:00'
+    });
+
     const [isLooping, setIsLooping] = useState(false);
     const [targetCount, setTargetCount] = useState<number>(1);
     const [successCount, setSuccessCount] = useState(0);
@@ -38,13 +141,33 @@ export default function AdminPage() {
     // 2. 게시글 목록 불러오기
     const fetchPosts = async () => {
         setLoading(true);
+        // 게시글 목록 (시스템 글 제외)
         const { data } = await supabase
             .from('posts')
             .select('*')
+            .neq('status', 'system') // 시스템 설정 글은 목록에서 제외
             .order('created_at', { ascending: false });
         if (data) setPosts(data);
         setLoading(false);
     };
+
+    // 설정 불러오기
+    const fetchSettings = async () => {
+        const current = await SettingsService.getSettings();
+        setSettings(current);
+    };
+
+    // 설정 업데이트 핸들러
+    const updateSettings = async (newSettings: CronSettings) => {
+        await SettingsService.updateSettings(newSettings);
+        setSettings(newSettings);
+    };
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            fetchSettings();
+        }
+    }, [isAuthenticated]);
 
     // 3. 로그 추가 함수
     const addLog = (msg: string) => {
@@ -175,21 +298,27 @@ export default function AdminPage() {
                 {/* 왼쪽: 컨트롤 패널 */}
                 <div className="lg:col-span-4 space-y-6">
 
-                    {/* 1. 작업 설정 카드 */}
-                    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-                        <h2 className="mb-4 text-xl font-bold flex items-center gap-2">
-                            ⚙️ 작업 설정
-                            {isLooping && <span className="animate-pulse text-xs text-red-500">● 작동 중</span>}
-                        </h2>
+                    {/* 1. 자동화 설정 카드 */}
+                    <AutomationSettingsCard
+                        isActive={settings.isActive}
+                        targetCount={settings.dailyTarget}
+                        startTime={settings.startTime}
+                        endTime={settings.endTime}
+                        onUpdate={updateSettings}
+                    />
 
+                    {/* 2. 글 생성 테스트 카드 (기존 기능) */}
+                    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                        <h2 className="mb-4 text-xl font-bold text-gray-800">🧪 수동 테스트</h2>
+                        {/* ... 기존 수동 테스트 UI 유지 ... */}
                         <div className="space-y-4">
                             <div>
-                                <label className="mb-1 block text-sm font-bold text-gray-700">생성할 글 갯수</label>
+                                <label className="mb-1 block text-sm font-bold text-gray-700">테스트 생성 갯수</label>
                                 <div className="flex items-center gap-2">
                                     <input
                                         type="number"
                                         min="1"
-                                        max="1000"
+                                        max="5"
                                         value={targetCount}
                                         onChange={(e) => setTargetCount(Number(e.target.value))}
                                         disabled={isLooping}
@@ -197,73 +326,20 @@ export default function AdminPage() {
                                     />
                                     <span className="text-gray-500">개</span>
                                 </div>
-                                <div className="mt-2 flex gap-2">
-                                    {[1, 5, 10, 50, 100].map(num => (
-                                        <button
-                                            key={num}
-                                            onClick={() => setTargetCount(num)}
-                                            disabled={isLooping}
-                                            className="flex-1 rounded-md bg-gray-100 py-1 text-xs font-bold text-gray-600 hover:bg-gray-200 disabled:opacity-50"
-                                        >
-                                            {num}개
-                                        </button>
-                                    ))}
-                                </div>
                             </div>
-
-                            <div>
-                                <label className="mb-1 block text-sm font-bold text-gray-700">생성 간격 (랜덤)</label>
-                                <div className="flex gap-2 items-center">
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        max="60"
-                                        value={minDelay}
-                                        onChange={(e) => setMinDelay(Number(e.target.value))}
-                                        disabled={isLooping}
-                                        className="w-20 rounded-lg border border-gray-300 p-2 text-sm text-center"
-                                    />
-                                    <span className="text-gray-500">~</span>
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        max="60"
-                                        value={maxDelay}
-                                        onChange={(e) => setMaxDelay(Number(e.target.value))}
-                                        disabled={isLooping}
-                                        className="w-20 rounded-lg border border-gray-300 p-2 text-sm text-center"
-                                    />
-                                    <span className="text-gray-500">초</span>
-                                </div>
-                                <p className="text-xs text-gray-400 mt-1">매번 다른 간격으로 발행 (자연스러움 ↑)</p>
-                            </div>
-
-                            <hr className="border-gray-100" />
-
-                            <div className="flex gap-2 text-center text-sm">
-                                <div className="flex-1 rounded-lg bg-green-50 p-2">
-                                    <div className="font-bold text-green-600">{successCount}</div>
-                                    <div className="text-xs text-green-800">성공</div>
-                                </div>
-                                <div className="flex-1 rounded-lg bg-red-50 p-2">
-                                    <div className="font-bold text-red-600">{failCount}</div>
-                                    <div className="text-xs text-red-800">실패</div>
-                                </div>
-                            </div>
-
                             {!isLooping ? (
                                 <button
                                     onClick={startLoop}
-                                    className="w-full rounded-xl py-4 font-bold text-white shadow-lg transition-all active:scale-95 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                                    className="w-full rounded-xl bg-gray-800 py-4 font-bold text-white shadow-lg transition-all active:scale-95 hover:bg-gray-900"
                                 >
-                                    ▶ 작업 시작하기
+                                    ▶ 수동 생성 시작
                                 </button>
                             ) : (
                                 <button
                                     onClick={stopLoop}
-                                    className="w-full rounded-xl py-4 font-bold text-white shadow-lg transition-all active:scale-95 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700"
+                                    className="w-full rounded-xl bg-red-600 py-4 font-bold text-white shadow-lg transition-all active:scale-95 hover:bg-red-700"
                                 >
-                                    ⏹ 작업 중단하기
+                                    ⏹ 중단하기
                                 </button>
                             )}
                         </div>

@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 전북배관 자동화 블로그 시스템 사용설명서
 
-## Getting Started
+안녕하세요! 이 문서는 **전북배관 블로그 자동 포스팅 프로그램**을 누구나 쉽게 이해하고 사용할 수 있도록 만든 설명서입니다.
 
-First, run the development server:
+---
+
+## 1. 이 프로그램은 무엇인가요?
+사장님이 주무시는 동안에도 **인공지능(AI)**이 알아서 **"전주 변기 막힘", "익산 하수구"** 같은 홍보 글을 작성해서 홈페이지에 올려주는 똑똑한 로봇입니다.
+
+### 🌟 핵심 기능
+1.  **알아서 글쓰기**: 제목, 본문, 사진까지 AI가 다 만듭니다.
+2.  **알아서 올리기**: 매일 정해진 시간에 글을 발행합니다.
+3.  **내 맘대로 설정**: 하루에 10개를 올릴지, 100개를 올릴지, 언제 켜고 꿀지 관리자 페이지에서 정할 수 있습니다.
+
+---
+
+## 2. 관리자 페이지 사용법
+홈페이지 주소 뒤에 `/admin`을 붙여서 접속하세요. (예: `www.전북배관.com/admin`)
+
+### 🤖 자동화 제어 (새로 생긴 기능!)
+관리자 화면 왼쪽에 있는 설정 박스입니다.
+- **ON / OFF**: 스위치를 끄면 로봇이 일을 멈춥니다. 켜면 다시 일합니다.
+- **하루 목표 발행량**: 오늘 총 몇 개의 글을 쓸지 정합니다. (예: 100개)
+- **가동 시간**: 로봇이 일하는 시간을 정합니다. (예: 08:00 ~ 22:00 -> 아침 8시부터 밤 10시까지만 글을 씁니다)
+
+### 📋 발행 목록
+오른쪽에는 AI가 쓴 글들이 쭈욱 나옵니다.
+- 마음에 안 드는 글이 있다면 **[삭제]** 버튼을 눌러 지울 수 있습니다.
+
+---
+
+## 3. 프로그램 구조 (파일 설명)
+이 프로그램이 어떻게 생겼는지 간단히 설명해 드릴게요. (몰라도 되지만, 알면 좋아요!)
+
+- **`src/app/admin/page.tsx`**: 관리자 페이지 화면을 담당하는 파일입니다.
+- **`src/app/api/cron/route.ts`**: 10분마다 깨어나서 "글 쓸 시간인가?" 확인하는 알람 시계 같은 파일입니다.
+- **`src/lib/post-generator.ts`**: AI에게 "이런 내용으로 글 써줘"라고 명령하는 작업반장 파일입니다.
+- **`src/lib/settings.ts`**: 사장님이 설정한 시간, 갯수 등을 기억해두는 메모장 파일입니다.
+
+---
+
+## 4. 업데이트 방법 (개발자용)
+혹시 나중에 코드를 수정하거나 기능을 추가하고 싶다면, 터미널에서 아래 3줄만 입력하면 됩니다.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# 1. 변경된 내용을 봉투에 담기
+git add .
+
+# 2. 봉투에 이름 쓰기 (뭐가 바뀌었는지)
+git commit -m "기능 업데이트"
+
+# 3. 우체통에 넣기 (서버로 보내기 - 자동으로 반영됨!)
+git push
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+이것만 하면 약 2~3분 뒤에 홈페이지가 자동으로 업데이트됩니다!
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 5. 자주 묻는 질문 (FAQ)
 
-## Learn More
+**Q. 관리자 페이지가 안 열려요!**
+- 서버가 켜져 있는지 확인해야 합니다. 개발 중이라면 터미널에 `npm run dev`를 입력했는지 확인하세요.
+- 인터넷 주소가 맞는지 확인하세요.
 
-To learn more about Next.js, take a look at the following resources:
+**Q. 글이 안 올라와요!**
+- 관리자 페이지에서 **ON**으로 되어 있는지 확인하세요.
+- **가동 시간**이 지났는지(밤 10시 이후 등) 확인하세요.
+- 오늘 **목표 갯수**를 다 채웠는지 확인하세요.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**담당 AI**: Antigravity
+**마지막 업데이트**: 2025년 12월 18일

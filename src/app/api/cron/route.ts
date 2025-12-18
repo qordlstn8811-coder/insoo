@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { generatePostAction } from '@/lib/post-generator';
 import { createClient } from '@supabase/supabase-js';
+import { SettingsService } from '@/lib/settings';
 
 // Vercel Cron은 기본적으로 타임아웃이 10초이므로, 긴 작업을 위해 런타임을 설정할 수 있음
-export const maxDuration = 60; // 60초 (Pro Plan 권장, Hobby는 10초 제한일 수 있음. 가볍게 유지)
+export const maxDuration = 60; // 60초
 export const dynamic = 'force-dynamic';
 
 const supabase = createClient(
@@ -11,71 +12,67 @@ const supabase = createClient(
     process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-// 사용자 설정 (나중에 DB화 가능)
-const DAILY_TARGET = 100; // 하루 목표 발행량 (100개로 상향)
-
 export async function GET(request: Request) {
     try {
-        // 1. 보안 체크 (Vercel Cron 헤더 확인)
-        const authHeader = request.headers.get('authorization');
-        // 로컬 테스트를 위해 'Bearer test-secret' 허용하거나, 배포 시엔 CRON_SECRET 환경변수 확인 필요
-        // if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-        //     return new NextResponse('Unauthorized', { status: 401 });
-        // }
+        // 1. 설정 로드
+        const settings = await SettingsService.getSettings();
 
-        // 2. 오늘 발행된 글 개수 확인
+        // 2. 자동화 ON/OFF 체크
+        if (!settings.isActive) {
+            return NextResponse.json({
+                message: '자동화가 비활성화 상태입니다.',
+                executed: false,
+                settings
+            });
+        }
+
+        // 3. 시간대 체크
+        const now = new Date();
+        const currentHour = now.getHours();
+        const startHour = parseInt(settings.startTime.split(':')[0]);
+        const endHour = parseInt(settings.endTime.split(':')[0]);
+
+        // 시간이 범위 밖이면 스킵 (단, 자정 넘어가는 경우는 별도 처리 필요하지만 일단 단순 범위로)
+        if (currentHour < startHour || currentHour >= endHour) {
+            return NextResponse.json({
+                message: `운영 시간이 아닙니다. (${settings.startTime}~${settings.endTime})`,
+                executed: false,
+                currentHour
+            });
+        }
+
+        // 4. 오늘 발행된 글 개수 확인
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
         const { count, error } = await supabase
             .from('posts')
             .select('*', { count: 'exact', head: true })
-            .gte('created_at', today.toISOString());
+            .gte('created_at', today.toISOString())
+            .neq('status', 'system'); // 시스템 설정 글 제외
 
         if (error) throw error;
 
         const currentCount = count || 0;
+        const dailyTarget = settings.dailyTarget;
 
-        // 3. 목표 달성 여부 체크
-        if (currentCount >= DAILY_TARGET) {
+        // 5. 목표 달성 여부 체크
+        if (currentCount >= dailyTarget) {
             return NextResponse.json({
-                message: `오늘 목표 달성 완료 (${currentCount}/${DAILY_TARGET})`,
+                message: `오늘 목표 달성 완료(${currentCount} / ${dailyTarget})`,
                 executed: false
             });
         }
 
-        // 4. 실행 확률 로직 (랜덤성을 위해)
-        // 예를 들어 30분마다 크론이 돈다고 가정 (하루 48회)
-        // 남은 횟수 / 남은 시간 비율로 확률 계산 등 복잡한 로직보다는
-        // 단순하게 "목표 미달이면 무조건 실행" 하되, 크론 스케줄 간격을 조절하는 게 더 확실함.
-        // 여기서는 "목표 미달이면 실행"으로 단순화. 
-        // (사용자가 간격을 랜덤하게 해달라고 했으므로, 여기서 sleep을 주거나 확률로 skip할 수 있음)
-
-        // 랜덤 Skip 기능 (50% 확률로 실행) -> 하루 48번 찔러도 24번만 실행됨 (얼추 20개 맞춤)
-        // 만약 너무 적게 발행되면 안 되니까, 저녁 시간대에는 확률을 높이는 로직도 가능하지만 일단 단순하게.
-
-        // 4. 실행 확률 로직 (제거 - 100개 목표 달성을 위해 매번 실행)
-        // const shouldRun = Math.random() > 0.3; // 제거
-
-        // 100개 목표를 위해 무조건 실행 (목표 달성 시 위에서 리턴됨)
-        const shouldRun = true;
-
-        if (!shouldRun && currentCount < DAILY_TARGET) {
-            return NextResponse.json({
-                message: `랜덤 스킵 당첨 (발행 안 함) - 현재: ${currentCount}개`,
-                executed: false
-            });
-        }
-
-        // 5. 글 생성 실행
-        console.log(`[CRON] 글 생성 시작 via CronJob (현재: ${currentCount}개)`);
+        // 6. 글 생성 실행
+        console.log(`[CRON] 글 생성 시작 via CronJob(현재: ${currentCount} / ${dailyTarget})`);
         const result = await generatePostAction();
 
         return NextResponse.json({
             message: '글 생성 성공',
             executed: true,
             data: result,
-            daily_status: `${currentCount + 1}/${DAILY_TARGET}`
+            daily_status: `${currentCount + 1}/${dailyTarget}`
         });
 
     } catch (error: any) {
