@@ -1,89 +1,103 @@
 import { NextResponse } from 'next/server';
 import { generatePostAction } from '@/lib/post-generator';
 import { createClient } from '@supabase/supabase-js';
-import { SettingsService } from '@/lib/settings';
 
-// Vercel Cron은 기본적으로 타임아웃이 10초이므로, 긴 작업을 위해 런타임을 설정할 수 있음
-export const maxDuration = 60; // 60초
-export const dynamic = 'force-dynamic';
-
+// Initialize Supabase Client (Same as in post-generator.ts)
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+export const dynamic = 'force-dynamic'; // Ensure not cached
+
 export async function GET(request: Request) {
-    // 0. 보안 검증 (Vercel Cron 또는 수동 호출 시 시크릿 체크)
-    const authHeader = request.headers.get('authorization');
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     try {
-        // 1. 설정 로드
-        const settings = await SettingsService.getSettings(supabase);
-
-        // 2. 자동화 ON/OFF 체크
-        if (!settings.isActive) {
-            return NextResponse.json({
-                message: '자동화가 비활성화 상태입니다.',
-                executed: false,
-                settings
-            });
-        }
-
-        // 3. 시간대 체크
+        // 1. Calculate KST Time
         const now = new Date();
-        const currentHour = now.getHours();
-        const startHour = parseInt(settings.startTime.split(':')[0]);
-        const endHour = parseInt(settings.endTime.split(':')[0]);
+        const kstOffset = 9 * 60; // KST is UTC+9
+        const kstTime = new Date(now.getTime() + kstOffset * 60 * 1000);
+        const kstDateString = kstTime.toISOString().split('T')[0]; // YYYY-MM-DD
 
-        // 시간이 범위 밖이면 스킵 (단, 자정 넘어가는 경우는 별도 처리 필요하지만 일단 단순 범위로)
-        if (currentHour < startHour || currentHour >= endHour) {
-            return NextResponse.json({
-                message: `운영 시간이 아닙니다. (${settings.startTime}~${settings.endTime})`,
-                executed: false,
-                currentHour
-            });
-        }
+        // Start of Day in KST (which is previous day's 15:00 UTC)
+        // We use ISOSString comparison for DB query
+        const startOfKstDay = new Date(`${kstDateString}T00:00:00+09:00`);
+        const startOfKstDayIso = startOfKstDay.toISOString();
 
-        // 4. 오늘 발행된 글 개수 확인
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
+        // 2. Check Daily Count
         const { count, error } = await supabase
             .from('posts')
             .select('*', { count: 'exact', head: true })
-            .gte('created_at', today.toISOString())
-            .neq('status', 'draft') // 시스템 설정(draft) 및 임시저장 글 제외
-            .neq('title', 'SYSTEM_CRON_CONFIG'); // 안전장치: 설정 글 확실히 제외
+            .gte('created_at', startOfKstDayIso);
 
-        if (error) throw error;
-
-        const currentCount = count || 0;
-        const dailyTarget = settings.dailyTarget;
-
-        // 5. 목표 달성 여부 체크
-        if (currentCount >= dailyTarget) {
-            return NextResponse.json({
-                message: `오늘 목표 달성 완료(${currentCount} / ${dailyTarget})`,
-                executed: false
-            });
+        if (error) {
+            console.error('[Cron] DB Error:', error);
+            // If DB check fails, try to generate at least one safely
+            throw error;
         }
 
-        // 6. 글 생성 실행
-        console.log(`[CRON] 글 생성 시작 via CronJob(현재: ${currentCount} / ${dailyTarget})`);
-        const result = await generatePostAction();
+        const currentCount = count || 0;
+        const TARGET_DAILY = 100;
+        const currentKstHour = kstTime.getUTCHours();
+        const remainingHours = 24 - currentKstHour;
+
+        console.log(`[Cron] Time(KST): ${kstTime.toISOString()}, Count: ${currentCount}, Target: ${TARGET_DAILY}, RemainingHours: ${remainingHours}`);
+
+        if (currentCount >= TARGET_DAILY) {
+            return NextResponse.json({ message: 'Daily target reached', count: currentCount });
+        }
+
+        // 3. Calculate Batch Size
+        // If remaining hours is 0 (23:00-24:00), treat as 1 hour left
+        const safeRemainingHours = remainingHours <= 0 ? 1 : remainingHours;
+        const remainingPosts = TARGET_DAILY - currentCount;
+
+        // Simple distribution: evenly spread remaining work
+        let batchSize = Math.ceil(remainingPosts / safeRemainingHours);
+
+        // Safety Caps
+        // Max 5 concurrent generations to prevent timeout (Vercel has 10s-60s limits)
+        // If we fall behind, we max out at 5/hour, which is 120/day capacity, sufficient for 100.
+        const MAX_BATCH_SIZE = 5;
+        const executionCount = Math.min(batchSize, MAX_BATCH_SIZE);
+
+        // Ensure at least 1 if we are behind (and not met target)
+        const finalBatchSize = Math.max(1, executionCount);
+
+        console.log(`[Cron] Executing Batch Size: ${finalBatchSize} (Calculated: ${batchSize})`);
+
+        // 4. Execute Batch in Parallel
+        // We use Promise.all to run them concurrently for speed
+        const promises = Array.from({ length: finalBatchSize }).map(async (_, index) => {
+            // Add slight stagger to avoid exact millisecond collision if needed (optional)
+            // But API race conditions are usually handled by DB
+            try {
+                const res = await generatePostAction();
+                return { success: true, ...res };
+            } catch (err: any) {
+                return { success: false, error: err.message };
+            }
+        });
+
+        const results = await Promise.all(promises);
+
+        const successCount = results.filter(r => r.success).length;
+        const failCount = results.length - successCount;
 
         return NextResponse.json({
-            message: '글 생성 성공',
-            executed: true,
-            data: result,
-            daily_status: `${currentCount + 1}/${dailyTarget}`
+            success: true,
+            message: `Batch execution complete`,
+            stats: {
+                previousCount: currentCount,
+                attempted: finalBatchSize,
+                succeeded: successCount,
+                failed: failCount,
+                newTotalEstimate: currentCount + successCount
+            },
+            results
         });
 
     } catch (error: any) {
-        console.error('[CRON] Error:', error);
+        console.error('[Cron] Critical Error:', error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
