@@ -182,9 +182,10 @@ Gemini Pro의 풍부한 표현력을 발휘하여, 단순히 글을 쓰는 것�
         // API 키는 환경 변수에서 가져옵니다.
         const API_KEY = process.env.GOOGLE_GEMINI_API_KEY;
 
-        console.log(`[PostGen] Requesting Gemini Pro for: ${keyword}`);
+        const MODEL = 'gemini-2.0-flash'; // Key supports this model
+        console.log(`[PostGen] Requesting ${MODEL} for: ${keyword}`);
         const geminiResponse = await fetchWithRetry(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
