@@ -178,8 +178,12 @@ export default function AdminPage() {
     // 4. 단일 생성 요청 함수
     const generateOnePost = async (index: number) => {
         try {
-            addLog(`#${index} 생성 시작...`);
-            const res = await fetch('/api/generate-post', { method: 'POST' });
+            addLog(`#${index} 생성 시작...`); // Start
+            const res = await fetch('/api/admin/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password }) // Send password for auth
+            });
             const data = await res.json();
 
             if (res.ok) {
