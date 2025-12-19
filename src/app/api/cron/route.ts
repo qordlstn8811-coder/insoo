@@ -3,15 +3,24 @@ import { generatePostAction } from '@/lib/post-generator';
 import { createClient } from '@supabase/supabase-js';
 
 // Initialize Supabase Client (Same as in post-generator.ts)
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Client initialization moved inside function
+// const supabase = createClient(...)
 
 export const dynamic = 'force-dynamic'; // Ensure not cached
 
 export async function GET(request: Request) {
     try {
+        const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+
+        // Security Check
+        const authHeader = request.headers.get('authorization');
+        if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+            return new NextResponse('Unauthorized', { status: 401 });
+        }
+
         // 1. Calculate KST Time
         const now = new Date();
         const kstOffset = 9 * 60; // KST is UTC+9
@@ -72,7 +81,7 @@ export async function GET(request: Request) {
             // But API race conditions are usually handled by DB
             try {
                 const res = await generatePostAction();
-                return { success: true, ...res };
+                return res;
             } catch (err: any) {
                 return { success: false, error: err.message };
             }

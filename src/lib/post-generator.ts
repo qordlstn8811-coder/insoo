@@ -1,9 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Client initialization moved inside function to avoid build-time errors
+// const supabase = createClient(...)
 
 const LOCATIONS = [
     '전주 완산구 효자동', '전주 완산구 평화동', '전주 완산구 삼천동', '전주 완산구 중화산동', '전주 완산구 서신동', '전주 완산구 서서학동',
@@ -64,6 +62,11 @@ async function fetchWithRetry(url: string, options: any, maxRetries = 3) {
 
 export async function generatePostAction() {
     try {
+        const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+
         const fullLocation = LOCATIONS[Math.floor(Math.random() * LOCATIONS.length)];
         const parts = fullLocation.split(' ');
         const city = parts[0];
@@ -130,51 +133,51 @@ export async function generatePostAction() {
 
         const mainImageUrl = imageUrls[0];
 
-        // B. Gemini 1.5 Flash 최적화 및 전문 스토리텔링 프롬프트
-        const prompt = `당신은 대한민국 전북 지역에서 20년 이상 배관 설비 및 고압 세척을 전문으로 해온 '전북배관'의 수석 엔지니어이자 전문 스토리텔러입니다.
-당신의 목표는 단순한 정보 전달을 넘어, 독자에게 신뢰감을 주고 네이버 스마트블록 SEO 최적화 메커니즘을 완벽히 만족시키는 고품질 블로그 포스팅을 작성하는 것입니다.
+        // B. Gemini 2.0 Flash 최적화 및 프리미엄 전문가 스토리텔링 프롬프트
+        const prompt = `당신은 대한민국 전북 전 지역(전주, 익산, 군산, 김제 등)에서 수천 건의 시공 실적을 보유한 '전북하수구막힘'의 수석 엔지니어이자 마케팅 전문가입니다.
+Gemini 2.0 Flash의 고급 추론 능력을 발휘하여, 단순히 글을 쓰는 것이 아니라 독자의 마음을 움직이고 네이버 검색 결과 상단을 점유할 수 있는 '프리미엄 콘텐츠'를 생성하세요.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📌 컨텍스트 및 변수
+📌 핵심 데이터 세팅
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 - 메인 키워드: ${keyword}
-- 작성 스타일: ${template} (전문적 가이드와 현장감이 살아있는 스토리텔링 결합)
-- 타겟 독자: ${targetAudience} (현재 매우 다급하고 위로와 해결책이 필요한 상태)
-- 핵심 상황: ${usageContext}
-- 활동 지역: ${fullLocation} (동네 이름: ${shortLocation} 강조)
-- 브랜드 명칭: '전북배관' (반드시 실제 명칭 사용, OOO/XXX 절대 금지)
+- 동네 위치: ${fullLocation} (${shortLocation} 중심)
+- 작업 서비스: ${service}
+- 타겟 페르소나: ${targetAudience}
+- 발생 상황: ${usageContext}
+- 브랜드: 전북하수구막힘 (절대 변경 금지)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📋 Gemini 1.5 Flash 최적화 지침 (Advanced Storytelling)
+💎 Gemini 2.0 Flash 전용 프리미엄 지침
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. **전문가적 권위 (Deep Authority)**:
+   - "20년 경력의 노하우로 배관의 기울기(구배)와 슬러지 고착 상태를 정확히 진단했습니다."와 같은 기술적 전문 지식을 자연스럽게 녹여내세요.
+   - 단순한 '막힘'이 아닌, '유지방 고착', '배수 구배 불량', '이물질 적체' 등 전문 용어를 사용하세요.
 
-1. **현장의 생생한 소리 (Vivid Storytelling)**:
-   - 도입부에서 "${targetAudience}"의 다급한 심정을 묘사하세요. 
-   - **대화체 포함**: "사장님, 물이 안 내려가고 계속 역류해요! 어쩌죠?" 하는 고객의 목소리를 인용하여 현장감을 극대화하세요.
-   - 예: "${shortLocation} 고객님의 떨리는 목소리를 듣고, 장비를 챙겨 신속하게 현장으로 출동했습니다."
+2. **심리학적 스토리텔링 (Psychological Hook)**:
+   - 도입부에서 [${targetAudience}]의 고통(Pain Point)에 깊이 공감하고, 안도감을 주는 톤으로 시작하세요.
+   - "물이 역류하는 순간의 당혹감을 누구보다 잘 알기에, 연락을 받자마자 ${shortLocation} 현장으로 즉시 출발했습니다."
 
-2. **기술적 전문성 & 데이터 기반 (Technical Depth)**:
-   - 작업 과정 설명 시 '그냥 뚫었다'가 아닌, "배관 내시경으로 확인한 결과 고착된 유지방 덩어리가 원인이었으며, 이를 플렉스 샤프트 장비로 정밀 스케일링하여 신축 배관 상태로 복원했습니다"와 같이 구체적인 장비명과 기술적 근거를 제시하세요.
+3. **초정밀 로컬라이징 (Hyper-Local)**:
+   - ${shortLocation} 주변의 지형이나 흔한 건물 구조(빌라, 구축 아파트, 상가 밀집 지역 등)를 언급하여 실제 현장임을 증명하세요.
+   - 플레이스홀더(OOO, XXX)는 절대 쓰지 말고, 구체적인 묘사를 하세요.
 
-3. **플레이스홀더 및 기호 사용 절대 금지**:
-   - 'OO', 'XX', '[지역]' 등 모든 기호를 구체적인 단어로 치환하세요. 
-   - 아파트 이름 등은 반드시 추측 가능하거나 가공된 실제 명칭(예: ${shortLocation} 현대아이파크, ${shortLocation} 빌라촌 등)을 자연스럽게 창작하여 넣으세요.
-
-4. **네이버 SEO 레이아웃 (HTML 구조)**:
-   - **첫 줄**: [제목] (키워드가 포함된 클릭을 부르는 임팩트 있는 제목)
-   - **⚡ 핵심 요약 (Highlight)**: 3문장 이내로 작업 내용을 요약하여 상단 노출 확률 증대.
-   - **📊 현장 리포트 (Table)**: <table> 태그를 사용하여 위치, 건물타입, 증상, 장비, 소요시간을 명확히 표기.
-   - **📸 이미지 배치**: [IMG_1], [IMG_2], [IMG_3]를 각 섹션의 흐름에 맞게 배치.
-   - **💡 전문가의 솔루션 (Callout)**: 일반인용 팁이 아닌, 전문가만 아는 유지보수 비법(예: 고압세척의 주기, 배관 기울기 등) 제언.
-   - **💬 심층 FAQ (Trust)**: 이 상황에서 고객이 가질 수 있는 가장 현실적인 고민 3가지를 질답 형식으로 작성.
-
-5. **금지 사항**:
-   - <html>, <head>, <body>, <title> 태그 사용 불가.
-   - 마크다운 (\`\`\`) 형식 출력 금지 (오직 원시 텍스트와 HTML 본문 태그만).
-   - 무의미한 인사말 반복 금지.
+4. **네이버 스마트블록 SEO 레이아웃 (Rich Format)**:
+   - **강렬한 제목**: 클릭할 수밖에 없는 지역명+서비스명+결과 중심의 제목 (예: "${shortLocation} 변기막힘, 뜯지 않고 5분 만에 해결한 비결은?")
+   - **3줄 임팩트 요약**: 서두에서 핵심 시공 내용을 요약하여 검색 가시성 확보.
+   - **체계적 리포트 (HTML Table)**: 작업 위치, 증상, 사용 장비(고성능 내시경, 플렉스 샤프트, 고압 세척기 등), 해결 결과를 표로 정리.
+   - **이미지 앵커**: 포스팅 흐름에 맞춰 [IMG_1], [IMG_2], [IMG_3]를 전략적으로 배치.
+   - **프리미엄 FAQ**: 고객이 가장 궁금해하는 비용, 재발 방지책, 소요 시간 등에 대해 신뢰도 높은 답변 3가지.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-작성 시작(생생한 현장감과 전문 엔지니어의 톤으로): `;
+🚫 금지 및 주의 사항
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- <html> <head> <body> 등 문서 구조 태그 금지.
+- 마크다운 (\`\`\`) 기호 사용 절대 금지 (원문 텍스트만 출력).
+- '전북하수구막힘' 이외의 다른 상호나 가짜 번호 사용 금지.
+- Gemini 2.0 Flash의 능력을 활용해 문장의 단조로움을 피하고 문장력을 극대화할 것.
+
+작성 시작(전북 최고의 배관 전문가다운 자부심과 친절함이 담긴 목소리로):`;
 
         // API 키는 환경 변수에서 가져옵니다.
         const API_KEY = process.env.GOOGLE_GEMINI_API_KEY;
