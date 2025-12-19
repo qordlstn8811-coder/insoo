@@ -13,6 +13,12 @@ const supabase = createClient(
 );
 
 export async function GET(request: Request) {
+    // 0. 보안 검증 (Vercel Cron 또는 수동 호출 시 시크릿 체크)
+    const authHeader = request.headers.get('authorization');
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     try {
         // 1. 설정 로드
         const settings = await SettingsService.getSettings(supabase);

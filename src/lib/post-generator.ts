@@ -67,10 +67,13 @@ export async function generatePostAction() {
         const fullLocation = LOCATIONS[Math.floor(Math.random() * LOCATIONS.length)];
         const parts = fullLocation.split(' ');
         const city = parts[0];
+        // 구/읍/면이 있는 경우 처리
         const district = parts.length > 2 ? parts[1] : '';
         const dong = parts[parts.length - 1];
 
-        const shortLocation = dong || district || city;
+        // 중복 방지를 위해 city와 district가 같지 않을 때만 district 표시
+        const displayDistrict = (district && district !== city) ? district : '';
+        const shortLocation = dong || displayDistrict || city;
         const service = SERVICES[Math.floor(Math.random() * SERVICES.length)];
         const keyword = `${fullLocation} ${service}`;
 
@@ -120,87 +123,65 @@ export async function generatePostAction() {
 
         const imageUrls = imagePrompts.map((p, index) => {
             const prompt = encodeURIComponent(`${p}, realistic, photo, 4k, taken in Korea, highly detailed`);
-            const seed = Math.floor(Math.random() * 50000) + (index * 1000);
+            // 시드 범위를 대폭 늘려 중복 방지 (날짜+랜덤+인덱스)
+            const seed = Math.floor(Date.now() / 1000) + Math.floor(Math.random() * 100000) + (index * 5000);
             return `https://image.pollinations.ai/prompt/${prompt}?width=1024&height=768&seed=${seed}&nologo=true`;
         });
 
         const mainImageUrl = imageUrls[0];
 
-        // B. Gemini 프롬프트
-        const prompt = `당신은 전북 지역 20년 경력의 배관 설비 전문가 '전북배관'의 블로그 작가입니다.
-주제: ${keyword}
-글 유형: ${template}
-타겟 독자: ${targetAudience}
-상황 설정: ${usageContext}
-지역: ${fullLocation} (${shortLocation})
+        // B. Gemini 1.5 Flash 최적화 및 전문 스토리텔링 프롬프트
+        const prompt = `당신은 대한민국 전북 지역에서 20년 이상 배관 설비 및 고압 세척을 전문으로 해온 '전북배관'의 수석 엔지니어이자 전문 스토리텔러입니다.
+당신의 목표는 단순한 정보 전달을 넘어, 독자에게 신뢰감을 주고 네이버 스마트블록 SEO 최적화 메커니즘을 완벽히 만족시키는 고품질 블로그 포스팅을 작성하는 것입니다.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📋 작성 지침 (네이버 스마트블록 SEO & 가독성 최적화)
+📌 컨텍스트 및 변수
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-1. **글 구조 (반드시 준수)**
-   - **첫 줄**: [제목] (키워드를 포함한 매력적인 제목을 한 줄로 작성. 이모지 1개 포함 가능)
-   
-   - **⚡ 3줄 요약 (두괄식)**:
-     1. [문제 상황 요약]
-     2. [원인 분석 요약]
-     3. [해결 결과 및 AS 보장]
-
-   - **📋 작업 데이터 (속성값 명시)**:
-     - **위치**: ${fullLocation}
-     - **건물 유형**: (아파트/빌라/상가/주택 중 랜덤 선택)
-     - **증상**: ${usageContext}
-     - **작업 시간**: (30분~1시간 내외 랜덤)
-     - **사용 장비**: (내시경, 석션기, 샤프트기 등 상황에 맞게 기재)
-
-   - **서론 (공감 형성)**: ${shortLocation}에 거주하는 ${targetAudience}의 입장에서 겪는 불편함. "${usageContext}" 상황을 실감나게 묘사.
-   - **본문 1 [현장 진단]**: [IMG_1] 태그 삽입. 현장에 도착하니 상황이 어땠는지 구체적으로 설명.
-   - **본문 2 [원인 파악]**: 전문가적 시선에서 정확한 원인 설명.
-   - **본문 3 [작업 과정]**: [IMG_2] 태그 삽입. '전북배관'만의 노하우와 최신 장비를 사용하여 해결하는 과정 상세 기술.
-   - **💡 전문가의 관리 꿀팁 (저장 유도)**:
-     - 일반인은 잘 모르는, 이 문제의 재발을 막는 **핵심 관리 비법**을 박스 형태로 강조해서 작성하세요.
-   - **본문 4 [해결 완료]**: [IMG_3] 태그 삽입. 시원하게 뚫린 모습. 배수 테스트 진행.
-   - **질문과 답변 (Q&A)**: (이전 지시사항 따름)
-   - **맺음말**: AS 보장 및 출동 안내.
-
-2. **이미지 배치**
-   - 글 중간중간에 \`[IMG_1]\`, \`[IMG_2]\`, \`[IMG_3]\` 마커 배치.
-
-3. **SEO & 키워드 전략**
-   - **메인 키워드**: "${fullLocation} ${service}" (제목 및 본문 상단 1~2회)
-   - **서브 키워드**: "${shortLocation} ${service} 업체", "${district} 설비"
-   - 자연스럽게 5~8회 녹여내기.
-
-4. **출력 형식 (HTML)**
-   - <html>, <head>, <body> 금지.
-   - 오직 <h3>, <p>, <ul>, <li>, <strong>, <table> 태그 사용.
-   - **제목**은 태그 없이 첫 줄에.
-   - **3줄 요약**은 <div>와 <em> 태그 등을 활용해 눈에 띄게.
-   - **작업 데이터**는 반드시 HTML <table> 태그로 깔끔하게.
-
-5. **말투 (페르소나)**
-   - 현장감 넘치고 전문적인 톤.
-   - "~습니다", "~해요" 적절히 혼용하여 자연스럽게.
-
-6. **질문과 답변 (Q&A) 작성 예시 (필수)**
-   - 반드시 아래와 같은 포맷으로 내용 하단에 추가하세요.
-   <hr />
-   <h3>💬 자주 묻는 질문 (FAQ)</h3>
-   <p><strong>Q. 싱크대 막힘으로 인해 냄새가 심한데, 식초를 직접 부어도 되나요?</strong></p>
-   <p>A. 식초는 음식물 찌꺼기나 기름때를 녹이는 데 효과가 있지만, 단독으로는 한계가 있습니다. 냄새 제거를 위해서는 베이킹소다와 함께 사용하는 것이 좋습니다.</p>
-   <p><strong>Q. 배관 뚫음 전문가는 어떤 장비를 사용하나요?</strong></p>
-   <p>A. 내시경 카메라, 고압 세척기, 스프링 장비 등을 사용합니다. 현장 상황에 맞춰 최적의 장비를 선택합니다.</p>
-   
-   ⚠️ **중요**: 위 예시를 그대로 베끼지 마세요!
-   - 현재 글의 상황("${usageContext}")과 주제("${keyword}")에 100% 맞는 **새로운 질문** 3가지를 창작하세요.
-   - 예: 겨울이면 '동파' 관련, 음식물이면 '음식물 처리기' 관련, 아이가 있는 집이면 '장난감' 관련 등 구체적으로.
-   - 질문은 독자가 가장 궁금해할 만한 **실질적인 고민**이어야 합니다.
+- 메인 키워드: ${keyword}
+- 작성 스타일: ${template} (전문적 가이드와 현장감이 살아있는 스토리텔링 결합)
+- 타겟 독자: ${targetAudience} (현재 매우 다급하고 위로와 해결책이 필요한 상태)
+- 핵심 상황: ${usageContext}
+- 활동 지역: ${fullLocation} (동네 이름: ${shortLocation} 강조)
+- 브랜드 명칭: '전북배관' (반드시 실제 명칭 사용, OOO/XXX 절대 금지)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-작성 시작: `;
+📋 Gemini 1.5 Flash 최적화 지침 (Advanced Storytelling)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+1. **현장의 생생한 소리 (Vivid Storytelling)**:
+   - 도입부에서 "${targetAudience}"의 다급한 심정을 묘사하세요. 
+   - **대화체 포함**: "사장님, 물이 안 내려가고 계속 역류해요! 어쩌죠?" 하는 고객의 목소리를 인용하여 현장감을 극대화하세요.
+   - 예: "${shortLocation} 고객님의 떨리는 목소리를 듣고, 장비를 챙겨 신속하게 현장으로 출동했습니다."
+
+2. **기술적 전문성 & 데이터 기반 (Technical Depth)**:
+   - 작업 과정 설명 시 '그냥 뚫었다'가 아닌, "배관 내시경으로 확인한 결과 고착된 유지방 덩어리가 원인이었으며, 이를 플렉스 샤프트 장비로 정밀 스케일링하여 신축 배관 상태로 복원했습니다"와 같이 구체적인 장비명과 기술적 근거를 제시하세요.
+
+3. **플레이스홀더 및 기호 사용 절대 금지**:
+   - 'OO', 'XX', '[지역]' 등 모든 기호를 구체적인 단어로 치환하세요. 
+   - 아파트 이름 등은 반드시 추측 가능하거나 가공된 실제 명칭(예: ${shortLocation} 현대아이파크, ${shortLocation} 빌라촌 등)을 자연스럽게 창작하여 넣으세요.
+
+4. **네이버 SEO 레이아웃 (HTML 구조)**:
+   - **첫 줄**: [제목] (키워드가 포함된 클릭을 부르는 임팩트 있는 제목)
+   - **⚡ 핵심 요약 (Highlight)**: 3문장 이내로 작업 내용을 요약하여 상단 노출 확률 증대.
+   - **📊 현장 리포트 (Table)**: <table> 태그를 사용하여 위치, 건물타입, 증상, 장비, 소요시간을 명확히 표기.
+   - **📸 이미지 배치**: [IMG_1], [IMG_2], [IMG_3]를 각 섹션의 흐름에 맞게 배치.
+   - **💡 전문가의 솔루션 (Callout)**: 일반인용 팁이 아닌, 전문가만 아는 유지보수 비법(예: 고압세척의 주기, 배관 기울기 등) 제언.
+   - **💬 심층 FAQ (Trust)**: 이 상황에서 고객이 가질 수 있는 가장 현실적인 고민 3가지를 질답 형식으로 작성.
+
+5. **금지 사항**:
+   - <html>, <head>, <body>, <title> 태그 사용 불가.
+   - 마크다운 (\`\`\`) 형식 출력 금지 (오직 원시 텍스트와 HTML 본문 태그만).
+   - 무의미한 인사말 반복 금지.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+작성 시작(생생한 현장감과 전문 엔지니어의 톤으로): `;
+
+        // API 키는 환경 변수에서 가져옵니다.
+        const API_KEY = process.env.GOOGLE_GEMINI_API_KEY;
+
+        console.log(`[PostGen] Requesting Gemini 2.0 Flash for: ${keyword}`);
         const geminiResponse = await fetchWithRetry(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -222,6 +203,7 @@ export async function generatePostAction() {
         }
 
         const geminiData = await geminiResponse.json();
+        console.log(`[PostGen] Gemini response received for: ${keyword}`);
         let rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '내용 생성 실패';
 
         rawText = rawText
@@ -246,7 +228,7 @@ export async function generatePostAction() {
         content += `
             <hr style="margin: 40px 0;" />
             <h3>📍 ${fullLocation} ${service} 해결 전문!</h3>
-            <p><strong>전북 전 지역(${city}, ${district || city}) 30분 내 긴급 출동!</strong></p>
+            <p><strong>전북 전 지역(${city}${displayDistrict ? ', ' + displayDistrict : ''}) 30분 내 긴급 출동!</strong></p>
             <p>더 많은 시공 사례와 정확한 위치는 아래 지도에서 확인해주세요.</p>
             <p style="text-align: center; margin-top: 20px;">
                 <a href="${placeUrl}" target="_blank" style="background-color: #03C75A; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1.1em;">

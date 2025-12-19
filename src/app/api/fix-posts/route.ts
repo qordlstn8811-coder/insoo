@@ -16,9 +16,10 @@ export async function POST(request: Request) {
         for (const post of posts || []) {
             if (!post.content) continue;
 
-            // 코드블록 제거
+            // 고도화된 콘텐츠 정제
             let cleanContent = post.content
-                .replace(/```html\n?/g, '')
+                .replace(/```html\n?/gi, '')
+                .replace(/```markdown\n?/gi, '')
                 .replace(/```\n?/g, '')
                 .replace(/<!DOCTYPE html>/gi, '')
                 .replace(/<html[^>]*>/gi, '')
@@ -26,8 +27,10 @@ export async function POST(request: Request) {
                 .replace(/<head[^>]*>[\s\S]*?<\/head>/gi, '')
                 .replace(/<body[^>]*>/gi, '')
                 .replace(/<\/body>/gi, '')
+                .replace(/\[제목\]:?\s*/g, '') // 제목 접두어 제거
                 .replace(/OOO/g, '전북배관')
                 .replace(/XXX/g, '전북배관')
+                .replace(/\[\s*지역\s*\]/g, post.keyword.split(' ')[0] || '전북')
                 .trim();
 
             // 변경사항이 있으면 업데이트

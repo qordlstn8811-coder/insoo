@@ -45,34 +45,45 @@ export const SettingsService = {
     },
 
     async updateSettings(client: SupabaseClient, newSettings: CronSettings): Promise<void> {
-        // Upsert logic
-        const { data } = await client
-            .from('posts')
-            .select('id')
-            .eq('title', 'SYSTEM_CRON_CONFIG')
-            .single();
+        try {
+            // Upsert logic
+            const { data, error: fetchError } = await client
+                .from('posts')
+                .select('id')
+                .eq('title', 'SYSTEM_CRON_CONFIG')
+                .single();
 
-        if (data) {
-            // Update
-            await client
-                .from('posts')
-                .update({
-                    content: JSON.stringify(newSettings),
-                    status: 'draft', 
-                    updated_at: new Date().toISOString()
-                })
-                .eq('id', data.id);
-        } else {
-            // Insert
-            await client
-                .from('posts')
-                .insert({
-                    title: 'SYSTEM_CRON_CONFIG',
-                    content: JSON.stringify(newSettings),
-                    status: 'draft',
-                    keyword: 'SYSTEM',
-                    category: 'SYSTEM'
-                });
+            if (data) {
+                // Update
+                const { error: updateError } = await client
+                    .from('posts')
+                    .update({
+                        content: JSON.stringify(newSettings),
+                        status: 'draft',
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', data.id);
+
+                if (updateError) throw updateError;
+                console.log('설정 업데이트 성공');
+            } else {
+                // Insert
+                const { error: insertError } = await client
+                    .from('posts')
+                    .insert({
+                        title: 'SYSTEM_CRON_CONFIG',
+                        content: JSON.stringify(newSettings),
+                        status: 'draft',
+                        keyword: 'SYSTEM',
+                        category: 'SYSTEM'
+                    });
+
+                if (insertError) throw insertError;
+                console.log('설정 신규 생성 성공');
+            }
+        } catch (e) {
+            console.error('설정 저장 중 치명적 오류:', e);
+            throw e; // 호출한 곳(UI)에서 에러를 인지할 수 있게 던짐
         }
     }
 };
