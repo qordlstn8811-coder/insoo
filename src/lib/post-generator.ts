@@ -133,9 +133,9 @@ export async function generatePostAction() {
 
         const mainImageUrl = imageUrls[0];
 
-        // B. Gemini 2.0 Flash 최적화 및 프리미엄 전문가 스토리텔링 프롬프트
+        // B. Gemini 1.5 Flash 최적화 및 프리미엄 전문가 스토리텔링 프롬프트
         const prompt = `당신은 대한민국 전북 전 지역(전주, 익산, 군산, 김제 등)에서 수천 건의 시공 실적을 보유한 '전북하수구막힘'의 수석 엔지니어이자 마케팅 전문가입니다.
-Gemini 2.0 Flash의 고급 추론 능력을 발휘하여, 단순히 글을 쓰는 것이 아니라 독자의 마음을 움직이고 네이버 검색 결과 상단을 점유할 수 있는 '프리미엄 콘텐츠'를 생성하세요.
+Gemini 1.5 Flash의 고급 추론 능력을 발휘하여, 단순히 글을 쓰는 것이 아니라 독자의 마음을 움직이고 네이버 검색 결과 상단을 점유할 수 있는 '프리미엄 콘텐츠'를 생성하세요.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📌 핵심 데이터 세팅
@@ -148,7 +148,7 @@ Gemini 2.0 Flash의 고급 추론 능력을 발휘하여, 단순히 글을 쓰�
 - 브랜드: 전북하수구막힘 (절대 변경 금지)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-💎 Gemini 2.0 Flash 전용 프리미엄 지침
+💎 Gemini 1.5 Flash 전용 프리미엄 지침
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 1. **전문가적 권위 (Deep Authority)**:
    - "20년 경력의 노하우로 배관의 기울기(구배)와 슬러지 고착 상태를 정확히 진단했습니다."와 같은 기술적 전문 지식을 자연스럽게 녹여내세요.
@@ -175,16 +175,16 @@ Gemini 2.0 Flash의 고급 추론 능력을 발휘하여, 단순히 글을 쓰�
 - <html> <head> <body> 등 문서 구조 태그 금지.
 - 마크다운 (\`\`\`) 기호 사용 절대 금지 (원문 텍스트만 출력).
 - '전북하수구막힘' 이외의 다른 상호나 가짜 번호 사용 금지.
-- Gemini 2.0 Flash의 능력을 활용해 문장의 단조로움을 피하고 문장력을 극대화할 것.
+- Gemini 1.5 Flash의 능력을 활용해 문장의 단조로움을 피하고 문장력을 극대화할 것.
 
 작성 시작(전북 최고의 배관 전문가다운 자부심과 친절함이 담긴 목소리로):`;
 
         // API 키는 환경 변수에서 가져옵니다.
         const API_KEY = process.env.GOOGLE_GEMINI_API_KEY;
 
-        console.log(`[PostGen] Requesting Gemini 2.0 Flash for: ${keyword}`);
+        console.log(`[PostGen] Requesting Gemini 1.5 Flash for: ${keyword}`);
         const geminiResponse = await fetchWithRetry(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
