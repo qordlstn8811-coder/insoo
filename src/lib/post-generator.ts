@@ -184,7 +184,7 @@ Gemini 1.5 Flash의 고급 추론 능력을 발휘하여, 단순히 글을 쓰�
 
         console.log(`[PostGen] Requesting Gemini 1.5 Flash for: ${keyword}`);
         const geminiResponse = await fetchWithRetry(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-001:generateContent?key=${API_KEY}`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
