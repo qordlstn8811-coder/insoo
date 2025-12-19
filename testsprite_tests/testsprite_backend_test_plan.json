@@ -1,7 +1,0 @@
-[
-  {
-    "id": "TC_GEN_001",
-    "title": "Generate Blog Post Success",
-    "description": "Test the POST /api/generate-post endpoint. It should generate a blog post using Gemini and save it to Supabase. Expect a 200 OK response with 'success': true."
-  }
-]

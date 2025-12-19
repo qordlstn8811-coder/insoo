@@ -426,7 +426,12 @@ export default function AdminDashboard() {
                                                 }`}>
                                                 {post.status.toUpperCase()}
                                             </span>
-                                            <span className="text-xs text-gray-400">{new Date(post.created_at).toLocaleString()}</span>
+                                            <span className="text-xs text-gray-400">
+                                                {(() => {
+                                                    const d = new Date(post.created_at);
+                                                    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+                                                })()}
+                                            </span>
                                         </div>
                                         <a href={`/cases/${post.id}`} target="_blank" className="truncate font-bold text-gray-900 block hover:text-blue-600 mb-0.5">
                                             {post.title || '제목 없음'}
