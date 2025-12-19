@@ -49,3 +49,6 @@ find-*.js
 # secrets
 secret.js
 keys.js
+
+.vercel
+.env*.local

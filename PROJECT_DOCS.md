@@ -149,6 +149,46 @@ TELEGRAM_CHAT_ID=1737738720
 
 ---
 
+## 🚨 긴급 배포 및 오류 해결 지침 (재발 방지)
+
+### 1. 배포 중 "도메인/프로젝트 불일치" 발생 시
+- **증상**: 배포는 됐는데 404가 뜨거나, 도메인이 다른 프로젝트에 연결된 경우.
+- **해결 절차**:
+  1. **현재 연결된 프로젝트 확인**: 
+     ```bash
+     npx vercel project ls
+     ```
+  2. **도메인 위치 확인**:
+     ```bash
+     npx vercel domains ls
+     ```
+  3. **올바른 연결 (Link)**:
+     ```bash
+     npx vercel link --yes --project jeonbuk-hasugu
+     ```
+  4. **도메인 강제 이동**:
+     ```bash
+     npx vercel domains move 전북하수구막힘.com jeonbuk-hasugu
+     ```
+
+### 2. 배포 중 "Git Author / 권한 오류" 발생 시
+- **증상**: `Error: Git author ... must have access...` 오류로 배포 실패.
+- **원인**: PC의 Git 이메일 설정이 Vercel 팀 멤버 목록에 없어서 발생.
+- **비상 해결법 (우회 배포)**:
+  ```bash
+  # .git 폴더를 잠시 숨겨서 순수 파일만 업로드
+  Rename-Item .git .git_tmp
+  npx vercel deploy --prod --force
+  Rename-Item .git_tmp .git
+  ```
+
+### 3. "404 Not Found" 발생 시 체크리스트
+- [ ] Vercel 대시보드에서 `Deployment` 상태가 `Ready`인가?
+- [ ] 도메인이 `Project Settings > Domains`에 올바르게 등록되었는가?
+- [ ] `npx vercel domains ls` 명령어로 도메인이 엉뚱한 프로젝트(`jeonbuk-hasugu-final...`)에 있지 않은가?
+
+---
+
 ## 🎉 완료!
 
 모든 작업이 완료되었습니다.

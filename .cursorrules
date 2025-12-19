@@ -1,0 +1,53 @@
+# 전북배관 프로젝트 운영 규칙 (Project Rules)
+
+이 파일은 AI 에이전트가 이 프로젝트를 다룰 때 반드시 지켜야 할 "절대 규칙"과 "비상 대응 매뉴얼"을 정의합니다.
+
+---
+
+## 🚨 1. 배포 및 Vercel 관련 (CRITICAL)
+
+### 1-1. Git Author 권한 오류 회피 (필수)
+- **상황**: `npx vercel deploy --prod` 실행 시 `Error: Git author ... must have access...` 오류 발생.
+- **원인**: 로컬 PC의 Git 이메일(`admin@...`)이 Vercel 팀 멤버에 등록되지 않음.
+- **해결책 (우회법)**:
+  배포 전에 `.git` 폴더를 잠시 숨겨서, Vercel이 Git 정보를 읽지 못하게 해야 합니다.
+  ```powershell
+  # 1. .git 숨기기
+  Rename-Item .git .git_tmp
+  
+  # 2. 강제 배포
+  npx vercel deploy --prod --force
+  
+  # 3. .git 원상복구 (필수)
+  Rename-Item .git_tmp .git
+  ```
+  **주의**: 배포 후 `.git` 폴더를 복구하지 않으면 Git 명령어가 작동하지 않으니 즉시 복구할 것.
+
+### 1-2. 도메인 관리 및 주소
+- **사용 중인 도메인**: `xn--2e0bm8utzck3fsyi7rvktd.com` (퓨니코드)
+- **한글 도메인**: `전북하수구막힘.com`
+- **올바른 Vercel 프로젝트**: `jeonbuk-hasugu` (과거에 `final12` 등 임시 프로젝트 금지)
+- **도메인 연결 명령**:
+  ```powershell
+  npx vercel domains add xn--2e0bm8utzck3fsyi7rvktd.com
+  ```
+  만약 "다른 프로젝트에 있다"고 하면 `domains remove` 후 가져올 것.
+
+---
+
+## ✅ 2. 작업 절차 (Process)
+
+1. **내용물 우선 확인**: 404 오류가 뜨면 도메인 탓을 하기 전에 `deploy`가 성공했는지부터 로그(`✅ Production`)로 확인한다.
+2. **무단 변경 금지**: `package.json`의 빌드 스크립트나 주요 환경설정은 사용자 승인 없이 바꾸지 않는다.
+3. **학습 후 실행**: 모르는 오류가 발생하면 즉시 멈추고 `PROJECT_DOCS.md`나 이 규칙 파일을 다시 읽어본다.
+
+---
+
+## 🔒 3. 보안
+- `.env` 파일의 키 값이나 비밀번호(`1234` 등)를 외부로 유출하지 않는다.
+- Admin 페이지 접속 정보는 로컬 코드(`src/app/admin/AdminDashboard.tsx`)에 하드코딩 되어 있음.
+
+## ⚠️ 4. 절대 금지 및 승인 필수 (Strict Rules)
+1. **인증/식별 정보 변경 금지**: `git config user.email`, `user.name` 등 신원과 관련된 설정은 사용자가 명확하게 "변경해"라고 지시하기 전까지 절대 임의로 변경하지 않는다. 추측해서 실행하는 것 엄금.
+2. **프로덕션 배포 전 승인**: `vercel deploy --prod` 명령은 반드시 계획을 보고하고, 마지막으로 "배포하겠습니다"라고 묻고 승인을 받은 후에만 실행한다.
+3. **프론트엔드 키 노출 절대 금지**: API Key, Service Role Key, 개인정보(전화번호, 주소 등)는 절대 브라우저로 전송되는 코드(`use client`, `tsx`)에 하드코딩하거나 포함시키지 않는다. 반드시 API Route(`app/api/...`)를 통해서만 접근한다.

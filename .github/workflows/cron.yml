@@ -1,18 +1,19 @@
-name: External Cron Trigger
+name: Blog Post Cron
 
 on:
   schedule:
-    # 10분마다 실행 (하루 100개 목표 달성을 위해 빈도 증가)
-    - cron: '*/10 * * * *'
-  workflow_dispatch: # 수동 실행 버튼도 추가
+    # 15분마다 실행 (한국 시간 기준이 아니라 UTC 기준이지만 간격은 동일)
+    - cron: '*/15 * * * *'
+  workflow_dispatch: # 수동 실행 버튼
 
 jobs:
   trigger-cron:
     runs-on: ubuntu-latest
     steps:
-      - name: Call Vercel Cron Endpoint
-        env:
-          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+      - name: Call Vercel Cron API
         run: |
-          curl -X GET https://www.xn--2e0bm8utzck3fsyi7rvktd.com/api/cron \
-          -H "Authorization: Bearer $CRON_SECRET"
+          echo "Triggering Blog Post Generation..."
+          # CRON_SECRET을 헤더에 담아 호출
+          curl -X GET "${{ secrets.VERCEL_APP_URL }}/api/cron" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+          --fail || exit 1
