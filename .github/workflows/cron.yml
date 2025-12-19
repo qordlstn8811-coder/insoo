@@ -12,8 +12,13 @@ jobs:
     steps:
       - name: Call Vercel Cron API
         run: |
-          echo "Triggering Blog Post Generation..."
+          URL="${{ secrets.VERCEL_APP_URL }}"
+          if [ -z "$URL" ]; then
+            echo "::error::VERCEL_APP_URL secret is MISSING! Please add it to Settings > Secrets and variables > Actions > Repository secrets."
+            exit 1
+          fi
+          echo "Triggering Blog Post Generation to: $URL"
           # CRON_SECRET을 헤더에 담아 호출
-          curl -X GET "${{ secrets.VERCEL_APP_URL }}/api/cron" \
+          curl -X GET "$URL/api/cron" \
           -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
           --fail || exit 1
