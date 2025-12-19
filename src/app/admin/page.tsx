@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase';
 import Image from 'next/image';
 import { SettingsService, CronSettings } from '@/lib/settings';
 
@@ -101,6 +101,7 @@ function AutomationSettingsCard({ isActive, targetCount, startTime, endTime, onU
 }
 
 export default function AdminPage() {
+    const supabase = createClient();
     // 상태 관리
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState('');

@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Metadata } from 'next';
@@ -13,6 +13,7 @@ export const revalidate = 0;
 
 export default async function CasesPage() {
 
+    const supabase = createClient();
     // 게시글 가져오기 (최신순)
     const { data: posts } = await supabase
         .from('posts')

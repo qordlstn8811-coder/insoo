@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -8,6 +8,7 @@ import SaveShareButtons from '@/components/SaveShareButtons';
 // 동적 메타데이터 생성 (SEO)
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params;
+    const supabase = createClient();
     const { data: post } = await supabase.from('posts').select('*').eq('id', id).single();
 
     if (!post) {
@@ -72,6 +73,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function CaseDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
+    const supabase = createClient();
     const { data: post, error } = await supabase
         .from('posts')
         .select('*')
