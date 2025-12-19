@@ -27,3 +27,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
     }
 }
+
+export async function GET() {
+    return NextResponse.json({ status: 'ready', message: 'Manual generation API is ready. Use POST to trigger.' });
+}

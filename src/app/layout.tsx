@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Chatbot from "@/components/Chatbot";
-import FloatingButtons from "@/components/FloatingButtons";
-import CallPopup from "@/components/CallPopup";
-import StickyCallBar from "@/components/StickyCallBar";
+import ClientLayoutElements from "@/components/ClientLayoutElements";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -153,10 +150,7 @@ export default function RootLayout({
           }}
         />
         {children}
-        <Chatbot />
-        <FloatingButtons />
-        <CallPopup />
-        <StickyCallBar />
+        <ClientLayoutElements />
       </body>
     </html>
   );
