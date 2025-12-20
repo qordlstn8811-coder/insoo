@@ -18,7 +18,8 @@ const seoKeywords: Record<string, string> = {
     sink: '전주싱크대막힘, 군산싱크대막힘, 익산싱크대막힘, 싱크대뚫는곳, 주방배수구막힘',
     toilet: '전주변기막힘, 군산변기막힘, 익산변기막힘, 변기뚫는곳, 양변기막힘, 24시변기막힘',
     highpressure: '전주고압세척, 하수구고압세척, 배관세척, 배관청소, 고압세척업체',
-    cctv: '전주배관내시경, 배관CCTV, 배관카메라, 배관진단, 배관점검'
+    cctv: '전주배관내시경, 배관CCTV, 배관카메라, 배관진단, 배관점검',
+    watertank: '전주저수조청소, 전주물탱크청소, 군산물탱크청소, 익산물탱크청소, 물탱크소독'
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ service: string }> }) {
@@ -32,15 +33,19 @@ export async function generateMetadata({ params }: { params: Promise<{ service: 
     }
 
     const keywords = seoKeywords[serviceParam] || '';
+    const baseUrl = 'https://xn--2e0bm8utzck3fsyi7rvktd.com';
 
     return {
-        title: `${service.title} | 전주 ${service.title} 24시 긴급출동 - 전북하수구막힘`,
-        description: `전주, 군산, 익산 ${service.title} 24시 긴급출동! ${service.description} 합리적인 정찰제 가격. 010-8184-3496`,
+        title: `${service.title} | 전북 ${service.title} 24시 긴급출동 - 전북하수구막힘`,
+        description: `전주, 군산, 익산 등 전북 지역 ${service.title} 24시 긴급출동! ${service.description} 합리적인 정찰제 가격. 010-8184-3496`,
         keywords: keywords,
+        alternates: {
+            canonical: `${baseUrl}/services/${serviceParam}`,
+        },
         openGraph: {
-            title: `${service.title} | 전북하수구막힘 - 전주 ${service.title} 전문`,
-            description: `전주, 군산, 익산 ${service.title} 24시 긴급출동! ${service.description}`,
-            url: `https://전북하수구막힘.com/services/${serviceParam}`,
+            title: `${service.title} | 전북하수구막힘 - ${service.title} 전문`,
+            description: `전주, 군산, 익산 등 전북 지역 ${service.title} 24시 긴급출동! ${service.description}`,
+            url: `${baseUrl}/services/${serviceParam}`,
             images: [{ url: service.image }],
         },
     };

@@ -4,13 +4,16 @@ import Image from 'next/image';
 import Header from '@/components/Header';
 
 export const metadata: Metadata = {
-    title: '업체소개 | 전북하수구막힘 - 전주 하수구막힘 전문업체',
-    description: '전라북도 No.1 배관 전문 업체 전북하수구막힘. 전주, 군산, 익산 하수구막힘, 변기막힘, 싱크대막힘 24시 긴급출동. 10년 이상 경력, 최첨단 장비 보유. 010-8184-3496',
-    keywords: '전북하수구막힘, 전주하수구, 전주배관업체, 하수구막힘업체, 전북하수구막힘업체, 24시하수구',
+    title: '업체소개 | 전북하수구막힘',
+    description: '전라북도 No.1 배관 전문 업체 전북하수구막힘. 전주, 군산, 익산 등 전라북도 전지역 하수구막힘, 변기막힘, 싱크대막힘 24시 긴급출동. 010-8184-3496',
+    keywords: '전북하수구막힘, 전주하수구, 하수구막힘업체, 전북하수구막힘업체, 24시하수구',
+    alternates: {
+        canonical: 'https://xn--2e0bm8utzck3fsyi7rvktd.com/about',
+    },
     openGraph: {
-        title: '업체소개 | 전북하수구막힘 - 전주 하수구막힘 전문업체',
+        title: '업체소개 | 전북하수구막힘',
         description: '전라북도 No.1 배관 전문 업체 전북하수구막힘. 10년 이상 경력, 최첨단 장비 보유.',
-        url: 'https://전북하수구막힘.com/about',
+        url: 'https://xn--2e0bm8utzck3fsyi7rvktd.com/about',
     },
 };
 

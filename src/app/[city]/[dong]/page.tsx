@@ -31,6 +31,9 @@ export async function generateMetadata({ params }: { params: Promise<{ city: str
         title: `${regionName} ${dongName} 하수구막힘 변기뚫음 30분출동 | 전북하수구막힘`,
         description: `${regionName} ${dongName} 지역 하수구막힘, 싱크대막힘, 변기막힘 24시 긴급출동. 최신 장비로 확실하게 해결! 010-8184-3496`,
         keywords: `${dongName}하수구, ${dongName}변기막힘, ${regionName} ${dongName}, ${dongName}싱크대막힘, ${dongName}고압세척`,
+        alternates: {
+            canonical: `https://xn--2e0bm8utzck3fsyi7rvktd.com/${city}/${dong}`,
+        },
     };
 }
 

@@ -35,6 +35,7 @@ export default function Header() {
                                 <Link href="/services/toilet" className="block px-4 py-2 hover:bg-blue-50 text-gray-700">변기 막힘</Link>
                                 <Link href="/services/highpressure" className="block px-4 py-2 hover:bg-blue-50 text-gray-700">고압세척</Link>
                                 <Link href="/services/cctv" className="block px-4 py-2 hover:bg-blue-50 text-gray-700">배관 내시경</Link>
+                                <Link href="/services/watertank" className="block px-4 py-2 hover:bg-blue-50 text-gray-700">저수조 청소</Link>
                             </div>
                         </div>
 
@@ -126,6 +127,7 @@ export default function Header() {
                             <Link href="/services/toilet" className="block py-2 px-4 text-gray-600 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>변기 막힘</Link>
                             <Link href="/services/highpressure" className="block py-2 px-4 text-gray-600 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>고압세척</Link>
                             <Link href="/services/cctv" className="block py-2 px-4 text-gray-600 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>배관 내시경</Link>
+                            <Link href="/services/watertank" className="block py-2 px-4 text-gray-600 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>저수조 청소</Link>
                         </div>
                     </div>
 

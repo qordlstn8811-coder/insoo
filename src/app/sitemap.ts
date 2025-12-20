@@ -4,7 +4,7 @@ import { jeonbukRegions } from '@/data/regions';
 import { createClient } from '@/lib/supabase';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = 'https://www.xn--2e0bm8utzck3fsyi7rvktd.com';
+    const baseUrl = 'https://xn--2e0bm8utzck3fsyi7rvktd.com';
 
     // 1. 기본 페이지
     const routes = [

@@ -22,6 +22,9 @@ export async function generateMetadata({ params }: { params: Promise<{ city: str
         title: `${regionName} 하수구막힘 ${regionName} 변기막힘 24시 긴급출동 | 전북하수구막힘`,
         description: `${regionName} 지역 하수구막힘, 싱크대막힘, 변기막힘 전문. 30분내 긴급출동! ${regionName} ${region?.districts.slice(0, 5).join(', ')} 등 전지역 출장. 010-8184-3496`,
         keywords: `${regionName}하수구, ${regionName}변기막힘, ${regionName}싱크대막힘, ${regionName}고압세척, ${regionName}배관청소`,
+        alternates: {
+            canonical: `https://xn--2e0bm8utzck3fsyi7rvktd.com/${city}`,
+        },
     };
 }
 
@@ -139,10 +142,10 @@ export default async function CityPage({ params }: { params: Promise<{ city: str
                                 </h3>
                                 <p className="text-slate-700 leading-relaxed">
                                     {region.name} 지역의 하수구막힘은 주로 <strong>기름때, 음식물 찌꺼기, 머리카락, 비누 찌꺼기</strong> 등이
-                                    배관 내부에 축적되어 발생합니다. 특히 {region.name} 지역의 오래된 아파트나 빌라의 경우 
-                                    배관 노후화로 인한 <strong>석회석 발생</strong>이 주요 원인이 되기도 합니다. 
-                                    전북하수구막힘은 <strong>35~40마력 고압세척 장비</strong>와 <strong>HD 배관 내시경 카메라</strong>를 활용하여 
-                                    막힘의 정확한 원인을 파악하고, 근본적인 해결을 제공합니다. 단순히 뚫는 것이 아니라 
+                                    배관 내부에 축적되어 발생합니다. 특히 {region.name} 지역의 오래된 아파트나 빌라의 경우
+                                    배관 노후화로 인한 <strong>석회석 발생</strong>이 주요 원인이 되기도 합니다.
+                                    전북하수구막힘은 <strong>35~40마력 고압세척 장비</strong>와 <strong>HD 배관 내시경 카메라</strong>를 활용하여
+                                    막힘의 정확한 원인을 파악하고, 근본적인 해결을 제공합니다. 단순히 뚫는 것이 아니라
                                     배관 내부를 깨끗하게 세척하여 재발을 방지합니다.
                                 </p>
 
@@ -150,11 +153,11 @@ export default async function CityPage({ params }: { params: Promise<{ city: str
                                     {region.name} 변기막힘 긴급 해결
                                 </h3>
                                 <p className="text-slate-700 leading-relaxed">
-                                    변기막힘은 <strong>물티슈, 기저귀, 생리대, 이물질</strong> 등으로 인해 발생하며, 
-                                    일상생활에 큰 불편을 초래합니다. {region.name} 지역 어디서든 연락 주시면 
+                                    변기막힘은 <strong>물티슈, 기저귀, 생리대, 이물질</strong> 등으로 인해 발생하며,
+                                    일상생활에 큰 불편을 초래합니다. {region.name} 지역 어디서든 연락 주시면
                                     <strong>30분 이내</strong>에 도착하여 변기 손상 없이 안전하게 해결해 드립니다.
-                                    특히 아파트나 빌라에서 위층 변기 사용 시 1층에서 역류하는 경우, 
-                                    이는 <strong>오수관(공용배관) 막힘</strong>이 원인일 수 있습니다. 
+                                    특히 아파트나 빌라에서 위층 변기 사용 시 1층에서 역류하는 경우,
+                                    이는 <strong>오수관(공용배관) 막힘</strong>이 원인일 수 있습니다.
                                     전북하수구막힘은 이러한 복잡한 문제도 정확히 진단하여 해결합니다.
                                 </p>
 
@@ -164,8 +167,8 @@ export default async function CityPage({ params }: { params: Promise<{ city: str
                                 <p className="text-slate-700 leading-relaxed">
                                     주방 싱크대막힘은 <strong>기름 슬러지, 음식물 찌꺼기</strong>가 배관에 쌓여 발생합니다.
                                     특히 음식점, 식당의 경우 기름 사용량이 많아 배관이 자주 막히게 됩니다.
-                                    전북하수구막힘은 {region.name} 지역 가정집은 물론 <strong>음식점, 카페, 식당</strong> 등 
-                                    상업시설의 싱크대막힘도 전문적으로 해결합니다. 
+                                    전북하수구막힘은 {region.name} 지역 가정집은 물론 <strong>음식점, 카페, 식당</strong> 등
+                                    상업시설의 싱크대막힘도 전문적으로 해결합니다.
                                     고압세척으로 배관 내부의 기름때를 완벽히 제거하고, 악취 차단 트랩까지 점검합니다.
                                 </p>
 
@@ -174,8 +177,8 @@ export default async function CityPage({ params }: { params: Promise<{ city: str
                                 </h3>
                                 <p className="text-slate-700 leading-relaxed">
                                     정기적인 <strong>고압세척</strong>은 하수구막힘을 예방하는 가장 효과적인 방법입니다.
-                                    전북하수구막힘은 {region.name} 지역 아파트, 빌라, 단독주택, 상가 건물의 
-                                    <strong>배관 정기 청소 서비스</strong>를 제공합니다. 1년에 1~2회 정기 세척만으로도 
+                                    전북하수구막힘은 {region.name} 지역 아파트, 빌라, 단독주택, 상가 건물의
+                                    <strong>배관 정기 청소 서비스</strong>를 제공합니다. 1년에 1~2회 정기 세척만으로도
                                     배관 막힘 걱정 없이 쾌적하게 생활하실 수 있습니다.
                                 </p>
 
@@ -235,8 +238,8 @@ export default async function CityPage({ params }: { params: Promise<{ city: str
                                     {region.name} 서비스 가능 지역
                                 </h3>
                                 <p className="text-slate-700 leading-relaxed">
-                                    전북하수구막힘은 {region.name} 전지역에 서비스를 제공합니다. 
-                                    <strong>{region.districts.join(', ')}</strong> 등 
+                                    전북하수구막힘은 {region.name} 전지역에 서비스를 제공합니다.
+                                    <strong>{region.districts.join(', ')}</strong> 등
                                     {region.name} 어디서든 30분 이내 방문이 가능합니다.
                                 </p>
 

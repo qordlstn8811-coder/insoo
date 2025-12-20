@@ -6,6 +6,9 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
     title: '시공사례 | 전북하수구막힘',
     description: '전북하수구막힘의 생생한 현장 시공 사례를 확인하세요. 변기, 하수구, 싱크대 막힘 해결 후기.',
+    alternates: {
+        canonical: 'https://xn--2e0bm8utzck3fsyi7rvktd.com/cases',
+    },
 };
 
 // 동적 데이터 페칭 설정 (캐시 방지)

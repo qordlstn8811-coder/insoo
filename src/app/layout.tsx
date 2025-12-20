@@ -6,9 +6,9 @@ import ClientLayoutElements from "@/components/ClientLayoutElements";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.xn--2e0bm8utzck3fsyi7rvktd.com'),
-  title: "전주하수구막힘 완산구 덕진구 | 군산 익산 24시 하수구 변기 싱크대 뚫음 정찰제",
-  description: "전주 완산구 덕진구, 군산, 익산 전라북도 전지역 하수구막힘, 변기막힘, 싱크대막힘, 고압세척 전문. 30분 내 긴급출동! 정찰제 가격표 적용 및 확실한 AS 보장.",
+  metadataBase: new URL('https://xn--2e0bm8utzck3fsyi7rvktd.com'),
+  title: "전북하수구막힘 | 군산 익산 전주 24시 하수구 변기 싱크대 뚫음 정찰제",
+  description: "전주, 군산, 익산 등 전라북도 전지역 하수구막힘, 변기막힘, 싱크대막힘, 고압세척 전문. 30분 내 긴급출동! 정찰제 가격표 적용 및 확실한 AS 보장.",
   keywords: [
     // 서비스 키워드
     "하수구막힘", "하수구뚫는곳", "하수구청소", "하수구고압세척", "트렌치막힘", "횡주관세척", "육가교체", "집수정청소", "정화조뚫음",
@@ -38,10 +38,10 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'ko_KR',
-    url: 'https://www.xn--2e0bm8utzck3fsyi7rvktd.com',
+    url: 'https://xn--2e0bm8utzck3fsyi7rvktd.com',
     siteName: '전북하수구막힘',
-    title: '전주하수구막힘 | 전주 군산 익산 24시 긴급출동',
-    description: '전주 전지역 하수구막힘, 변기막힘, 싱크대막힘 전문. 정찰제 가격 및 확실한 AS 적용. 010-8184-3496',
+    title: '전북하수구막힘 | 전북 전지역 24시 긴급출동',
+    description: '전라북도 전지역 하수구막힘, 변기막힘, 싱크대막힘 전문. 정찰제 가격 및 확실한 AS 적용. 010-8184-3496',
     images: [
       {
         url: '/images/hero.png',
@@ -53,8 +53,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '전북하수구막힘 | 전주 하수구막힘 24시 긴급출동',
-    description: '전주, 군산, 익산 전라북도 전지역 하수구막힘 전문. 010-8184-3496',
+    title: '전북하수구막힘 | 전북 하수구막힘 24시 긴급출동',
+    description: '전라북도 전지역 하수구막힘 전문. 010-8184-3496',
     images: ['/images/hero.png'],
   },
   robots: {
@@ -86,7 +86,7 @@ export default function RootLayout({
       <head>
         <meta name="naver-site-verification" content="b8a6791951a6258cdf21d6f27ac056f93e1aad99" />
         <meta name="google-site-verification" content="FiHPYcjLehLtiuxnpgBlMONppK_l4AWasa-lryKV_2g" />
-        <link rel="canonical" href="https://www.xn--2e0bm8utzck3fsyi7rvktd.com" />
+        <link rel="canonical" href="https://xn--2e0bm8utzck3fsyi7rvktd.com" />
       </head>
       <body className={inter.className}>
         <script
@@ -96,11 +96,11 @@ export default function RootLayout({
               '@context': 'https://schema.org',
               '@type': 'PlumbingService',
               name: '전북하수구막힘',
-              image: 'https://www.xn--2e0bm8utzck3fsyi7rvktd.com/images/logo.png',
-              '@id': 'https://www.xn--2e0bm8utzck3fsyi7rvktd.com',
-              url: 'https://www.xn--2e0bm8utzck3fsyi7rvktd.com',
+              image: 'https://xn--2e0bm8utzck3fsyi7rvktd.com/images/hero.png',
+              '@id': 'https://xn--2e0bm8utzck3fsyi7rvktd.com',
+              url: 'https://xn--2e0bm8utzck3fsyi7rvktd.com',
               telephone: '010-8184-3496',
-              description: '전주, 군산, 익산 전라북도 전지역 하수구막힘, 변기막힘, 싱크대막힘 24시 긴급출동',
+              description: '전주, 군산, 익산 등 전라북도 전지역 하수구막힘, 변기막힘, 싱크대막힘 24시 긴급출동',
               areaServed: {
                 '@type': 'State',
                 name: 'Jeollabuk-do',
