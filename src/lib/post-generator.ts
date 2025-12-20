@@ -261,8 +261,8 @@ export async function generatePostAction() {
         content = content.replace(/\[IMG_3\]/g, replaceImage(2, `${keyword} 집중 시공`));
         content = content.replace(/\[IMG_4\]/g, replaceImage(3, `${keyword} 해결 완료`));
 
-        // Clean up any remaining IMG tags that might have been halluncinated with different numbers
-        content = content.replace(/\[IMG_\d+\]/g, '');
+        // Clean up any remaining IMG tags that might have been hallucinated (e.g. [IMG_5], [IMG_A], etc.)
+        content = content.replace(/\[IMG_[^\]]+\]/g, '');
 
         const placeUrl = NAVER_PLACE_URLS[service] || NAVER_PLACE_URLS['default'];
 
