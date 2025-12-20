@@ -7,28 +7,28 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.xn--2e0bm8utzck3fsyi7rvktd.com'),
-  title: "전북배관 | 전주 하수구막힘 변기막힘 싱크대막힘 24시 긴급출동",
-  description: "전주, 군산, 익산, 완주, 정읍, 남원, 김제 전라북도 전지역 하수구막힘, 변기막힘, 싱크대막힘, 고압세척, 배관내시경 전문. 30분 내 긴급출동! 합리적인 정찰제 가격. 010-8184-3496",
+  title: "전주하수구막힘 완산구 덕진구 | 군산 익산 24시 하수구 변기 싱크대 뚫음 정찰제",
+  description: "전주 완산구 덕진구, 군산, 익산 전라북도 전지역 하수구막힘, 변기막힘, 싱크대막힘, 고압세척 전문. 30분 내 긴급출동! 정찰제 가격표 적용 및 확실한 AS 보장.",
   keywords: [
     // 서비스 키워드
-    "하수구막힘", "하수구뚫는곳", "하수구청소", "하수구고압세척",
+    "하수구막힘", "하수구뚫는곳", "하수구청소", "하수구고압세척", "트렌치막힘", "횡주관세척", "육가교체", "집수정청소", "정화조뚫음",
     "변기막힘", "변기뚫는곳", "변기수리", "양변기막힘",
     "싱크대막힘", "싱크대뚫는곳", "주방배수구막힘", "싱크대배수구",
     "고압세척", "배관세척", "배관청소", "배관뚫기",
     "배관내시경", "배관카메라", "CCTV배관",
     // 지역 키워드
-    "전주하수구", "전주변기막힘", "전주싱크대막힘", "전주배관",
+    "전주하수구", "전주변기막힘", "전주싱크대막힘", "전주배관", "완산구하수구막힘", "덕진구하수구막힘",
     "군산하수구", "군산변기막힘", "군산싱크대막힘",
     "익산하수구", "익산변기막힘", "익산싱크대막힘",
     "완주하수구", "정읍하수구", "남원하수구", "김제하수구",
-    "전북하수구", "전라북도하수구", "전북배관",
+    "전북하수구", "전라북도하수구", "전북하수구막힘",
     // 긴급/24시
     "24시하수구", "긴급하수구", "야간하수구", "심야하수구출장",
     "24시변기막힘", "긴급배관수리"
   ].join(", "),
-  authors: [{ name: "전북배관" }],
-  creator: "전북배관",
-  publisher: "전북배관",
+  authors: [{ name: "전북하수구막힘" }],
+  creator: "전북하수구막힘",
+  publisher: "전북하수구막힘",
   formatDetection: {
     telephone: true,
   },
@@ -39,21 +39,21 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'ko_KR',
     url: 'https://www.xn--2e0bm8utzck3fsyi7rvktd.com',
-    siteName: '전북배관',
-    title: '전북배관 | 전주 하수구막힘 변기막힘 24시 긴급출동',
-    description: '전주, 군산, 익산 전라북도 전지역 하수구막힘, 변기막힘, 싱크대막힘 전문. 30분 내 긴급출동! 010-8184-3496',
+    siteName: '전북하수구막힘',
+    title: '전주하수구막힘 | 전주 군산 익산 24시 긴급출동',
+    description: '전주 전지역 하수구막힘, 변기막힘, 싱크대막힘 전문. 정찰제 가격 및 확실한 AS 적용. 010-8184-3496',
     images: [
       {
         url: '/images/hero.png',
         width: 1200,
         height: 630,
-        alt: '전북배관 - 하수구 변기 싱크대 막힘 전문',
+        alt: '전북하수구막힘 - 하수구 변기 싱크대 막힘 전문',
       }
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '전북배관 | 전주 하수구막힘 24시 긴급출동',
+    title: '전북하수구막힘 | 전주 하수구막힘 24시 긴급출동',
     description: '전주, 군산, 익산 전라북도 전지역 하수구막힘 전문. 010-8184-3496',
     images: ['/images/hero.png'],
   },
@@ -95,7 +95,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'PlumbingService',
-              name: '전북배관',
+              name: '전북하수구막힘',
               image: 'https://www.xn--2e0bm8utzck3fsyi7rvktd.com/images/logo.png',
               '@id': 'https://www.xn--2e0bm8utzck3fsyi7rvktd.com',
               url: 'https://www.xn--2e0bm8utzck3fsyi7rvktd.com',

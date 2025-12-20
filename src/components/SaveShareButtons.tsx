@@ -18,7 +18,7 @@ export default function SaveShareButtons({ title }: { title: string }) {
         if (navigator.share) {
             navigator.share({
                 title: title,
-                text: `${title} - 전북배관 시공사례`,
+                text: `${title} - 전북하수구막힘 시공사례`,
                 url: window.location.href,
             }).catch((error) => console.log('공유 실패', error));
         } else {

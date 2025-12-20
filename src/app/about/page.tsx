@@ -4,12 +4,12 @@ import Image from 'next/image';
 import Header from '@/components/Header';
 
 export const metadata: Metadata = {
-    title: '업체소개 | 전북배관 - 전주 하수구막힘 전문업체',
-    description: '전라북도 No.1 배관 전문 업체 전북배관. 전주, 군산, 익산 하수구막힘, 변기막힘, 싱크대막힘 24시 긴급출동. 10년 이상 경력, 최첨단 장비 보유. 010-8184-3496',
-    keywords: '전북배관, 전주하수구, 전주배관업체, 하수구막힘업체, 전북배관업체, 24시하수구',
+    title: '업체소개 | 전북하수구막힘 - 전주 하수구막힘 전문업체',
+    description: '전라북도 No.1 배관 전문 업체 전북하수구막힘. 전주, 군산, 익산 하수구막힘, 변기막힘, 싱크대막힘 24시 긴급출동. 10년 이상 경력, 최첨단 장비 보유. 010-8184-3496',
+    keywords: '전북하수구막힘, 전주하수구, 전주배관업체, 하수구막힘업체, 전북하수구막힘업체, 24시하수구',
     openGraph: {
-        title: '업체소개 | 전북배관 - 전주 하수구막힘 전문업체',
-        description: '전라북도 No.1 배관 전문 업체 전북배관. 10년 이상 경력, 최첨단 장비 보유.',
+        title: '업체소개 | 전북하수구막힘 - 전주 하수구막힘 전문업체',
+        description: '전라북도 No.1 배관 전문 업체 전북하수구막힘. 10년 이상 경력, 최첨단 장비 보유.',
         url: 'https://전북하수구막힘.com/about',
     },
 };
@@ -23,7 +23,7 @@ export default function AboutPage() {
                 <div className="bg-blue-900 text-white py-16">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                         <h1 className="text-4xl font-bold mb-4">업체 소개</h1>
-                        <p className="text-blue-100">정직과 신뢰로 보답하는 전북배관입니다.</p>
+                        <p className="text-blue-100">정직과 신뢰로 보답하는 전북하수구막힘입니다.</p>
                     </div>
                 </div>
 
@@ -33,7 +33,7 @@ export default function AboutPage() {
                         <div className="relative h-[400px] rounded-2xl overflow-hidden shadow-2xl">
                             <Image
                                 src="/images/worker.png"
-                                alt="전북배관 대표"
+                                alt="전북하수구막힘 대표"
                                 fill
                                 className="object-cover"
                             />
@@ -42,10 +42,10 @@ export default function AboutPage() {
                             <h2 className="text-3xl font-bold text-gray-900 mb-6">"보이지 않는 곳까지<br />깨끗하게 책임지겠습니다"</h2>
                             <div className="space-y-4 text-gray-600 leading-relaxed font-medium">
                                 <p>
-                                    안녕하십니까, 전북배관을 찾아주신 고객 여러분 진심으로 환영합니다.
+                                    안녕하십니까, 전북하수구막힘을 찾아주신 고객 여러분 진심으로 환영합니다.
                                 </p>
                                 <p>
-                                    저희 전북배관은 전라북도 전 지역을 대상으로 하수구, 변기, 싱크대 막힘 해결부터
+                                    저희 전북하수구막힘은 전라북도 전 지역을 대상으로 하수구, 변기, 싱크대 막힘 해결부터
                                     고압세척, 배관 내시경 촬영 등 배관과 관련된 모든 문제를 전문적으로 해결하고 있습니다.
                                 </p>
                                 <p>
@@ -59,7 +59,7 @@ export default function AboutPage() {
                                 </p>
                             </div>
                             <div className="mt-8">
-                                <div className="font-bold text-lg text-gray-900">전북배관 임직원 일동</div>
+                                <div className="font-bold text-lg text-gray-900">전북하수구막힘 임직원 일동</div>
                             </div>
                         </div>
                     </div>
@@ -110,7 +110,7 @@ export default function AboutPage() {
                             <div className="relative h-[300px] md:h-auto">
                                 <Image
                                     src="/images/team.png"
-                                    alt="전북배관 팀"
+                                    alt="전북하수구막힘 팀"
                                     fill
                                     className="object-cover"
                                 />
@@ -118,7 +118,7 @@ export default function AboutPage() {
                             <div className="p-8 md:p-12 flex flex-col justify-center">
                                 <h3 className="text-2xl font-bold text-gray-900 mb-4">최고의 전문가들이 함께합니다</h3>
                                 <p className="text-gray-600 mb-6">
-                                    전북배관의 모든 기사는 5년 이상의 경력을 보유한 베테랑들입니다.
+                                    전북하수구막힘의 모든 기사는 5년 이상의 경력을 보유한 베테랑들입니다.
                                     정기적인 기술 교육과 CS 교육을 통해 기술력은 물론 친절함까지 갖추었습니다.
                                     고객님의 댁을 내 집처럼 소중히 여기며 작업하겠습니다.
                                 </p>

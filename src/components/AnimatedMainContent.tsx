@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import LocalKeywordGrid from '@/components/LocalKeywordGrid';
 
 interface ServiceDetail {
     title: string;
@@ -85,10 +86,31 @@ export default function AnimatedMainContent({
                             </motion.span>
                             , 더 이상 참지 마세요
                         </h2>
-                        <p className="text-xl text-slate-300 max-w-2xl mx-auto">
+                        <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-10">
                             방치할수록 공사 비용과 시간은 늘어납니다.<br className="hidden md:block" />
                             지금 겪고 계신 문제를 확인해보세요.
                         </p>
+
+                        {/* 신뢰 지표 (Trust Badges) */}
+                        <motion.div
+                            className="flex flex-wrap justify-center gap-4 md:gap-8 mt-8"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.4 }}
+                        >
+                            {[
+                                { label: '30분 긴급출동', icon: '⚡' },
+                                { label: '1년 무상 A/S', icon: '🛡️' },
+                                { label: '정찰제 가격표', icon: '📋' },
+                                { label: '최첨단 장비보유', icon: '🔬' }
+                            ].map((badge, i) => (
+                                <div key={i} className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm border border-white/20">
+                                    <span className="text-xl">{badge.icon}</span>
+                                    <span className="text-sm font-bold text-white">{badge.label}</span>
+                                </div>
+                            ))}
+                        </motion.div>
                     </motion.div>
 
                     <motion.div
@@ -177,7 +199,7 @@ export default function AnimatedMainContent({
                             OUR SOLUTION
                         </motion.span>
                         <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
-                            전북배관만의 <span className="text-blue-600">확실한 해결책</span>
+                            전북하수구막힘만의 <span className="text-blue-600">확실한 해결책</span>
                         </h2>
                     </motion.div>
 
@@ -330,9 +352,9 @@ export default function AnimatedMainContent({
                         viewport={{ once: true }}
                         transition={{ duration: 0.7 }}
                     >
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4">왜 전북배관인가요?</h2>
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4">왜 전북하수구막힘인가요?</h2>
                         <p className="text-blue-200 max-w-2xl mx-auto">
-                            하수구업체 전북배관은 공정한 가격정책과 신속하고 정확한 진단을 통해 최상의 만족감을 드립니다.
+                            하수구업체 전북하수구막힘은 공정한 가격정책과 신속하고 정확한 진단을 통해 최상의 만족감을 드립니다.
                         </p>
                     </motion.div>
 
@@ -375,6 +397,9 @@ export default function AnimatedMainContent({
                     </motion.div>
                 </div>
             </section>
+
+            {/* 지역 키워드 그리드 (SEO 최적화) */}
+            <LocalKeywordGrid />
 
             {/* CTA 섹션 */}
             <section className="py-16 bg-white">
@@ -426,8 +451,8 @@ export default function AnimatedMainContent({
                         transition={{ duration: 0.6 }}
                     >
                         <div>
-                            <div className="text-2xl font-bold text-white mb-4">전북<span className="text-blue-400">배관</span></div>
-                            <p className="text-sm">전라북도 전지역 하수구막힘, 싱크대막힘, 변기막힘 24시 긴급출동</p>
+                            <div className="text-2xl font-bold text-white mb-4">전북<span className="text-blue-400">하수구막힘</span></div>
+                            <p className="text-sm">전라북도 전지역 하수구막힘, 싱크대막힘, 변기막힘 24시 긴급출동공정한 가격정책과 확실한 사후관리 서비스를 제공합니다.</p>
                         </div>
                         <div>
                             <h4 className="text-white font-bold mb-4">서비스 지역</h4>

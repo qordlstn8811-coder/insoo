@@ -16,8 +16,8 @@ export default function Header() {
                 <div className="flex justify-between items-center h-16 md:h-20">
                     {/* 로고 */}
                     <Link href="/" className="flex items-center gap-2">
-                        <Image src="/images/logo.png" alt="전북배관 로고" width={40} height={40} className="w-10 h-10" />
-                        <span className="text-xl md:text-2xl font-bold text-blue-900 tracking-tight">전북<span className="text-blue-600">배관</span></span>
+                        <Image src="/images/logo.png" alt="전북하수구막힘 로고" width={40} height={40} className="w-10 h-10" />
+                        <span className="text-xl md:text-2xl font-bold text-blue-900 tracking-tight">전북<span className="text-blue-600">하수구막힘</span></span>
                     </Link>
 
                     {/* 데스크톱 네비게이션 */}

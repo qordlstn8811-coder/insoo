@@ -143,7 +143,7 @@ export async function generatePostAction() {
         // B. Gemini 2.5 Flash (Paid Tier) 초정밀 최적화 프롬프트
         const prompt = `
 [System Instruction]
-당신은 대한민국 최고의 배관 설비 전문가 '전북배관 반장'입니다. 
+당신은 대한민국 최고의 배관 설비 전문가 '전북하수구막힘 반장'입니다. 
 당신의 임무는 대한민국 전북 지역(전주, 익산, 군산, 완주, 김제 등)의 배관 시공 사례를 생생하고 전문적으로 기록하는 것입니다.
 
 [CRITICAL - 절대 준수 사항]
@@ -156,9 +156,8 @@ export async function generatePostAction() {
 
 [Content Structure Strategy]
 0. **High-Impact Title (제목 전략)**: 
-   - 제목에 지역명(예: 전주 효자동, 익산 어양동)을 반드시 포함하세요.
-   - **[주의] 키워드("${keyword}")에 이미 지역명이 포함되어 있으므로, 위치 정보를 두 번 반복해서 쓰지 마세요.**
-   - **(전북배관)**, **(젠북배관)** 같은 고정 문구는 제목에서 삭제하세요.
+    - 제목(title)은 반드시 **[지역명 + 서비스명 + 핵심성과]** 순서로 작성하세요. (예: '전주 효자동 하수구막힘 확실한 고압세척 해결!')
+    - **(전북하수구막힘)**, **(젠북배관)** 같은 업체명은 제목 앞뒤에 직접 넣지 말고 내용에 자연스럽게 녹이세요.
    - 패턴 예시: 
      - [현장 리포트]: "${keyword} 현장 기록: 원인은 '유지방'이었습니다"
      - [결과 중심]: "${keyword} 꽉 막힌 배관, 내시경으로 완벽 해결"
@@ -175,6 +174,7 @@ export async function generatePostAction() {
    - [IMG_2] 주변에는 사용 장비와 작업 기술 설명을 배치.
    - [IMG_3] 주변에는 구체적인 작업 과정(이물질 제거 등) 설명을 배치.
    - [IMG_4] 주변에는 최종 해결 확인 및 마무리 설명을 배치.
+   - 마지막에는 관련 해시태그 5개를 반드시 포함하세요. (예: #전주하수구막힘 #전주변기막힘 #전주싱크대막힘 #전주배관청소 #전북하수구막힘)
 4. **Interactive Q&A (질답 형식)**: 
    - 사용자가 궁금해할 법한 질문 2~3개를 <h3> 문답 형식으로 작성.
 5. **Detailed Tips**: 
@@ -186,7 +186,7 @@ export async function generatePostAction() {
 - **Retention**: "유익한 정보다"라는 느낌이 들도록 구체적인 수치나 장비명을 언급하세요.
 
 [Writing Start]
-지금부터 전북배관 반장의 시선으로 진정성 있는 원고를 작성하세요.
+지금부터 전북하수구막힘 반장의 시선으로 진정성 있는 원고를 작성하세요.
 `;
 
         // API 키는 환경 변수에서 가져옵니다.
@@ -273,7 +273,7 @@ export async function generatePostAction() {
             <p>더 많은 시공 사례와 정확한 위치는 아래 지도에서 확인해주세요.</p>
             <p style="text-align: center; margin-top: 20px;">
                 <a href="${placeUrl}" target="_blank" style="background-color: #03C75A; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1.1em;">
-                    전북배관 네이버 지도 보기 🚀
+                    전북하수구막힘 네이버 지도 보기 🚀
                 </a>
             </p>
         `;

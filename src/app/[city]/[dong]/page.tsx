@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ city: str
     const dongName = decodeURIComponent(dong);
 
     return {
-        title: `${regionName} ${dongName} 하수구막힘 변기뚫음 30분출동 | 전북배관`,
+        title: `${regionName} ${dongName} 하수구막힘 변기뚫음 30분출동 | 전북하수구막힘`,
         description: `${regionName} ${dongName} 지역 하수구막힘, 싱크대막힘, 변기막힘 24시 긴급출동. 최신 장비로 확실하게 해결! 010-8184-3496`,
         keywords: `${dongName}하수구, ${dongName}변기막힘, ${regionName} ${dongName}, ${dongName}싱크대막힘, ${dongName}고압세척`,
     };
@@ -135,7 +135,7 @@ export default async function DongPage({ params }: { params: Promise<{ city: str
 
                             {/* 왜 저희인가 (SEO) */}
                             <section>
-                                <h3 className="text-xl font-bold text-slate-900 mb-4 border-b pb-2">💪 왜 전북배관인가요?</h3>
+                                <h3 className="text-xl font-bold text-slate-900 mb-4 border-b pb-2">💪 왜 전북하수구막힘인가요?</h3>
                                 <p className="text-slate-700 leading-relaxed mb-4">
                                     {seoContent.whyUs}
                                 </p>

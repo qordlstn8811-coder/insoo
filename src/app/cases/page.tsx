@@ -4,8 +4,8 @@ import Image from 'next/image';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: '시공사례 | 전북배관',
-    description: '전북배관의 생생한 현장 시공 사례를 확인하세요. 변기, 하수구, 싱크대 막힘 해결 후기.',
+    title: '시공사례 | 전북하수구막힘',
+    description: '전북하수구막힘의 생생한 현장 시공 사례를 확인하세요. 변기, 하수구, 싱크대 막힘 해결 후기.',
 };
 
 // 동적 데이터 페칭 설정 (캐시 방지)
@@ -29,7 +29,7 @@ export default async function CasesPage() {
                     생생한 시공 현장
                 </h1>
                 <p className="mx-auto max-w-2xl text-lg text-blue-100">
-                    전북배관이 직접 해결한 다양한 현장 이야기를 만나보세요.<br />
+                    전북하수구막힘이 직접 해결한 다양한 현장 이야기를 만나보세요.<br />
                     고객님의 고민과 비슷한 사례를 찾아보실 수 있습니다.
                 </p>
             </section>

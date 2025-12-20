@@ -11,7 +11,7 @@ type Message = {
 export default function Chatbot() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
-        { id: 1, text: '안녕하세요! 전북배관입니다. \n무엇을 도와드릴까요?', isUser: false },
+        { id: 1, text: '안녕하세요! 전북하수구막힘입니다. \n무엇을 도와드릴까요?', isUser: false },
     ]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -82,7 +82,7 @@ export default function Chatbot() {
                                 </svg>
                             </div>
                             <div>
-                                <h3 className="text-sm font-bold">전북배관 상담봇</h3>
+                                <h3 className="text-sm font-bold">전북하수구막힘 상담봇</h3>
                                 <span className="flex items-center text-xs text-blue-100">
                                     <span className="mr-1 inline-block h-2 w-2 rounded-full bg-green-400"></span>
                                     운영중

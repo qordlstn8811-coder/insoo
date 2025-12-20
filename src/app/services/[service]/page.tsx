@@ -34,11 +34,11 @@ export async function generateMetadata({ params }: { params: Promise<{ service: 
     const keywords = seoKeywords[serviceParam] || '';
 
     return {
-        title: `${service.title} | 전주 ${service.title} 24시 긴급출동 - 전북배관`,
+        title: `${service.title} | 전주 ${service.title} 24시 긴급출동 - 전북하수구막힘`,
         description: `전주, 군산, 익산 ${service.title} 24시 긴급출동! ${service.description} 합리적인 정찰제 가격. 010-8184-3496`,
         keywords: keywords,
         openGraph: {
-            title: `${service.title} | 전북배관 - 전주 ${service.title} 전문`,
+            title: `${service.title} | 전북하수구막힘 - 전주 ${service.title} 전문`,
             description: `전주, 군산, 익산 ${service.title} 24시 긴급출동! ${service.description}`,
             url: `https://전북하수구막힘.com/services/${serviceParam}`,
             images: [{ url: service.image }],

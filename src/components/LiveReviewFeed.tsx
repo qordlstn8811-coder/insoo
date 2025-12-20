@@ -49,7 +49,7 @@ export default function LiveReviewFeed() {
                     <span className="text-blue-700 text-sm font-medium">실시간 고객 만족 후기</span>
                 </div>
                 <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
-                    <span className="text-blue-600">전북배관</span>을 선택한 고객님들의 이야기
+                    <span className="text-blue-600">전북하수구막힘</span>을 선택한 고객님들의 이야기
                 </h2>
                 <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                     실제 이용해 주신 고객님들의 생생한 목소리를 들어보세요.<br className="hidden md:inline" />

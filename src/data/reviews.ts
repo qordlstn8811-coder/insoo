@@ -285,12 +285,12 @@ export const generateRegionSEOContent = (regionName: string, dongName?: string) 
     const location = dongName ? `${regionName} ${dongName}` : regionName;
 
     return {
-        intro: `${location} 지역의 하수구막힘, 싱크대막힘, 변기막힘 문제로 고민이신가요? 전북배관은 ${location} 전지역에 24시간 긴급출동 서비스를 제공합니다. 30분 내 도착을 약속드립니다!`,
+        intro: `${location} 지역의 하수구막힘, 싱크대막힘, 변기막힘 문제로 고민이신가요? 전북하수구막힘은 ${location} 전지역에 24시간 긴급출동 서비스를 제공합니다. 30분 내 도착을 약속드립니다!`,
 
         services: [
             {
                 title: `${location} 하수구막힘 해결`,
-                content: `${location} 지역의 하수구막힘 문제는 대부분 기름때, 음식물 찌꺼기, 머리카락 등이 원인입니다. 특히 오래된 건물의 경우 배관 노후화로 인한 석회석 발생이 주요 원인이 되기도 합니다. 전북배관은 최신 고압세척 장비를 사용하여 막힌 하수구를 완벽하게 뚫어드립니다.`
+                content: `${location} 지역의 하수구막힘 문제는 대부분 기름때, 음식물 찌꺼기, 머리카락 등이 원인입니다. 특히 오래된 건물의 경우 배관 노후화로 인한 석회석 발생이 주요 원인이 되기도 합니다. 전북하수구막힘은 최신 고압세척 장비를 사용하여 막힌 하수구를 완벽하게 뚫어드립니다.`
             },
             {
                 title: `${location} 싱크대 역류 수리`,
@@ -302,7 +302,7 @@ export const generateRegionSEOContent = (regionName: string, dongName?: string) 
             }
         ],
 
-        whyUs: `왜 ${location} 주민들이 전북배관을 선택할까요? 첫째, 24시간 365일 긴급출동이 가능합니다. 둘째, 투명한 정찰제 가격으로 추가 비용 걱정이 없습니다. 셋째, 작업 후에도 같은 문제 발생 시 무상 A/S를 제공합니다.`,
+        whyUs: `왜 ${location} 주민들이 전북하수구막힘을 선택할까요? 첫째, 24시간 365일 긴급출동이 가능합니다. 둘째, 투명한 정찰제 가격으로 추가 비용 걱정이 없습니다. 셋째, 작업 후에도 같은 문제 발생 시 무상 A/S를 제공합니다.`,
 
         contact: `${location} 하수구막힘, 싱크대막힘, 변기막힘 문제로 고민이시라면 지금 바로 전화주세요. 전문 상담원이 친절하게 안내해 드리고, 숙련된 기술자가 신속하게 방문하여 문제를 해결해 드립니다.`
     };

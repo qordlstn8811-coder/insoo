@@ -159,7 +159,7 @@ export default function Hero() {
                             >
                                 <Image
                                     src="/images/van.png"
-                                    alt="전북배관 서비스 차량"
+                                    alt="전북하수구막힘 서비스 차량"
                                     width={600}
                                     height={400}
                                     className="rounded-3xl shadow-2xl border-4 border-white/10"

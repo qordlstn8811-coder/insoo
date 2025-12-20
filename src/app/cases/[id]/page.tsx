@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const cleanDescription = post.content?.substring(0, 160).replace(/<[^>]*>?/gm, '') || '';
     const keywords = [
         post.keyword,
-        '전북배관',
+        '전북하수구막힘',
         '전북 하수구막힘',
         '전주 배관청소',
         '군산 싱크대막힘',
@@ -31,12 +31,12 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     ].join(', ');
 
     return {
-        title: `${post.title} | 전북배관 시공사례`,
+        title: `${post.title} | 전북하수구막힘 시공사례`,
         description: cleanDescription,
         keywords: keywords,
-        authors: [{ name: '전북배관' }],
-        creator: '전북배관',
-        publisher: '전북배관',
+        authors: [{ name: '전북하수구막힘' }],
+        creator: '전북하수구막힘',
+        publisher: '전북하수구막힘',
         alternates: {
             canonical: `https://xn--2e0bm8utzck3fsyi7rvktd.com/cases/${id}`
         },
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
             title: post.title,
             description: cleanDescription,
             url: `https://xn--2e0bm8utzck3fsyi7rvktd.com/cases/${id}`,
-            siteName: '전북배관',
+            siteName: '전북하수구막힘',
             images: post.image_url ? [{
                 url: post.image_url,
                 width: 1200,
@@ -101,12 +101,12 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
                             dateModified: post.created_at,
                             author: {
                                 '@type': 'Organization',
-                                name: '전북배관',
+                                name: '전북하수구막힘',
                                 url: 'https://xn--2e0bm8utzck3fsyi7rvktd.com',
                             },
                             publisher: {
                                 '@type': 'Organization',
-                                name: '전북배관',
+                                name: '전북하수구막힘',
                                 logo: {
                                     '@type': 'ImageObject',
                                     url: 'https://xn--2e0bm8utzck3fsyi7rvktd.com/icon.png'
@@ -120,7 +120,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
                                         name: '배관 막힘 해결 비용은 얼마인가요?',
                                         acceptedAnswer: {
                                             '@type': 'Answer',
-                                            text: '현장 상황에 따라 다르지만, 전북배관은 정찰제로 운영되며 사전 견적을 제공합니다. 010-8184-3496으로 문의주세요.'
+                                            text: '현장 상황에 따라 다르지만, 전북하수구막힘은 정찰제로 운영되며 사전 견적을 제공합니다. 010-8184-3496으로 문의주세요.'
                                         }
                                     }
                                 ]
@@ -199,7 +199,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
                 {/* 하단 상담 유도 */}
                 <div className="mt-16 rounded-2xl bg-blue-50 p-8 text-center ring-1 ring-blue-100">
                     <h3 className="mb-3 text-2xl font-bold text-gray-900">비슷한 문제로 고민 중이신가요?</h3>
-                    <p className="mb-6 text-gray-600">전북배관이 30분 내로 방문하여 시원하게 해결해 드립니다.</p>
+                    <p className="mb-6 text-gray-600">전북하수구막힘이 30분 내로 방문하여 시원하게 해결해 드립니다.</p>
                     <div className="flex flex-col justify-center gap-4 sm:flex-row">
                         <a href="tel:010-8184-3496" className="rounded-xl bg-blue-600 px-8 py-3 text-lg font-bold text-white shadow-lg transition hover:bg-blue-700">
                             📞 010-8184-3496 전화 상담
