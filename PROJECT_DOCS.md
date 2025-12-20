@@ -1,7 +1,7 @@
-# 🚀 전북배관 웹사이트 개발 및 배포 완료 리포트
+# 🚀 전북하수구막힘 웹사이트 개발 및 배포 완료 리포트
 
 ## 프로젝트 개요
-- **프로젝트명**: 전북배관 (jeonbuk-hasugu)
+- **프로젝트명**: 전북하수구막힘 (jeonbuk-hasugu)
 - **도메인**: 전북하수구막힘.com
 - **배포 URL**: https://jeonbuk-hasugu.vercel.app
 - **GitHub**: https://github.com/qordlstn8811-coder/insoo
@@ -129,7 +129,7 @@ TELEGRAM_CHAT_ID=1737738720
 
 ## 📞 연락처 정보
 
-- **상호**: 전북배관
+- **상호**: 전북하수구막힘
 - **대표**: 오다희
 - **전화**: 010-8184-3496
 - **사업자번호**: 139-04-76709
@@ -186,6 +186,7 @@ TELEGRAM_CHAT_ID=1737738720
 - [ ] Vercel 대시보드에서 `Deployment` 상태가 `Ready`인가?
 - [ ] 도메인이 `Project Settings > Domains`에 올바르게 등록되었는가?
 - [ ] `npx vercel domains ls` 명령어로 도메인이 엉뚱한 프로젝트(`jeonbuk-hasugu-final...`)에 있지 않은가?
+- [ ] **GitHub 연동 확인**: Vercel 대시보드 → Settings → Git에서 현재 작업 중인 `jeonbuk-hasugu` 레포지토리가 올바르게 Connect 되어 있는지 확인. (연동이 꼬였을 경우 수동 relink 필요)
 
 ---
 
