@@ -95,25 +95,28 @@ export default function RootLayout({
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'PlumbingService',
-              name: '전북하수구막힘',
+              name: '전북배관',
+              legalName: '전북배관',
+              alternateName: '전북하수구막힘',
+              brand: {
+                '@type': 'Brand',
+                name: '전북하수구막힘'
+              },
               image: 'https://xn--2e0bm8utzck3fsyi7rvktd.com/images/hero.png',
               '@id': 'https://xn--2e0bm8utzck3fsyi7rvktd.com',
               url: 'https://xn--2e0bm8utzck3fsyi7rvktd.com',
               telephone: '010-8184-3496',
-              description: '전주, 군산, 익산 등 전라북도 전지역 하수구막힘, 변기막힘, 싱크대막힘 24시 긴급출동',
-              areaServed: {
-                '@type': 'State',
-                name: 'Jeollabuk-do',
-                containsPlace: [
-                  { '@type': 'City', name: '전주시' },
-                  { '@type': 'City', name: '군산시' },
-                  { '@type': 'City', name: '익산시' },
-                  { '@type': 'City', name: '정읍시' },
-                  { '@type': 'City', name: '남원시' },
-                  { '@type': 'City', name: '김제시' },
-                  { '@type': 'City', name: '완주군' }
-                ]
-              },
+              description: '전주, 군산, 익산 등 전라북도 전지역 하수구막힘, 변기막힘, 싱크대막힘 전문 해결사 전북배관입니다.',
+              areaServed: [
+                { '@type': 'State', name: 'Jeollabuk-do' },
+                { '@type': 'City', name: '전주시' },
+                { '@type': 'City', name: '군산시' },
+                { '@type': 'City', name: '익산시' },
+                { '@type': 'City', name: '김제시' },
+                { '@type': 'City', name: '완주군' },
+                { '@type': 'City', name: '정읍시' },
+                { '@type': 'City', name: '남원시' }
+              ],
               address: {
                 '@type': 'PostalAddress',
                 addressLocality: '전주시',
@@ -136,13 +139,13 @@ export default function RootLayout({
               },
               hasOfferCatalog: {
                 '@type': 'OfferCatalog',
-                name: '배관 서비스',
+                name: '배관 및 하수구 서비스',
                 itemListElement: [
-                  { '@type': 'Offer', itemOffered: { '@type': 'Service', name: '하수구 막힘' } },
-                  { '@type': 'Offer', itemOffered: { '@type': 'Service', name: '변기 막힘' } },
-                  { '@type': 'Offer', itemOffered: { '@type': 'Service', name: '싱크대 막힘' } },
-                  { '@type': 'Offer', itemOffered: { '@type': 'Service', name: '고압 세척' } },
-                  { '@type': 'Offer', itemOffered: { '@type': 'Service', name: '배관 내시경' } }
+                  { '@type': 'Offer', itemOffered: { '@type': 'Service', name: '하수구 막힘 해결 및 고압세척' } },
+                  { '@type': 'Offer', itemOffered: { '@type': 'Service', name: '변기 막힘 뚫음 및 수리' } },
+                  { '@type': 'Offer', itemOffered: { '@type': 'Service', name: '싱크대 배수구 막힘 청소' } },
+                  { '@type': 'Offer', itemOffered: { '@type': 'Service', name: '저수조 및 물탱크 청소' } },
+                  { '@type': 'Offer', itemOffered: { '@type': 'Service', name: '배관 내시경 및 누수 탐지' } }
                 ]
               },
               priceRange: '₩50,000~'

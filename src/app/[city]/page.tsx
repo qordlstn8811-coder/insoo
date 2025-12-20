@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ city: str
     const regionName = region?.name || city;
 
     return {
-        title: `${regionName} 하수구막힘 ${regionName} 변기막힘 24시 긴급출동 | 전북하수구막힘`,
+        title: `${regionName} 하수구막힘 싱크대·변기뚫음 24시 긴급출동 | 30분 내 방문`,
         description: `${regionName} 지역 하수구막힘, 싱크대막힘, 변기막힘 전문. 30분내 긴급출동! ${regionName} ${region?.districts.slice(0, 5).join(', ')} 등 전지역 출장. 010-8184-3496`,
         keywords: `${regionName}하수구, ${regionName}변기막힘, ${regionName}싱크대막힘, ${regionName}고압세척, ${regionName}배관청소`,
         alternates: {
