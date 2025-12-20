@@ -150,9 +150,9 @@ export async function generatePostAction() {
 
 [Content Structure Strategy]
 0. **High-Impact Title (제목 전략)**: 
-   - 제목에 반드시 **지역명과 동(예: 전주 효자동, 익산 어양동)**을 포함하세요. (로컬 SEO 핵심)
+   - 제목에 지역명(예: 전주 효자동, 익산 어양동)을 반드시 포함하세요.
+   - **[주의] 키워드("${keyword}")에 이미 지역명이 포함되어 있으므로, 위치 정보를 두 번 반복해서 쓰지 마세요.**
    - **(전북배관)**, **(젠북배관)** 같은 고정 문구는 제목에서 삭제하세요.
-   - 키워드("${keyword}")에 이미 지역명이 포함되어 있으므로, 키워드를 그대로 활용하거나 클릭을 유도하는 패턴으로 만드세요.
    - 패턴 예시: 
      - [현장 리포트]: "${keyword} 현장 기록: 원인은 '유지방'이었습니다"
      - [결과 중심]: "${keyword} 꽉 막힌 배관, 내시경으로 완벽 해결"
@@ -221,6 +221,12 @@ export async function generatePostAction() {
 
         const lines = rawText.split('\n');
         let title = lines[0].replace(/<h1>|<\/h1>|제목:/g, '').trim();
+
+        // [Fix] Deduplicate location if it appears twice in the title
+        const titleParts = title.split(' ');
+        const uniqueParts = titleParts.filter((item: string, index: number) => titleParts.indexOf(item) === index);
+        title = uniqueParts.join(' ');
+
         if (title.length > 70 || title.length < 5) {
             title = `${keyword} 꼼꼼한 해결 시공기`;
         }
