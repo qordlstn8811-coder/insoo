@@ -89,32 +89,38 @@ export async function generatePostAction() {
             '변기막힘': [
                 'clogged toilet in typical Korean apartment bathroom, beige tiles, plunger nearby, realistic dirty condition, wet floor',
                 'professional plumber hands wearing red rubber gloves unblocking toilet with auger tool, close up view, mechanics tools',
-                'sparkling clean white toilet bowl after repair, modern Korean bathroom interior, bright lighting, dry floor'
+                'sparkling clean white toilet bowl after repair, modern Korean bathroom interior, bright lighting, dry floor',
+                'plumber explaining maintenance to homeowner in Korean house, professional demeanor'
             ],
             '하수구막힘': [
                 'overflowing floor drain in Korean wet room bathroom, soapy water puddle, typical Korean apartment shower area',
                 'plumber using heavy duty flexible shaft machine for sewer cleaning, construction site dirty gloves, yellow equipment',
-                'clean floor drain water flowing smoothly in Korean style bathroom, grey tiles, no water standing'
+                'clean floor drain water flowing smoothly in Korean style bathroom, grey tiles, no water standing',
+                'professional plumber checking sewer with flashlight, dirty pipes, working environment'
             ],
             '싱크대막힘': [
                 'kitchen sink filled with dirty yellowish water and food waste, typical Korean home kitchen sink strainer blocked',
                 'plumber opening under sink cabinet revealing pvc grey pipes and P-trap, flashlight beam, tools on floor',
-                'clean stainless steel kitchen sink empty and shiny, water running from faucet, clean kitchen counter'
+                'clean stainless steel kitchen sink empty and shiny, water running from faucet, clean kitchen counter',
+                'removing large grease chunk from kitchen drain pipe, dirty grease, professional extraction'
             ],
             '수도설비': [
                 'leaking water pipe spraying water under sink, wet floor, panic emergency situation, water puddles',
                 'professional installing new boiler connection pipes, insulation foam, neat work, wrench in hand',
-                'newly replaced shiny silver water pipes, construction finished, neat organization, professional finish'
+                'newly replaced shiny silver water pipes, construction finished, neat organization, professional finish',
+                'testing water pressure after faucet installation, clear running water, chrome finish'
             ],
             '배관청소': [
                 'endoscope camera screen showing sludge gunk inside old rusty pipe, yellow grease, dirty disgusting view',
                 'high pressure water jet cleaning rusty pipe interior, splashing water action shot, hydro jetting nozzle',
-                'perfectly clean inside of pipe after cleaning, smooth surface, bright light reflection, like new pipe'
+                'perfectly clean inside of pipe after cleaning, smooth surface, bright light reflection, like new pipe',
+                'plumber carrying high pressure jetting equipment into a Korean building, heavy duty setup'
             ],
             '누수탐지': [
                 'damp moldy water stain on beige wallpaper ceiling, water damage detail, peeling paint',
                 'thermal imaging camera screen showing blue cold spot leak on floor, professional device screen',
-                'plumber with headset listing to floor leak using acoustic detector device, concentration, professional equipment'
+                'plumber with headset listing to floor leak using acoustic detector device, concentration, professional equipment',
+                'repairing small puncture in copper water pipe, specialized tools, precision work'
             ]
         };
 
@@ -244,10 +250,16 @@ export async function generatePostAction() {
             content = content.replace(phrase, '');
         });
 
-        content = content.replace(/\[IMG_1\]/g, `<img src="${imageUrls[0]}" alt="${keyword} 현장 모습" style="width:100%; border-radius:10px; margin: 20px 0;" />`);
-        content = content.replace(/\[IMG_2\]/g, `<img src="${imageUrls[1]}" alt="${keyword} 작업 과정" style="width:100%; border-radius:10px; margin: 20px 0;" />`);
-        content = content.replace(/\[IMG_3\]/g, `<img src="${imageUrls[2]}" alt="${keyword} 집중 시공" style="width:100%; border-radius:10px; margin: 20px 0;" />`);
-        content = content.replace(/\[IMG_4\]/g, `<img src="${imageUrls[3]}" alt="${keyword} 해결 완료" style="width:100%; border-radius:10px; margin: 20px 0;" />`);
+        // Helper to safely replace IMG tags with error handling (hide broken images)
+        const replaceImage = (idx: number, alt: string) => {
+            if (!imageUrls[idx]) return '';
+            return `<img src="${imageUrls[idx]}" alt="${alt}" onerror="this.style.display='none'" style="width:100%; border-radius:10px; margin: 20px 0;" />`;
+        };
+
+        content = content.replace(/\[IMG_1\]/g, replaceImage(0, `${keyword} 현장 모습`));
+        content = content.replace(/\[IMG_2\]/g, replaceImage(1, `${keyword} 작업 과정`));
+        content = content.replace(/\[IMG_3\]/g, replaceImage(2, `${keyword} 집중 시공`));
+        content = content.replace(/\[IMG_4\]/g, replaceImage(3, `${keyword} 해결 완료`));
 
         // Clean up any remaining IMG tags that might have been halluncinated with different numbers
         content = content.replace(/\[IMG_\d+\]/g, '');
