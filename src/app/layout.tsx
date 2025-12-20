@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     telephone: true,
   },
   alternates: {
-    canonical: "https://www.xn--2e0bm8utzck3fsyi7rvktd.com",
+    canonical: "https://xn--2e0bm8utzck3fsyi7rvktd.com",
   },
   openGraph: {
     type: 'website',
