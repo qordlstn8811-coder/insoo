@@ -10,8 +10,8 @@ try {
     if (!match) { console.error('Key not found'); process.exit(1); }
     const apiKey = match[1].trim();
 
-    // Testing gemini-2.5-flash (Next Option)
-    const model = 'gemini-2.5-flash';
+    // Testing gemini-2.0-flash (Latest Option)
+    const model = 'gemini-2.0-flash';
     console.log(`Testing model: ${model}...`);
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
@@ -29,7 +29,7 @@ try {
         res.on('end', () => {
             console.log(`Status: ${res.statusCode}`);
             if (res.statusCode === 200) {
-                console.log('✅ SUCCESS: gemini-2.5-flash is WORKING!');
+                console.log('✅ SUCCESS: gemini-2.0-flash is WORKING!');
                 // Check if quota error is present in 200 OK body (sometimes happens)
                 if (data.includes('error')) console.log('⚠️ Warning: Content contains error', data);
             } else {

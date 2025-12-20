@@ -46,9 +46,20 @@ export default async function DongPage({ params }: { params: Promise<{ city: str
     // SEO 콘텐츠 생성
     const seoContent = generateRegionSEOContent(regionName, dongName);
 
-    // 해당 지역 또는 랜덤 후기
+    // 해당 지역(동) 우수 후기 우선 노출, 없으면 시 단위 후기 노출
+    const dongReviews = reviews.filter(r => r.dong.includes(dongName.replace('1동', '').replace('2동', '').replace('3동', '').replace('4동', '').replace('5동', '')) ||
+        dongName.includes(r.dong));
     const regionReviews = reviews.filter(r => r.region.includes(regionName.replace('시', '').replace('군', '')));
-    const displayReviews = regionReviews.length > 0 ? regionReviews.slice(0, 2) : reviews.slice(0, 2);
+
+    // 동 후기가 있으면 동 후기 우선, 부족하면 시 후기로 채움
+    let displayReviews = [...dongReviews];
+    if (displayReviews.length < 2) {
+        const additionalReviews = regionReviews.filter(r => !displayReviews.find(dr => dr.id === r.id));
+        displayReviews = [...displayReviews, ...additionalReviews];
+    }
+
+    // 최종 2개 노출
+    displayReviews = displayReviews.length > 0 ? displayReviews.slice(0, 2) : reviews.slice(0, 2);
 
     return (
         <>
