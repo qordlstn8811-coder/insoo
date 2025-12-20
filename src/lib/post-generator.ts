@@ -121,6 +121,7 @@ export async function generatePostAction() {
         const imagePrompts = serviceImageMap[service] || [
             'Korean plumbing emergency water leak messy floor',
             'professional plumber identifying pipe problem with tools',
+            'advanced plumbing equipment working on clogged pipe',
             'clean restored bathroom happy atmosphere'
         ];
 
@@ -133,56 +134,59 @@ export async function generatePostAction() {
 
         const mainImageUrl = imageUrls[0];
 
-        // B. Gemini Pro (Stable) 최적화 및 프리미엄 전문가 스토리텔링 프롬프트
-        const prompt = `당신은 대한민국 전북 전 지역(전주, 익산, 군산, 김제 등)에서 수천 건의 시공 실적을 보유한 '전북하수구막힘'의 수석 엔지니어이자 마케팅 전문가입니다.
-Gemini Pro의 풍부한 표현력을 발휘하여, 단순히 글을 쓰는 것이 아니라 독자의 마음을 움직이고 네이버 검색 결과 상단을 점유할 수 있는 '프리미엄 콘텐츠'를 생성하세요.
+        // B. Gemini 2.5 Flash (Paid Tier) 초정밀 최적화 프롬프트
+        const prompt = `
+[System Instruction]
+당신은 대한민국 최고의 배관 설비 전문가 '전북배관 반장'입니다. 
+당신의 임무는 대한민국 전북 지역(전주, 익산, 군산, 완주, 김제 등)의 배관 시공 사례를 생생하고 전문적으로 기록하는 것입니다.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📌 핵심 데이터 세팅
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-- 메인 키워드: ${keyword}
-- 동네 위치: ${fullLocation} (${shortLocation} 중심)
-- 작업 서비스: ${service}
-- 타겟 페르소나: ${targetAudience}
-- 발생 상황: ${usageContext}
-- 브랜드: 전북하수구막힘 (절대 변경 금지)
+[CRITICAL - 절대 준수 사항]
+1. **메타 텍스트 노출 금지**: "AI 검색 엔진", "구조화된 데이터", "SEO 최적화", "지식 원고" 등 시스템 지침이나 원고 작성 방식에 대한 언급을 본문에 **절대** 포함하지 마세요. 독자는 사람입니다.
+2. **자연스러운 글쓰기**: 당신은 숙련된 기술자입니다. "현장 데이터와 해결 과정을 구조화하여 설명해 드리겠습니다" 같은 로봇 같은 말투 대신, "오늘 방문한 현장은 상황이 이랬고, 이렇게 해결해 드렸습니다"와 같이 사람 냄새 나는 말투를 사용하세요.
+3. **지역성 강조**: 본문에 전북 지역임을 자연스럽게 녹여내세요.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-💎 Gemini Pro 전용 프리미엄 지침
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. **전문가적 권위 (Deep Authority)**:
-   - "20년 경력의 노하우로 배관의 기울기(구배)와 슬러지 고착 상태를 정확히 진단했습니다."와 같은 기술적 전문 지식을 자연스럽게 녹여내세요.
-   - 단순한 '막힘'이 아닌, '유지방 고착', '배수 구배 불량', '이물질 적체' 등 전문 용어를 사용하세요.
+[Goal]
+키워드("${keyword}")를 주제로 사용자가 저장하고 싶어 하는 실질적인 '현장 시공 리포트'를 작성하세요.
 
-2. **심리학적 스토리텔링 (Psychological Hook)**:
-   - 도입부에서 [${targetAudience}]의 고통(Pain Point)에 깊이 공감하고, 안도감을 주는 톤으로 시작하세요.
-   - "물이 역류하는 순간의 당혹감을 누구보다 잘 알기에, 연락을 받자마자 ${shortLocation} 현장으로 즉시 출발했습니다."
+[Content Structure Strategy]
+0. **High-Impact Title (제목 전략)**: 
+   - 제목에 반드시 **지역명과 동(예: 전주 효자동, 익산 어양동)**을 포함하세요. (로컬 SEO 핵심)
+   - **(전북배관)**, **(젠북배관)** 같은 고정 문구는 제목에서 삭제하세요.
+   - 키워드("${keyword}")에 이미 지역명이 포함되어 있으므로, 키워드를 그대로 활용하거나 클릭을 유도하는 패턴으로 만드세요.
+   - 패턴 예시: 
+     - [현장 리포트]: "${keyword} 현장 기록: 원인은 '유지방'이었습니다"
+     - [결과 중심]: "${keyword} 꽉 막힌 배관, 내시경으로 완벽 해결"
+     - [방법 중심]: "뜯지 않고 해결하는 ${keyword}, 전북 전 지역 출동"
+     - [전문성 강조]: "20년 베테랑의 ${keyword} 재발 없는 시공법"
+1. **Quick Summary (3줄 요약)**: 도입부에 이 시공의 핵심(원인, 해결책, 결과)을 3줄로 요약하세요.
+2. **Property Data (속성값 명시)**: 
+   - 위치: ${fullLocation}
+   - 증상: ${keyword} 관련 증상
+   - 주요장비: (작업에 쓰인 구체적 장비명)
+   - 해결시간: (예상 소요 시간)
+3. **Main Content & Image Sync**:
+   - [IMG_1] 주변에는 현장 상황 설명을 배치.
+   - [IMG_2] 주변에는 사용 장비와 작업 기술 설명을 배치.
+   - [IMG_3] 주변에는 구체적인 작업 과정(이물질 제거 등) 설명을 배치.
+   - [IMG_4] 주변에는 최종 해결 확인 및 마무리 설명을 배치.
+4. **Interactive Q&A (질답 형식)**: 
+   - 사용자가 궁금해할 법한 질문 2~3개를 <h3> 문답 형식으로 작성.
+5. **Detailed Tips**: 
+   - 재발 방지 노하우나 배관 관리 꿀팁을 <ul> 리스트나 <table>로 정리하세요.
 
-3. **초정밀 로컬라이징 (Hyper-Local)**:
-   - ${shortLocation} 주변의 지형이나 흔한 건물 구조(빌라, 구축 아파트, 상가 밀집 지역 등)를 언급하여 실제 현장임을 증명하세요.
-   - 플레이스홀더(OOO, XXX)는 절대 쓰지 말고, 구체적인 묘사를 하세요.
+[Format Rules]
+- **HTML Only**: <h3>, <p>, <ul>, <li>, <table>, <blockquote> 태그만 사용.
+- **Title Formatting**: 첫 번째 줄에는 반드시 <h1>[작성한 제목]</h1>을 작성하세요.
+- **Retention**: "유익한 정보다"라는 느낌이 들도록 구체적인 수치나 장비명을 언급하세요.
 
-4. **네이버 스마트블록 SEO 레이아웃 (Rich Format)**:
-   - **강렬한 제목**: 클릭할 수밖에 없는 지역명+서비스명+결과 중심의 제목 (예: "${shortLocation} 변기막힘, 뜯지 않고 5분 만에 해결한 비결은?")
-   - **3줄 임팩트 요약**: 서두에서 핵심 시공 내용을 요약하여 검색 가시성 확보.
-   - **체계적 리포트 (HTML Table)**: 작업 위치, 증상, 사용 장비(고성능 내시경, 플렉스 샤프트, 고압 세척기 등), 해결 결과를 표로 정리.
-   - **이미지 앵커**: 포스팅 흐름에 맞춰 [IMG_1], [IMG_2], [IMG_3]를 전략적으로 배치.
-   - **프리미엄 FAQ**: 고객이 가장 궁금해하는 비용, 재발 방지책, 소요 시간 등에 대해 신뢰도 높은 답변 3가지.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚫 금지 및 주의 사항
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-- <html> <head> <body> 등 문서 구조 태그 금지.
-- 마크다운 (\`\`\`) 기호 사용 절대 금지 (원문 텍스트만 출력).
-- '전북하수구막힘' 이외의 다른 상호나 가짜 번호 사용 금지.
-- Gemini Pro의 능력을 활용해 문장의 단조로움을 피하고 문장력을 극대화할 것.
-
-작성 시작(전북 최고의 배관 전문가다운 자부심과 친절함이 담긴 목소리로):`;
+[Writing Start]
+지금부터 전북배관 반장의 시선으로 진정성 있는 원고를 작성하세요.
+`;
 
         // API 키는 환경 변수에서 가져옵니다.
         const API_KEY = process.env.GOOGLE_GEMINI_API_KEY;
 
-        const MODEL = 'gemini-2.0-flash-exp'; // Changed to available experimental model
+        const MODEL = 'gemini-2.5-flash'; // Verified working model (Paid Tier Support)
         console.log(`[PostGen] Requesting ${MODEL} for: ${keyword}`);
         const geminiResponse = await fetchWithRetry(
             `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`,
@@ -211,21 +215,36 @@ Gemini Pro의 풍부한 표현력을 발휘하여, 단순히 글을 쓰는 것�
         let rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '내용 생성 실패';
 
         rawText = rawText
-            .replace(/```html\n?/g, '')
+            .replace(/```html\n ?/g, '')
             .replace(/```\n?/g, '')
             .trim();
 
         const lines = rawText.split('\n');
-        let title = lines[0].replace('제목:', '').trim();
-        if (title.length > 50 || title.length < 5) {
-            title = `${keyword} 꼼꼼한 해결 시공기 (전북배관)`;
+        let title = lines[0].replace(/<h1>|<\/h1>|제목:/g, '').trim();
+        if (title.length > 70 || title.length < 5) {
+            title = `${keyword} 꼼꼼한 해결 시공기`;
         }
 
         let content = lines.slice(1).join('\n').trim();
 
-        content = content.replace('[IMG_1]', `<img src="${imageUrls[0]}" alt="${keyword} 현장 모습" style="width:100%; border-radius:10px; margin: 20px 0;" />`);
-        content = content.replace('[IMG_2]', `<img src="${imageUrls[1]}" alt="${keyword} 작업 과정" style="width:100%; border-radius:10px; margin: 20px 0;" />`);
-        content = content.replace('[IMG_3]', `<img src="${imageUrls[2]}" alt="${keyword} 해결 완료" style="width:100%; border-radius:10px; margin: 20px 0;" />`);
+        // [Fix] Remove leaked meta-instructions from content just in case
+        const leakedPhrases = [
+            /AI 검색 엔진과 사용자 모두가 만족할 수 있도록/g,
+            /현장 데이터와 해결 과정을 구조화하여 설명해 드리겠습니다/g,
+            /데이터베이스형 지식 원고를 작성하는 것입니다/g,
+            /AI가 정보를 추출하기 쉽고/g
+        ];
+        leakedPhrases.forEach(phrase => {
+            content = content.replace(phrase, '');
+        });
+
+        content = content.replace(/\[IMG_1\]/g, `<img src="${imageUrls[0]}" alt="${keyword} 현장 모습" style="width:100%; border-radius:10px; margin: 20px 0;" />`);
+        content = content.replace(/\[IMG_2\]/g, `<img src="${imageUrls[1]}" alt="${keyword} 작업 과정" style="width:100%; border-radius:10px; margin: 20px 0;" />`);
+        content = content.replace(/\[IMG_3\]/g, `<img src="${imageUrls[2]}" alt="${keyword} 집중 시공" style="width:100%; border-radius:10px; margin: 20px 0;" />`);
+        content = content.replace(/\[IMG_4\]/g, `<img src="${imageUrls[3]}" alt="${keyword} 해결 완료" style="width:100%; border-radius:10px; margin: 20px 0;" />`);
+
+        // Clean up any remaining IMG tags that might have been halluncinated with different numbers
+        content = content.replace(/\[IMG_\d+\]/g, '');
 
         const placeUrl = NAVER_PLACE_URLS[service] || NAVER_PLACE_URLS['default'];
 

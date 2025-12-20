@@ -189,7 +189,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
 
                 {/* 본문 */}
                 <div
-                    className="prose prose-lg prose-blue mx-auto max-w-none bg-white p-0 md:p-8"
+                    className="prose prose-lg prose-blue mx-auto max-w-none bg-white p-0 md:p-8 prose-headings:font-bold prose-h2:text-3xl prose-h3:text-2xl prose-p:leading-8 prose-li:marker:text-blue-500 prose-img:rounded-xl prose-img:shadow-md"
                     dangerouslySetInnerHTML={{ __html: post.content || '' }}
                 />
 
