@@ -46,18 +46,27 @@ async function fetchWithRetry(url: string, options: any, maxRetries = 3) {
     for (let i = 0; i < maxRetries; i++) {
         try {
             const response = await fetch(url, options);
-            if (response.status === 503 && i < maxRetries - 1) {
-                const waitTime = (i + 1) * 2000;
+
+            // 503(Service Unavailable) 또는 429(Too Many Requests) 처리
+            if ((response.status === 503 || response.status === 429) && i < maxRetries - 1) {
+                // 지수 백오프: 2s, 4s, 8s... + 랜덤 지터
+                const backoffTime = Math.pow(2, i + 1) * 1000;
+                const jitter = Math.random() * 1000;
+                const waitTime = backoffTime + jitter;
+
+                console.warn(`[API] ${response.status} detected. Retrying in ${Math.round(waitTime)}ms... (Attempt ${i + 1}/${maxRetries})`);
                 await new Promise(resolve => setTimeout(resolve, waitTime));
                 continue;
             }
             return response;
         } catch (error) {
             if (i === maxRetries - 1) throw error;
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            const waitTime = Math.pow(2, i + 1) * 1000;
+            console.warn(`[API] Fetch error. Retrying in ${waitTime}ms...`, error);
+            await new Promise(resolve => setTimeout(resolve, waitTime));
         }
     }
-    throw new Error('최대 재시도 횟수 초과');
+    throw new Error('최대 재시도 횟수 초과 또는 API 사용 제한');
 }
 
 export async function generatePostAction() {
@@ -184,36 +193,66 @@ export async function generatePostAction() {
 이제 '전북하수구막힘 반장'으로서 배관 문제에 대한 당신만의 통찰력을 원고에 담아주세요.
 `;
 
-        // API 키는 환경 변수에서 가져옵니다.
-        const API_KEY = process.env.GOOGLE_GEMINI_API_KEY;
+        // B. Gemini Model Fallback Strategy (2.0 Flash -> 1.5 Flash -> 1.5 Pro)
+        const MODELS = ['gemini-2.0-flash-exp', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+        let geminiData: any = null;
+        let usedModel = '';
+        let lastError: any = null;
 
-        const MODEL = 'gemini-2.0-flash'; // Verified working model (Paid Tier Support)
-        console.log(`[PostGen] Requesting ${MODEL} for: ${keyword}`);
-        const geminiResponse = await fetchWithRetry(
-            `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`,
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{ text: prompt }]
-                    }],
-                    generationConfig: {
-                        temperature: 0.85,
-                        maxOutputTokens: 4000
-                    }
-                })
+        console.log(`[PostGen] Starting generation with fallback strategy. Models: ${MODELS.join(', ')}`);
+
+        for (const model of MODELS) {
+            try {
+                console.log(`[PostGen] Attempting with model: ${model} for keyword: ${keyword}`);
+
+                const response = await fetchWithRetry(
+                    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{ text: prompt }]
+                            }],
+                            generationConfig: {
+                                temperature: 0.85,
+                                maxOutputTokens: 4000
+                            }
+                        })
+                    },
+                    1 // Retry only once per model internally to fail fast and switch models
+                );
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Model ${model} Error: ${response.status} ${JSON.stringify(errorData)}`);
+                }
+
+                geminiData = await response.json();
+
+                // [Safety Check]
+                if (!geminiData.candidates || geminiData.candidates.length === 0) {
+                    throw new Error(`Model ${model} returned no candidates (Safety Block?)`);
+                }
+
+                usedModel = model;
+                console.log(`[PostGen] Success with model: ${model}`);
+                break; // Exit loop on success
+
+            } catch (error: any) {
+                console.warn(`[PostGen] Failed with ${model}: ${error.message}`);
+                lastError = error;
+                // Continue to next model
             }
-        );
-
-        if (!geminiResponse.ok) {
-            const errorData = await geminiResponse.json();
-            throw new Error(`Gemini API Error: ${geminiResponse.status} ${JSON.stringify(errorData)}`);
         }
 
-        const geminiData = await geminiResponse.json();
-        console.log(`[PostGen] Gemini response received for: ${keyword}`);
-        let rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '내용 생성 실패';
+        if (!geminiData) {
+            console.error('[PostGen] All models failed.');
+            throw lastError || new Error('All Gemini models failed to generate content.');
+        }
+
+        console.log(`[PostGen] Processing raw text from ${usedModel}...`);
+        let rawText = geminiData.candidates[0].content?.parts?.[0]?.text || '내용 생성 실패';
 
         rawText = rawText
             .replace(/```html\n ?/g, '')

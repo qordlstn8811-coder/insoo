@@ -12,12 +12,12 @@ jobs:
     steps:
       - name: Call Vercel Cron API
         run: |
-          URL="${{ secrets.VERCEL_APP_URL }}"
-          if [ -z "$URL" ]; then
-            echo "::error::VERCEL_APP_URL secret is MISSING! Please add it to Settings > Secrets and variables > Actions > Repository secrets."
-            exit 1
-          fi
+          # [Fixed] Hardcoded domain to ensure stability
+          # Target: https://www.전북하수구막힘.com (Punycode: xn--2e0bm8utzck3fsyi7rvktd.com)
+          URL="https://www.xn--2e0bm8utzck3fsyi7rvktd.com"
+          
           echo "Triggering Blog Post Generation to: $URL"
+          
           # CRON_SECRET을 헤더에 담아 호출
           curl -X GET "$URL/api/cron" \
           -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \

@@ -1,9 +1,17 @@
 import React from 'react';
+import Link from 'next/link';
 
 const neighborhoodData = {
-    '전주 완산구': ['중앙동', '풍남동', '노송동', '완산동', '동서학동', '서서학동', '중화산동', '서신동', '평화동', '삼천동', '효자동'],
-    '전주 덕진구': ['진북동', '인후동', '덕진동', '금암동', '팔복동', '우아동', '호성동', '송천동', '조촌동', '여의동', '혁신동'],
-    '전북 주요지역': ['군산시', '익산시', '완주군', '김제시', '정읍시', '남원시']
+    '전주 완산구': { id: 'jeonju', dongs: ['중앙동', '풍남동', '노송동', '완산동', '동서학동', '서서학동', '중화산동', '서신동', '평화동', '삼천동', '효자동'] },
+    '전주 덕진구': { id: 'jeonju', dongs: ['진북동', '인후동', '덕진동', '금암동', '팔복동', '우아동', '호성동', '송천동', '조촌동', '여의동', '혁신동'] },
+    '전북 주요지역': {
+        '군산시': 'gunsan',
+        '익산시': 'iksan',
+        '완주군': 'wanju',
+        '김제시': 'gimje',
+        '정읍시': 'jeongeup',
+        '남원시': 'namwon'
+    }
 };
 
 const services = ['하수구막힘', '변기막힘', '싱크대막힘', '배관수리', '누수탐지'];
@@ -17,24 +25,48 @@ export default function LocalKeywordGrid() {
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {Object.entries(neighborhoodData).map(([region, neighborhoods]) => (
-                        <div key={region} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                            <h3 className="text-lg font-semibold text-blue-700 mb-4">{region}</h3>
-                            <div className="flex flex-wrap gap-2">
-                                {neighborhoods.map((name, idx) => {
-                                    const service = services[idx % services.length];
-                                    return (
-                                        <span
-                                            key={name}
-                                            className="text-xs text-gray-500 hover:text-blue-600 cursor-default"
-                                        >
-                                            {name}{service},
-                                        </span>
-                                    );
-                                })}
+                    {/* 전주 구별 데이터 처리 */}
+                    {['전주 완산구', '전주 덕진구'].map((key) => {
+                        const data = neighborhoodData[key as keyof typeof neighborhoodData] as { id: string, dongs: string[] };
+                        return (
+                            <div key={key} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                                <h3 className="text-lg font-semibold text-blue-700 mb-4">{key}</h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {data.dongs.map((name, idx) => {
+                                        const service = services[idx % services.length];
+                                        return (
+                                            <Link
+                                                key={name}
+                                                href={`/${data.id}/${encodeURIComponent(name)}`}
+                                                className="text-xs text-gray-400 hover:text-blue-600 hover:font-bold transition-all"
+                                            >
+                                                {name}{service},
+                                            </Link>
+                                        );
+                                    })}
+                                </div>
                             </div>
+                        );
+                    })}
+
+                    {/* 전북 주요 시/군 데이터 처리 */}
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h3 className="text-lg font-semibold text-blue-700 mb-4">전북 주요지역</h3>
+                        <div className="flex flex-wrap gap-2">
+                            {Object.entries(neighborhoodData['전북 주요지역']).map(([name, id], idx) => {
+                                const service = services[idx % services.length];
+                                return (
+                                    <Link
+                                        key={name}
+                                        href={`/${id}`}
+                                        className="text-xs text-gray-400 hover:text-blue-600 hover:font-bold transition-all"
+                                    >
+                                        {name}{service},
+                                    </Link>
+                                );
+                            })}
                         </div>
-                    ))}
+                    </div>
                 </div>
 
                 <div className="mt-10 text-center">

@@ -1,59 +1,70 @@
-# 전북배관 프로젝트 운영 규칙 (Project Rules)
+# ?�북배�? ?�로?�트 ?�영 규칙 (Project Rules)
 
-## 🚨 0. 필수 행동 수칙 (User Mandate)
-- **SEARCH-FIRST POLICY**: 어떤 작업을 제안하거나 실행하기 전에, 반드시 **관련 내용을 먼저 포괄적으로 검색(Web/Docs)**하여 문맥, 제한사항, 문서를 완전히 파악해야 한다. "해도 되나요?"라고 묻기 전에 **먼저 알아보고 근거를 갖춘 뒤에** 안내하라.
-- **ATOMIC INTEGRATION RULE**: 데이터(DB, JSON)와 프론트엔드(UI, Metadata)는 항상 **한 몸(Atomic)**으로 취급한다. 서비스 명칭이나 브랜드명이 바뀔 경우, 데이터만 고치지 말고 이를 참조하는 모든 UI 컴포넌트, 헤더, 메타데이터, 사이트맵을 **동시에(Single Cycle)** 수정하여 파편화를 원천 차단해야 한다. "따로 수정"은 없다.
-- **SYNC VERIFICATION POLICY**: `git push` 후에는 반드시 라이브 페이지(`https://...`)를 직접 스크래핑하거나 브라우저로 확인하여, 배포가 실제 반영되었는지 검증하라. 반영되지 않았다면 즉시 배포 파이프라인(Vercel Repo Link 등)의 문제를 추적 보고해야 한다.
+## ?�� 0. ?�수 ?�동 ?�칙 (User Mandate)
+- **SEARCH-FIRST POLICY**: ?�떤 ?�업???�안?�거???�행?�기 ?�에, 반드??**관???�용??먼�? ?�괄?�으�?검??Web/Docs)**?�여 문맥, ?�한?�항, 문서�??�전???�악?�야 ?�다. "?�도 ?�나??"?�고 묻기 ?�에 **먼�? ?�아보고 근거�?갖춘 ?�에** ?�내?�라.
+- **ATOMIC INTEGRATION RULE**: ?�이??DB, JSON)?� ?�론?�엔??UI, Metadata)????�� **??�?Atomic)**?�로 취급?�다. ?�비??명칭?�나 브랜?�명??바�?경우, ?�이?�만 고치지 말고 ?��? 참조?�는 모든 UI 컴포?�트, ?�더, 메�??�이?? ?�이?�맵??**?�시??Single Cycle)** ?�정?�여 ?�편?��? ?�천 차단?�야 ?�다. "?�로 ?�정"?� ?�다.
+- **SYNC VERIFICATION POLICY**: `git push` ?�에??반드???�이�??�이지(`https://...`)�?직접 ?�크?�핑?�거??브라?��?�??�인?�여, 배포가 ?�제 반영?�었?��? 검증하?? 반영?��? ?�았?�면 즉시 배포 ?�이?�라??Vercel Repo Link ????문제�?추적 보고?�야 ?�다.
 
 
-이 파일은 AI 에이전트가 이 프로젝트를 다룰 때 반드시 지켜야 할 "절대 규칙"과 "비상 대응 매뉴얼"을 정의합니다.
+???�일?� AI ?�이?�트가 ???�로?�트�??�룰 ??반드??지켜야 ??"?��? 규칙"�?"비상 ?�??매뉴?????�의?�니??
 
 ---
 
-## 🚨 1. 배포 및 Vercel 관련 (CRITICAL)
+## ?�� 1. 배포 �?Vercel 관??(CRITICAL)
 
-### 1-1. Git Author 권한 오류 회피 (필수)
-- **상황**: `npx vercel deploy --prod` 실행 시 `Error: Git author ... must have access...` 오류 발생.
-- **원인**: 로컬 PC의 Git 이메일(`admin@...`)이 Vercel 팀 멤버에 등록되지 않음.
-- **해결책 (우회법)**:
-  배포 전에 `.git` 폴더를 잠시 숨겨서, Vercel이 Git 정보를 읽지 못하게 해야 합니다.
+### 1-1. Git Author 권한 ?�류 ?�피 (?�수)
+- **?�황**: `npx vercel deploy --prod` ?�행 ??`Error: Git author ... must have access...` ?�류 발생.
+- **?�인**: 로컬 PC??Git ?�메??`admin@...`)??Vercel ?� 멤버???�록?��? ?�음.
+- **?�결�?(?�회�?**:
+  배포 ?�에 `.git` ?�더�??�시 ?�겨?? Vercel??Git ?�보�??��? 못하�??�야 ?�니??
   ```powershell
-  # 1. .git 숨기기
+  # 1. .git ?�기�?
   Rename-Item .git .git_tmp
   
   # 2. 강제 배포
   npx vercel deploy --prod --force
   
-  # 3. .git 원상복구 (필수)
+  # 3. .git ?�상복구 (?�수)
   Rename-Item .git_tmp .git
   ```
-  **주의**: 배포 후 `.git` 폴더를 복구하지 않으면 Git 명령어가 작동하지 않으니 즉시 복구할 것.
+  **주의**: 배포 ??`.git` ?�더�?복구?��? ?�으�?Git 명령?��? ?�동?��? ?�으??즉시 복구??�?
 
-### 1-2. 도메인 관리 및 주소
-- **사용 중인 도메인**: `xn--2e0bm8utzck3fsyi7rvktd.com` (퓨니코드)
-- **한글 도메인**: `전북하수구막힘.com`
-- **올바른 Vercel 프로젝트**: `jeonbuk-hasugu` (과거에 `final12` 등 임시 프로젝트 금지)
-- **도메인 연결 명령**:
+### 1-2. ?�메??관�?�?주소
+- **?�용 중인 ?�메??*: `xn--2e0bm8utzck3fsyi7rvktd.com` (?�니코드)
+- **?��? ?�메??*: `?�북?�수구막??com`
+- **?�바�?Vercel ?�로?�트**: `jeonbuk-hasugu` (과거??`final12` ???�시 ?�로?�트 금�?)
+- **?�메???�결 명령**:
   ```powershell
   npx vercel domains add xn--2e0bm8utzck3fsyi7rvktd.com
   ```
-  만약 "다른 프로젝트에 있다"고 하면 `domains remove` 후 가져올 것.
+  만약 "?�른 ?�로?�트???�다"�??�면 `domains remove` ??가?�올 �?
 
 ---
 
-## ✅ 2. 작업 절차 (Process)
+## ??2. ?�업 ?�차 (Process)
 
-1. **내용물 우선 확인**: 404 오류가 뜨면 도메인 탓을 하기 전에 `deploy`가 성공했는지부터 로그(`✅ Production`)로 확인한다.
-2. **무단 변경 금지**: `package.json`의 빌드 스크립트나 주요 환경설정은 사용자 승인 없이 바꾸지 않는다.
-3. **학습 후 실행**: 모르는 오류가 발생하면 즉시 멈추고 `PROJECT_DOCS.md`나 이 규칙 파일을 다시 읽어본다.
+1. **?�용�??�선 ?�인**: 404 ?�류가 ?�면 ?�메???�을 ?�기 ?�에 `deploy`가 ?�공?�는지부??로그(`??Production`)�??�인?�다.
+2. **무단 변�?금�?**: `package.json`??빌드 ?�크립트??주요 ?�경?�정?� ?�용???�인 ?�이 바꾸지 ?�는??
+3. **?�습 ???�행**: 모르???�류가 발생?�면 즉시 멈추�?`PROJECT_DOCS.md`????규칙 ?�일???�시 ?�어본다.
 
 ---
 
-## 🔒 3. 보안
-- `.env` 파일의 키 값이나 비밀번호(`1234` 등)를 외부로 유출하지 않는다.
-- Admin 페이지 접속 정보는 로컬 코드(`src/app/admin/AdminDashboard.tsx`)에 하드코딩 되어 있음.
+## ?�� 3. 보안
+- `.env` ?�일????값이??비�?번호(`1234` ??�??��?�??�출?��? ?�는??
+- Admin ?�이지 ?�속 ?�보??로컬 코드(`src/app/admin/AdminDashboard.tsx`)???�드코딩 ?�어 ?�음.
 
-## ⚠️ 4. 절대 금지 및 승인 필수 (Strict Rules)
-1. **인증/식별 정보 변경 금지**: `git config user.email`, `user.name` 등 신원과 관련된 설정은 사용자가 명확하게 "변경해"라고 지시하기 전까지 절대 임의로 변경하지 않는다. 추측해서 실행하는 것 엄금.
-2. **프로덕션 배포 전 승인**: `vercel deploy --prod` 명령은 반드시 계획을 보고하고, 마지막으로 "배포하겠습니다"라고 묻고 승인을 받은 후에만 실행한다.
-3. **프론트엔드 키 노출 절대 금지**: API Key, Service Role Key, 개인정보(전화번호, 주소 등)는 절대 브라우저로 전송되는 코드(`use client`, `tsx`)에 하드코딩하거나 포함시키지 않는다. 반드시 API Route(`app/api/...`)를 통해서만 접근한다.
+## ?�️ 4. ?��? 금�? �??�인 ?�수 (Strict Rules)
+1. **?�증/?�별 ?�보 변�?금�?**: `git config user.email`, `user.name` ???�원�?관?�된 ?�정?� ?�용?��? 명확?�게 "변경해"?�고 지?�하�??�까지 ?��? ?�의�?변경하지 ?�는?? 추측?�서 ?�행?�는 �??�금.
+2. **?�로?�션 배포 ???�인**: `vercel deploy --prod` 명령?� 반드??계획??보고?�고, 마�?막으�?"배포?�겠?�니???�고 묻고 ?�인??받�? ?�에�??�행?�다.
+3. **?�론?�엔?????�출 ?��? 금�?**: API Key, Service Role Key, 개인?�보(?�화번호, 주소 ?????��? 브라?��?�??�송?�는 코드(`use client`, `tsx`)???�드코딩?�거???�함?�키지 ?�는?? 반드??API Route(`app/api/...`)�??�해?�만 ?�근?�다.
+
+##  5. �ڵ� �۾��� (Cron) �� ������ / Env ����
+- **Cron �۵� ���**: 15�и��� GitHub Actions�� https://www.xn--2e0bm8utzck3fsyi7rvktd.com/api/cron ȣ��.
+  - **����**: Vercel�� VERCEL_APP_URL ������ �Ҿ����Ͽ� GitHub Action �ڵ�(cron.yml)�� �������� **�ϵ��ڵ�** �ص�. �Ժη� ������ �ǵ����� �� ��.
+- **�ʼ� ȯ�� ���� (GitHub & Vercel ����)**:
+  - CRON_SECRET: Vercel�� GitHub Secrets ���� **�ݵ�� ��ġ**�ؾ� �� (���簪: my_secure_password_2025 �� ����ȭ��).
+  - SUPABASE_SERVICE_ROLE_KEY: ������ �� ���� ������.
+- **�߿� ������ ����**:
+  - �� ������: www.�����ϼ�������.com (Punycode: xn--...)
+  - Vercel ������Ʈ: jeonbuk-hasugu (-final12 ��� ȥ�� ����)
+
