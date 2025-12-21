@@ -46,7 +46,7 @@ export async function GET(request: Request) {
         const promises = Array.from({ length: limit }).map(async (_, idx) => {
             // 약간의 지연을 주어 API 몰림 방지 (0s, 2s, 4s...)
             await new Promise(resolve => setTimeout(resolve, idx * 2000));
-            return generatePostAction();
+            return generatePostAction('auto');
         });
 
         const results = await Promise.all(promises);

@@ -108,6 +108,7 @@ export default function AdminDashboard() {
 
     const [posts, setPosts] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
+    const [dbLogs, setDbLogs] = useState<any[]>([]);
 
     // Cron 설정 상태
     const [settings, setSettings] = useState<CronSettings>({
@@ -133,24 +134,35 @@ export default function AdminDashboard() {
         e.preventDefault();
         if (password === '1234') {
             setIsAuthenticated(true);
-            fetchPosts();
+            fetchAllData();
         } else {
             alert('비밀번호가 틀렸습니다.');
         }
     };
 
-    // 2. 게시글 목록 불러오기
-    const fetchPosts = async () => {
+    // 2. 데이터 불러오기
+    const fetchAllData = async () => {
         setLoading(true);
-        // 게시글 목록 (시스템 글 제외)
-        const { data } = await supabase
+        // 게시글 목록
+        const { data: postData } = await supabase
             .from('posts')
             .select('*')
-            .neq('status', 'system') // 시스템 설정 글은 목록에서 제외
+            .neq('status', 'system')
             .order('created_at', { ascending: false });
-        if (data) setPosts(data);
+        if (postData) setPosts(postData);
+
+        // 크론 로그 목록 (최신 30개)
+        const { data: logData } = await supabase
+            .from('cron_logs')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(30);
+        if (logData) setDbLogs(logData);
+
         setLoading(false);
     };
+
+    const fetchPosts = fetchAllData; // 기존 코드 호환성 유지
 
     // 설정 불러오기
     const fetchSettings = async () => {
@@ -167,12 +179,14 @@ export default function AdminDashboard() {
     useEffect(() => {
         if (isAuthenticated) {
             fetchSettings();
+            fetchAllData();
         }
     }, [isAuthenticated]);
 
-    // 3. 로그 추가 함수
+    // 3. 로그 추가 함수 (실시간 브라우저 내 로그)
     const addLog = (msg: string) => {
         setLogs((prev) => [`[${new Date().toLocaleTimeString()}] ${msg}`, ...prev]);
+        if (msg.includes('성공') || msg.includes('완료')) fetchAllData();
     };
 
     // 4. 단일 생성 요청 함수
@@ -224,7 +238,7 @@ export default function AdminDashboard() {
             await generateOnePost(i);
 
             // 목록 중간 갱신
-            if (i % 5 === 0) fetchPosts();
+            if (i % 5 === 0) fetchAllData();
 
             // 랜덤 딜레이 (마지막 작업이 아닐 때만)
             if (i < targetCount && !shouldStopRef.current) {
@@ -236,7 +250,7 @@ export default function AdminDashboard() {
 
         addLog('🎉 모든 작업이 완료되었습니다.');
         setIsLooping(false);
-        fetchPosts();
+        fetchAllData();
     };
 
     // 6. 작업 중단
@@ -377,19 +391,55 @@ export default function AdminDashboard() {
                         </div>
                     </div>
 
-                    {/* 2. 로그 창 */}
-                    <div className="rounded-2xl border border-gray-200 bg-gray-900 p-4 shadow-sm h-64 flex flex-col">
+                    {/* 2. 로그 창 (통합 히스토리) */}
+                    <div className="rounded-2xl border border-gray-200 bg-gray-900 p-4 shadow-sm h-[400px] flex flex-col">
                         <div className="mb-2 flex items-center justify-between text-xs font-bold text-gray-400">
-                            <span>SYSTEM LOG</span>
-                            <button onClick={() => setLogs([])} className="hover:text-white">Clear</button>
+                            <span className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                CRON HISTORY (DB 로그 최신 30개)
+                            </span>
+                            <button onClick={fetchAllData} className="hover:text-white flex items-center gap-1">
+                                🔄 갱신
+                            </button>
                         </div>
+
                         <div className="flex-1 overflow-y-auto space-y-1 scrollbar-thin scrollbar-thumb-gray-700 pr-2">
-                            {logs.length === 0 && <span className="text-gray-600 text-xs text-center block mt-10">대기 중...</span>}
-                            {logs.map((log, i) => (
-                                <div key={i} className="text-xs font-mono text-green-400 border-b border-gray-800 pb-1 mb-1 last:border-0">
-                                    {log}
+                            {dbLogs.length === 0 && <span className="text-gray-600 text-xs text-center block mt-10">로그가 없습니다.</span>}
+                            {dbLogs.map((log) => (
+                                <div key={log.id} className="text-[10px] font-mono border-b border-gray-800 pb-2 mb-2 last:border-0">
+                                    <div className="flex justify-between items-center mb-1">
+                                        <span className={`${log.status === 'success' ? 'text-green-400' : 'text-red-400'} font-bold`}>
+                                            [{log.status.toUpperCase()}] {log.job_type === 'auto' ? '🤖 자동' : '👤 수동'}
+                                        </span>
+                                        <span className="text-gray-500">
+                                            {new Date(log.created_at).toLocaleString()}
+                                        </span>
+                                    </div>
+                                    {log.status === 'success' ? (
+                                        <div className="text-gray-300 truncate">
+                                            ✅ {log.title || log.keyword}
+                                            <span className="ml-2 text-gray-600">({log.model_used})</span>
+                                        </div>
+                                    ) : (
+                                        <div className="text-red-300 break-words bg-red-900/20 p-1 rounded">
+                                            ❌ {log.error_message}
+                                        </div>
+                                    )}
                                 </div>
                             ))}
+                        </div>
+
+                        {/* 실시간 수동 로그 (선택 시 보여주기 위해 작게 유지) */}
+                        <div className="mt-4 border-t border-gray-800 pt-2 h-32 flex flex-col">
+                            <div className="mb-1 text-[10px] font-bold text-gray-500 uppercase tracking-wider">Manual Console</div>
+                            <div className="flex-1 overflow-y-auto space-y-1">
+                                {logs.length === 0 && <span className="text-gray-700 text-[10px]">대기 중...</span>}
+                                {logs.map((log, i) => (
+                                    <div key={i} className="text-[10px] font-mono text-blue-400">
+                                        {log}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>

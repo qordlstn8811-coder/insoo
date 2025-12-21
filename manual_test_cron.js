@@ -18,7 +18,7 @@ console.log(`📡 Connecting to https://${DOMAIN}/api/cron ...`);
 
 const req = https.request(options, (res) => {
   console.log(`✅ Status Code: ${res.statusCode}`);
-  
+
   let data = '';
 
   res.on('data', (chunk) => {
@@ -29,11 +29,13 @@ const req = https.request(options, (res) => {
     try {
       console.log('📄 Response Body:');
       console.log(JSON.parse(data));
-      
-      if (res.statusCode === 200) {
-        console.log('\n🎉 성공! 글이 생성되었습니다. 홈페이지를 확인해보세요.');
+      const body = JSON.parse(data);
+
+      if (res.statusCode === 200 && body.generated > 0) {
+        console.log('\n🎉 진짜 성공! 글이 1개 생성되었습니다. (generated: 1 확인됨)');
       } else {
-        console.log('\n⚠️ 실패! 위 에러 메시지를 확인하세요.');
+        console.log('\n⚠️ 실패! (사이트 연결은 됐지만, 글이 안 써졌습니다)');
+        console.log(`원인: ${JSON.stringify(body.details)}`);
       }
     } catch (e) {
       console.log('Raw Output:', data);
