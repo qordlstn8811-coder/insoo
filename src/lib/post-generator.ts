@@ -195,10 +195,10 @@ export async function generatePostAction() {
 
         // B. Gemini Model Fallback Strategy (Corrected List)
         const MODELS = [
-            'gemini-1.5-flash',       // 1. 주력 (가장 안정적/빠름)
-            'gemini-1.5-pro',         // 2. 고성능 (Pro)
-            'gemini-1.5-flash-8b',    // 3. 초고속 (8b)
-            'gemini-pro'              // 4. 구형 1.0 (Legacy)
+            'gemini-2.0-flash',       // 1. New Main Model (Available)
+            'gemini-2.0-flash-exp',   // 2. Fallback
+            'gemini-flash-latest',    // 3. Fallback generic
+            'gemini-2.5-flash'        // 4. Future proof
         ];
         let geminiData: any = null;
         let usedModel = '';
