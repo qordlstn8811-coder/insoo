@@ -193,8 +193,15 @@ export async function generatePostAction() {
 이제 '전북하수구막힘 반장'으로서 배관 문제에 대한 당신만의 통찰력을 원고에 담아주세요.
 `;
 
-        // B. Gemini Model Fallback Strategy (2.0 Flash -> 1.5 Flash -> 1.5 Pro)
-        const MODELS = ['gemini-2.0-flash-exp', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+        // B. Gemini Model Fallback Strategy (Extended List)
+        // 순서: 최신/고지능 -> 빠름/가성비 -> 구형/안정적
+        const MODELS = [
+            'gemini-2.0-flash-exp',   // 1. 최신 (High Intelligence)
+            'gemini-1.5-pro',         // 2. 고성능 (Stable Pro)
+            'gemini-1.5-flash',       // 3. 표준 (Standard Flash)
+            'gemini-1.5-flash-8b',    // 4. 초고속 (High Speed)
+            'gemini-1.0-pro'          // 5. 구형 (Legacy Reliability)
+        ];
         let geminiData: any = null;
         let usedModel = '';
         let lastError: any = null;
