@@ -11,11 +11,27 @@ export async function GET(request: Request) {
         const { searchParams } = new URL(request.url);
         const apiKey = searchParams.get('key');
 
+        // Check for essential environment variables
+        if (!process.env.CRON_SECRET) {
+            console.error('[Cron] CRON_SECRET is missing in environment variables.');
+            return NextResponse.json({ error: 'Server Configuration Error: CRON_SECRET missing' }, { status: 500 });
+        }
+
+        if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+            console.error('[Cron] SUPABASE_SERVICE_ROLE_KEY is missing in environment variables.');
+            return NextResponse.json({ error: 'Server Configuration Error: SUPABASE_SERVICE_ROLE_KEY missing' }, { status: 500 });
+        }
+
         // 헤더 또는 쿼리 파라미터로 인증 허용 (GitHub Actions/Vercel Cron 호환)
-        const isValid = (process.env.CRON_SECRET && authHeader === `Bearer ${process.env.CRON_SECRET}`) ||
-            (process.env.CRON_SECRET && apiKey === process.env.CRON_SECRET);
+        const isValid = (authHeader === `Bearer ${process.env.CRON_SECRET}`) ||
+            (apiKey === process.env.CRON_SECRET);
 
         if (!isValid) {
+            console.warn('[Cron] Unauthorized access attempt.', {
+                hasAuthHeader: !!authHeader,
+                hasApiKey: !!apiKey,
+                // Do not log actual values for security
+            });
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
