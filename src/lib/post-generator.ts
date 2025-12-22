@@ -55,7 +55,7 @@ const INFO_TOPICS = [
     '욕실 타일 곰팡이 완벽 제거 청소법'
 ];
 
-async function fetchWithRetry(url: string, options: any, maxRetries = 3) {
+async function fetchWithRetry(url: string, options: any, maxRetries = 5) {
     for (let i = 0; i < maxRetries; i++) {
         try {
             const response = await fetch(url, options);
@@ -298,7 +298,9 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
         });
         title = uniqueWords.join(' ');
 
-        if (title.length > 70 || title.length < 5) title = `${keyword} 꼼꼼한 해결 시공기`;
+        if (title.length > 70 || title.length < 5) {
+            title = isInfoPost ? `${keyword} 핵심 정보 정리` : `${keyword} 꼼꼼한 해결 시공기`;
+        }
 
         let content = lines.slice(1).join('\n').trim();
 

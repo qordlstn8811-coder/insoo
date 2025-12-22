@@ -49,7 +49,7 @@ export async function GET(request: Request) {
 
             // [Retry Logic] 최대 3번 재시도
             let result;
-            const maxRetries = 3;
+            const maxRetries = 5;
 
             for (let attempt = 1; attempt <= maxRetries; attempt++) {
                 try {
