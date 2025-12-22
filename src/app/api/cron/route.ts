@@ -44,9 +44,36 @@ export async function GET(request: Request) {
 
         // 3. 병렬 실행 (Promise.all)
         const promises = Array.from({ length: limit }).map(async (_, idx) => {
-            // 약간의 지연을 주어 API 몰림 방지 (0s, 2s, 4s...)
+            // 초기 지연 (API 몰림 방지)
             await new Promise(resolve => setTimeout(resolve, idx * 2000));
-            return generatePostAction('auto');
+
+            // [Retry Logic] 최대 3번 재시도
+            let result;
+            const maxRetries = 3;
+
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    result = await generatePostAction('auto');
+
+                    if (result.success) {
+                        if (attempt > 1) {
+                            console.log(`[Cron] Succeeded on attempt ${attempt}`);
+                        }
+                        return result;
+                    }
+
+                    console.warn(`[Cron] Attempt ${attempt}/${maxRetries} failed: ${result.error}`);
+
+                    if (attempt < maxRetries) {
+                        const backoff = attempt * 3000; // 3s, 6s...
+                        await new Promise(resolve => setTimeout(resolve, backoff));
+                    }
+                } catch (e: any) {
+                    console.error(`[Cron] Critical error on attempt ${attempt}:`, e);
+                    if (attempt < maxRetries) await new Promise(resolve => setTimeout(resolve, attempt * 3000));
+                }
+            }
+            return result || { success: false, error: 'Max retries exceeded' };
         });
 
         const results = await Promise.all(promises);
