@@ -155,6 +155,25 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
 
         const mainImageUrl = imageUrls[0];
 
+        // C. Prompt Construction
+        const prompt = `
+        당신은 20년 경력의 베테랑 배관 전문가이자 블로그 마케팅 전문가입니다.
+        아래 정보를 바탕으로 고객의 신뢰를 얻을 수 있는 전문적인 블로그 포스팅을 작성해주세요.
+
+        정보:
+        - 핵심 키워드: ${keyword}
+        - 글의 형식: ${template}
+        - 타겟 독자: ${targetAudience}
+        - 상황 연출: ${usageContext}
+
+        요청사항:
+        1. 글의 제목은 <h1> 태그로 작성하고, 클릭을 유도하는 매력적인 문구여야 합니다.
+        2. 본문은 <h2>, <p>, <ul>, <li> 태그를 적절히 사용하여 가독성을 높여주세요.
+        3. [IMG_1], [IMG_2], [IMG_3], [IMG_4]를 적절한 위치에 삽입하여 현장감을 살려주세요.
+        4. 말투는 친절하고 전문적이어야 하며, 공감을 이끌어내는 스토리텔링 방식을 사용하세요.
+        5. 마크다운이 아닌 적절한 HTML 포맷으로 출력해주세요. (html, head, body 태그 제외)
+        `;
+
         // B. Gemini Model Fallback Strategy
         const MODELS = [
             'gemini-2.0-flash',
