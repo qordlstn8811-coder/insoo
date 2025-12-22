@@ -7,7 +7,7 @@ const CRON_SECRET = 'my_secure_password_2025'; // .github/workflows/cron.yml에 
 const options = {
   hostname: DOMAIN,
   port: 443,
-  path: '/api/cron?limit=1', // 1개만 생성 시도
+  path: '/api/cron?limit=5', // 5개 생성 시도 (배치 테스트)
   method: 'GET',
   headers: {
     'Authorization': `Bearer ${CRON_SECRET}`
