@@ -285,10 +285,21 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
         if (!geminiData) throw lastError || new Error('All Gemini models failed.');
 
         let rawText = geminiData.candidates[0].content?.parts?.[0]?.text || '내용 생성 실패';
-        rawText = rawText.replace(/```html\n ?/g, '').replace(/```\n?/g, '').trim();
 
-        const lines = rawText.split('\n');
-        let title = lines[0].replace(/<h1>|<\/h1>|제목:/g, '').trim();
+        // Remove code blocks and common HTML wrappers
+        rawText = rawText
+            .replace(/```html\n ?/g, '')
+            .replace(/```\n?/g, '')
+            .replace(/<!DOCTYPE[^>]*>/gi, '')
+            .replace(/<html[^>]*>/gi, '')
+            .replace(/<head[^>]*>[\s\S]*?<\/head>/gi, '')
+            .replace(/<body[^>]*>/gi, '')
+            .replace(/<\/body>/gi, '')
+            .replace(/<\/html>/gi, '')
+            .trim();
+
+        const lines = rawText.split('\n').map((l: string) => l.trim()).filter((l: string) => l.length > 0);
+        let title = lines[0] ? lines[0].replace(/<h1>|<\/h1>|제목:/g, '').trim() : `${keyword} 해결 시공기`;
 
         // [Fix] 지역명 중복 제거 (예: '전주 완산구 서신동 전주 완산구 서신동 ...')
         const titleWords = title.split(' ');

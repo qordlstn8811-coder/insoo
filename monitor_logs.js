@@ -78,7 +78,13 @@ function printLog(log) {
     const time = new Date(log.created_at).toLocaleTimeString();
     const icon = log.status === 'success' ? '✅' : '❌';
     const type = log.job_type === 'auto' ? '[Auto]' : '[Manual]';
-    console.log(`${time} ${icon} ${type} ${log.title || 'No Title'} (${log.keyword})`);
+    // Note: We don't have category in cron_logs yet, but let's add it if we ever do. 
+    // For now, let's just make it look better and show the model.
+    console.log(`${time} ${icon} ${type} ${log.title || 'No Title'}`);
+    console.log(`   └─ Keyword: ${log.keyword}`);
+    if (log.model_used) {
+        console.log(`   └─ Model: ${log.model_used}`);
+    }
     if (log.status !== 'success') {
         console.log(`   └─ Error: ${log.error_message}`);
     }
