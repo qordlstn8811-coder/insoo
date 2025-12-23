@@ -692,14 +692,14 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
             currentKeyword = keyword;
 
             const infoImagePrompts = [
-                `professional plumbing tools collection, wrench, pipe cutter, neatly arranged on workbench, no people`,
-                `clean modern bathroom interior in Korea, sparkling clean, bright lighting, empty room`,
-                `diy home repair tools on table, wrench, plunger, gloves, realistic photo, object focus`,
-                `comfortable clean living room interior, warm sunlight, cozy atmosphere, no people`
+                `3d render of blue water splash, clean and fresh, minimalist, bright blue background, 8k, high quality`,
+                `shiny chrome plumbing wrench and tools on clean white surface, minimalist photography, bright studio lighting`,
+                `abstract blue and white flowing water lines, modern graphic design, tech style, no text`,
+                `clean modern bathroom interior, empty room, bright sunshine, white tile, sparkling clean`
             ];
 
             imageUrls = infoImagePrompts.map((p, index) => {
-                const promptEnc = encodeURIComponent(`${p}, realistic, photo, 4k, bright lighting, no people`);
+                const promptEnc = encodeURIComponent(`${p}, no people, no humans, object only`);
                 const seed = Math.floor(Date.now() / 1000) + Math.floor(Math.random() * 100000) + (index * 9999);
                 return `https://image.pollinations.ai/prompt/${promptEnc}?width=1024&height=768&seed=${seed}&nologo=true`;
             });
