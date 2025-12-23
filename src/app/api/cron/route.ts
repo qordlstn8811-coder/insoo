@@ -23,14 +23,21 @@ export async function GET(request: Request) {
         }
 
         // 헤더 또는 쿼리 파라미터로 인증 허용 (GitHub Actions/Vercel Cron 호환)
-        const isValid = (authHeader === `Bearer ${process.env.CRON_SECRET}`) ||
-            (apiKey === process.env.CRON_SECRET);
+        // [Robustness] Trim whitespace to prevent 401 errors from hidden characters
+        const cleanHeader = authHeader?.trim();
+        const cleanKey = apiKey?.trim();
+        const serverSecret = process.env.CRON_SECRET?.trim();
+
+        const isValid = (cleanHeader === `Bearer ${serverSecret}`) ||
+            (cleanKey === serverSecret);
 
         if (!isValid) {
             console.warn('[Cron] Unauthorized access attempt.', {
                 hasAuthHeader: !!authHeader,
                 hasApiKey: !!apiKey,
-                // Do not log actual values for security
+                // Length check for debugging (do not log actual values)
+                headerLength: cleanHeader?.length,
+                secretLength: serverSecret?.length ? serverSecret.length + 7 : 0
             });
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
