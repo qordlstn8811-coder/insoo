@@ -1,6 +1,8 @@
 name: Blog Post Cron
 
 on:
+  push:
+    branches: [main]
   schedule:
     # 15분마다 실행 (하루 약 100개 목표)
     - cron: '*/15 * * * *'
