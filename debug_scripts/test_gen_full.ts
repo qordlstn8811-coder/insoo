@@ -1,9 +1,19 @@
 
-import dotenv from 'dotenv';
+import fs from 'fs';
 import path from 'path';
 
-// Load environment variables from .env.local
-dotenv.config({ path: path.resolve(__dirname, '.env.local') });
+const envPath = path.resolve(__dirname, '.env.local');
+if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    envContent.split('\n').forEach(line => {
+        const parts = line.split('=');
+        if (parts.length >= 2) {
+            const key = parts[0].trim();
+            const val = parts.slice(1).join('=').trim().replace(/"/g, '');
+            process.env[key] = val;
+        }
+    });
+}
 
 import { generatePostAction } from './src/lib/post-generator';
 

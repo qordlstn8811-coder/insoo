@@ -27,9 +27,13 @@ export async function generateMetadata({ params }: { params: Promise<{ city: str
     const regionName = region?.name || city;
     const dongName = decodeURIComponent(dong);
 
+    // 키워드 다양화
+    const suffixKeywords = ['하수구막힘', '변기뚫음', '싱크대막힘', '24시 긴급출동', '배관수리'];
+    const randomSuffix = suffixKeywords[Math.floor(Math.random() * suffixKeywords.length)];
+
     return {
-        title: `${dongName} 하수구막힘 싱크대·변기뚫음 24시 긴급출동 | 30분 내 방문`,
-        description: `${regionName} ${dongName} 지역 하수구막힘, 싱크대막힘, 변기막힘 24시 긴급출동. 최신 장비로 확실하게 해결! 010-8184-3496`,
+        title: `${dongName} ${randomSuffix} | ${regionName} 배관전문업체`,
+        description: `${regionName} ${dongName} 지역 ${randomSuffix} 24시 긴급출동. 최신 장비와 합리적인 정찰제 가격으로 확실하게 해결해 드립니다. 010-8184-3496`,
         keywords: `${dongName}하수구, ${dongName}변기막힘, ${regionName} ${dongName}, ${dongName}싱크대막힘, ${dongName}고압세척`,
         alternates: {
             canonical: `https://xn--2e0bm8utzck3fsyi7rvktd.com/${city}/${dong}`,

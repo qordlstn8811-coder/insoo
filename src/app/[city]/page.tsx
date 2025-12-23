@@ -18,9 +18,13 @@ export async function generateMetadata({ params }: { params: Promise<{ city: str
     const region = jeonbukRegions.find(r => r.id === city);
     const regionName = region?.name || city;
 
+    // 키워드 다양화
+    const suffixKeywords = ['하수구막힘', '변기뚫음', '싱크대막힘', '배관고압세척', '24시 긴급출동'];
+    const randomSuffix = suffixKeywords[Math.floor(Math.random() * suffixKeywords.length)];
+
     return {
-        title: `${regionName} 하수구막힘 싱크대·변기뚫음 24시 긴급출동 | 30분 내 방문`,
-        description: `${regionName} 지역 하수구막힘, 싱크대막힘, 변기막힘 전문. 30분내 긴급출동! ${regionName} ${region?.districts.slice(0, 5).join(', ')} 등 전지역 출장. 010-8184-3496`,
+        title: `${regionName} ${randomSuffix} | 전북하수구막힘 30분 내 방문`,
+        description: `${regionName} 지역 ${randomSuffix} 전문. 30분내 긴급출동! ${regionName} ${region?.districts.slice(0, 5).join(', ')} 등 전지역 출장 가능. 010-8184-3496`,
         keywords: `${regionName}하수구, ${regionName}변기막힘, ${regionName}싱크대막힘, ${regionName}고압세척, ${regionName}배관청소`,
         alternates: {
             canonical: `https://xn--2e0bm8utzck3fsyi7rvktd.com/${city}`,

@@ -1,0 +1,61 @@
+﻿
+> jeonbuk-hasugu@0.1.0 build
+> next build
+
+   ??Next.js 16.0.10 (Turbopack)
+   - Environments: .env.local, .env.production
+
+   Creating an optimized production build ...
+ ??Compiled successfully in 1628.5ms
+   Running TypeScript ...
+node.exe : Failed to c
+ompile.
+위치 줄:1 문자:1
++ & "C:\Program Files\
+nodejs/node.exe" "C:\P
+rogram Files\nodejs/no
+de_mo ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (Failed to    
+ compile.:String)     
+[], RemoteExcepti    o
+n
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+
+./debug_post_gen_stand
+alone.ts:2:20
+Type error: Cannot fin
+d module 'dotenv' or i
+ts corresponding type 
+declarations.
+
+[0m [90m 1 |[39m
+[31m[1m>[22m[39m[
+90m 2 |[39m [36mimpo
+rt[39m dotenv [36mfr
+om[39m [32m'dotenv'
+[39m[33m;[39m
+ [90m   |[39m       
+             [31m[1m
+^[22m[39m
+ [90m 3 |[39m [36mi
+mport[39m path [36mf
+rom[39m [32m'path'[
+39m[33m;[39m
+ [90m 4 |[39m [36mi
+mport[39m { createCli
+ent } [36mfrom[39m 
+[32m'@supabase/supabas
+e-js'[39m[33m;[39m
+ [90m 5 |[39m[0m
+Next.js build worker e
+xited with code: 1 and
+ signal: null

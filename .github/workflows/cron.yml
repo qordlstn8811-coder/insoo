@@ -2,8 +2,9 @@ name: Blog Post Cron
 
 on:
   schedule:
-    # 1시간마다 실행 (매시 0분) -> 하루 24회 * 5개 = 120개 발행
-    - cron: '0 * * * *'
+    # 15분마다 실행 (하루 96회 * 1개 = 약 100개 발행)
+    # 한 번에 많이 요청하는 것보다 자주 호출하여 타임아웃/Gemini 제한을 피하는 것이 훨씬 안정적입니다.
+    - cron: '*/15 * * * *'
   workflow_dispatch: # 수동 실행 버튼
 
 jobs:
@@ -18,7 +19,7 @@ jobs:
           
           echo "Triggering Blog Post Generation to: $URL"
           
-          # CRON_SECRET을 헤더에 담아 호출 (한 번에 5개 생성)
-          curl -X GET "$URL/api/cron?limit=5" \
+          # 안정성을 위해 한 번에 1개씩만 생성 (15분 간격)
+          curl -X GET "$URL/api/cron?limit=1" \
           -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
           --fail || exit 1
