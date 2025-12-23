@@ -28,31 +28,21 @@ function stripPhoneNumbers(text: string): string {
  * Enhanced with more diverse colors and patterns.
  */
 function generateGraphicCardHtml(text: string, seed: number): string {
-    const gradients = [
-        'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        'linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)',
-        'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)',
-        'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-        'linear-gradient(135deg, #5ee7df 0%, #b490d2 100%)',
-        'linear-gradient(135deg, #2af598 0%, #009efd 100%)',
-        'linear-gradient(135deg, #f6d365 0%, #fda085 100%)',
-        'linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)',
-        'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)',
-        'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-        'linear-gradient(45deg, #ff0844 0%, #ffb199 100%)',
-        'linear-gradient(to top, #30cfd0 0%, #330867 100%)',
-        'linear-gradient(to right, #43e97b 0%, #38f8d8 100%)',
-        'linear-gradient(to top, #fa709a 0%, #fee140 100%)'
-    ];
+    // [Modified] User Request: "Never overlap" - Use dynamic HSL generation for infinite variety
+    // Generate a random base hue based on seed + randomness
+    const baseHue = (seed * 137 + Math.floor(Math.random() * 360)) % 360;
+    const complHue = (baseHue + 45 + Math.floor(Math.random() * 90)) % 360;
 
-    // Use seed for variety but add some randomness to the selection
-    const randomIndex = (seed + Math.floor(Math.random() * 100)) % gradients.length;
-    const gradient = gradients[randomIndex];
+    // Generate vibrant but readable colors (Saturation 60-80%, Lightness 55-65%)
+    const sat = 60 + Math.floor(Math.random() * 20);
+    const light = 55 + Math.floor(Math.random() * 10);
+
+    const gradient = `linear-gradient(135deg, hsl(${baseHue}, ${sat}%, ${light}%) 0%, hsl(${complHue}, ${sat}%, ${light + 10}%) 100%)`;
 
     return `
     <div style="
         width: 100%;
-        aspect-ratio: 1/1;
+        aspect-ratio: 16/9; /* Optimized for blog view */
         background: ${gradient};
         display: flex;
         align-items: center;
@@ -60,32 +50,66 @@ function generateGraphicCardHtml(text: string, seed: number): string {
         padding: 40px;
         box-sizing: border-box;
         border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         margin: 30px 0;
+        overflow: hidden;
+        position: relative;
     ">
+        <!-- Decorative Circle 1 -->
         <div style="
-            background: rgba(255, 255, 255, 0.9);
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        "></div>
+        
+        <!-- Decorative Circle 2 -->
+        <div style="
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        "></div>
+
+        <div style="
+            background: rgba(255, 255, 255, 0.95);
             width: 100%;
             height: 100%;
             border-radius: 15px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
+            padding: 20px;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         ">
             <h2 style="
-                color: #333;
-                font-size: clamp(24px, 5vw, 42px);
+                color: #2c3e50;
+                font-size: clamp(22px, 5vw, 38px);
                 font-weight: 800;
                 line-height: 1.4;
                 word-break: keep-all;
-                padding: 20px;
                 margin: 0;
+                letter-spacing: -0.5px;
             ">
                 ${text}
             </h2>
+            <div style="
+                width: 40px; 
+                height: 4px; 
+                background: ${gradient}; 
+                margin-top: 15px; 
+                border-radius: 2px;
+            "></div>
         </div>
-    </div>
     </div>
     `;
 }
@@ -602,7 +626,7 @@ const INFO_TOPICS = [
     '배관 수리 완료 후 고객이 직접 확인해야 할 체크포인트 3가지'
 ];
 
-async function fetchWithRetry(url: string, options: any, maxRetries = 5) {
+async function fetchWithRetry(url: string, options: any, maxRetries = 7) {
     for (let i = 0; i < maxRetries; i++) {
         try {
             const response = await fetch(url, options);
@@ -720,54 +744,21 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
             const usageContext = CONTEXTS[Math.floor(Math.random() * CONTEXTS.length)];
 
             // 이미지 생성
-            const serviceImageMap: Record<string, string[]> = {
-                '변기막힘': [
-                    'close up of high end toilet bowl mechanism, tools nearby, bathroom interior, no people',
-                    'modern restroom interior, clean white toilet, bright lighting, empty room',
-                    'plumbing auger tool positioned near toilet, professional equipment display, no people',
-                    'toilet maintenance tools neatly arranged on bathroom floor, wrench, plunger, clean view'
-                ],
-                '하수구막힘': [
-                    'floor drain in Korean bathroom, soapy water, detail shot, no people',
-                    'industrial sewer cleaning machine yellow cable coiled, drain pipe close up, professional equipment',
-                    'clean floor drain water flowing smoothly in Korean style bathroom, grey tiles, empty',
-                    'flashlight beam illuminating inside of drain pipe, texture detail, no people'
-                ],
-                '싱크대막힘': [
-                    'kitchen sink drain close up, water swirling down, clean stainless steel, no people',
-                    'open under sink cabinet showing pvc grey pipes and P-trap, tools on floor, no humans',
-                    'clean kitchen counter and sink, bright window light, automatic faucet, empty kitchen',
-                    'grease trap cleaning equipment, professional tools, industrial kitchen setting, no people'
-                ],
-                '수도설비': [
-                    'newly installed brass water pipes, insulation foam, construction site detail, no people',
-                    'modern boiler connection pipes, neat arrangement, professional installation view',
-                    'shiny chrome faucet with running water, close up, water droplets, fresh look',
-                    'water pressure gauge showing normal reading, copper pipes, technical view'
-                ],
-                '배관청소': [
-                    'endoscope camera screen showing sludge gunk inside old pipe, technical screen view, no hands',
-                    'high pressure water jet nozzle spraying water, action shot, macro photography, no people',
-                    'perfectly clean inside of pipe after cleaning, smooth surface, bright light reflection, abstract view',
-                    'heavy duty drain cleaning machine on wheels, industrial setting, no people'
-                ],
-                '누수탐지': [
-                    'damp water stain on ceiling wall, peeling paint detail, home repair concept',
-                    'thermal imaging camera display showing blue cold spot leak on floor, device screen view',
-                    'acoustic leak detector device on floor, professional equipment, tech gadget',
-                    'copper water pipe with repair clamp, macro shot, maintenance detail, no people'
-                ]
-            };
-
-            const imagePrompts = serviceImageMap[service] || [
-                'Korean plumbing emergency water leak messy floor',
-                'professional plumber identifying pipe problem with tools',
-                'advanced plumbing equipment working on clogged pipe',
-                'clean restored bathroom happy atmosphere'
+            // [Modified] User Request: Use simple abstract backgrounds for thumbnails, avoid humans entirely.
+            const abstractPrompts = [
+                'abstract clean blue gradient background, professional, high quality, 8k, no text',
+                'modern bright bokeh background, cyan and white, minimalist, no text, empty',
+                'soft blurred office background, professional atmosphere, bright lighting, abstract, no people',
+                'clean water drop background, blue tones, fresh, hygiene concept, abstract, no people'
             ];
 
+            // Select a random prompt for the thumbnail
+            const thumbnailPrompt = abstractPrompts[Math.floor(Math.random() * abstractPrompts.length)];
+            const imagePrompts = [thumbnailPrompt, thumbnailPrompt, thumbnailPrompt, thumbnailPrompt];
+
             imageUrls = imagePrompts.map((p, index) => {
-                const promptEnc = encodeURIComponent(`${p}, realistic, photo, 4k, taken in Korea, highly detailed, no people, empty room`);
+                // Thumbnail uses Pollinations with abstract prompt
+                const promptEnc = encodeURIComponent(`${p}, realistic, 4k, bright, abstract, no text, no people`);
                 const seed = Math.floor(Date.now() / 1000) + Math.floor(Math.random() * 100000) + (index * 5000);
                 return `https://image.pollinations.ai/prompt/${promptEnc}?width=1024&height=768&seed=${seed}&nologo=true`;
             });
@@ -893,15 +884,13 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
             // 썸네일은 고품질 스톡 이미지 느낌의 폴리네이션스 사용 (콘텐츠 내 이미지는 그래픽 카드)
             mainImageUrl = imageUrls[0];
         } else {
-            const replaceImage = (idx: number, alt: string, overlayText: string) => {
-                if (!imageUrls[idx]) return '';
-                return generateOverlayImageHtml(imageUrls[idx], alt, overlayText);
-            };
+            // [Modified] User Request: "Background + Topic" style (Graphic Card) for ALL body images
+            // We reuse generateGraphicCardHtml to create consistent, clean text-on-card images.
 
-            content = content.replace(/\[IMG_1\]/g, replaceImage(0, `${keyword} 현장`, `📍 ${fullLocation} ${service} 긴급 출동`));
-            content = content.replace(/\[IMG_2\]/g, replaceImage(1, `${keyword} 작업`, `🛠️ 최신 장비로 확실하게 해결!`));
-            content = content.replace(/\[IMG_3\]/g, replaceImage(2, `${keyword} 시공`, `✨ 꼼꼼한 원인 파악 및 시공`));
-            content = content.replace(/\[IMG_4\]/g, replaceImage(3, `${keyword} 완료`, `👍 ${service} 문제 완벽 해결!`));
+            content = content.replace(/\[IMG_1\]/g, generateGraphicCardHtml(`📍 ${fullLocation} ${service}<br>긴급 출동 서비스`, 10));
+            content = content.replace(/\[IMG_2\]/g, generateGraphicCardHtml(`🛠️ ${service}<br>최신 장비로 완벽 해결`, 11));
+            content = content.replace(/\[IMG_3\]/g, generateGraphicCardHtml(`✨ 꼼꼼한 원인 파악<br>및 확실한 시공`, 12));
+            content = content.replace(/\[IMG_4\]/g, generateGraphicCardHtml(`👍 ${service} 작업 완료<br>A/S 철저 보장!`, 13));
         }
         content = content.replace(/\[IMG_[^\]]+\]/g, '');
 
