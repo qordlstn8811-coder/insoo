@@ -94,7 +94,8 @@ export async function GET(request: Request) {
             success: true,
             generated: successCount,
             failed: failedCount,
-            details: results
+            details: results,
+            version: "v4-abstract-fix-confirmed"
         });
 
     } catch (error: any) {
