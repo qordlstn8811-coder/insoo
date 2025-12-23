@@ -54,9 +54,9 @@ export async function GET(request: Request) {
             // 초기 지연 (API 몰림 방지)
             await new Promise(resolve => setTimeout(resolve, idx * 2000));
 
-            // [Retry Logic] 최대 3번 재시도
+            // [Retry Logic] 최대 3번 재시도 (User requested 5+ -> Updated to 7)
             let result;
-            const maxRetries = 5;
+            const maxRetries = 7;
 
             for (let attempt = 1; attempt <= maxRetries; attempt++) {
                 try {
