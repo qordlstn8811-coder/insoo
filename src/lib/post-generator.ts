@@ -86,6 +86,51 @@ function generateGraphicCardHtml(text: string, seed: number): string {
             </h2>
         </div>
     </div>
+    </div>
+    `;
+}
+
+/**
+ * Generates an HTML Image with a stylish text overlay.
+ */
+function generateOverlayImageHtml(imageUrl: string, altText: string, overlayText: string): string {
+    return `
+    <div style="
+        position: relative; 
+        margin: 30px 0; 
+        border-radius: 15px; 
+        overflow: hidden; 
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    ">
+        <img src="${imageUrl}" alt="${altText}" style="
+            width: 100%; 
+            height: auto; 
+            display: block; 
+            object-fit: cover;
+        " onerror="this.style.display='none'" />
+        
+        <div style="
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%); 
+            padding: 40px 20px 20px; 
+            text-align: center;
+        ">
+            <p style="
+                color: #fff; 
+                font-size: clamp(18px, 4vw, 24px); 
+                font-weight: 800; 
+                margin: 0; 
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+                word-break: keep-all;
+                line-height: 1.3;
+            ">
+                ${overlayText}
+            </p>
+        </div>
+    </div>
     `;
 }
 
@@ -623,14 +668,14 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
             currentKeyword = keyword;
 
             const infoImagePrompts = [
-                `professional plumber giving advice about ${topic}, friendly face, bright atmosphere`,
-                `clean modern bathroom interior in Korea, sparkling clean, home improvement`,
-                `diy home repair tools on table, wrench, plunger, gloves, realistic photo`,
-                `happy korean family in warm living room, comfortable home environment`
+                `professional plumbing tools collection, wrench, pipe cutter, neatly arranged on workbench, no people`,
+                `clean modern bathroom interior in Korea, sparkling clean, bright lighting, empty room`,
+                `diy home repair tools on table, wrench, plunger, gloves, realistic photo, object focus`,
+                `comfortable clean living room interior, warm sunlight, cozy atmosphere, no people`
             ];
 
             imageUrls = infoImagePrompts.map((p, index) => {
-                const promptEnc = encodeURIComponent(`${p}, realistic, photo, 4k, bright lighting`);
+                const promptEnc = encodeURIComponent(`${p}, realistic, photo, 4k, bright lighting, no people`);
                 const seed = Math.floor(Date.now() / 1000) + Math.floor(Math.random() * 100000) + (index * 9999);
                 return `https://image.pollinations.ai/prompt/${promptEnc}?width=1024&height=768&seed=${seed}&nologo=true`;
             });
@@ -677,40 +722,40 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
             // 이미지 생성
             const serviceImageMap: Record<string, string[]> = {
                 '변기막힘': [
-                    'clogged toilet in typical Korean apartment bathroom, beige tiles, plunger nearby, realistic dirty condition, wet floor',
-                    'professional plumber hands wearing red rubber gloves unblocking toilet with auger tool, close up view, mechanics tools',
-                    'sparkling clean white toilet bowl after repair, modern Korean bathroom interior, bright lighting, dry floor',
-                    'plumber explaining maintenance to homeowner in Korean house, professional demeanor'
+                    'close up of high end toilet bowl mechanism, tools nearby, bathroom interior, no people',
+                    'modern restroom interior, clean white toilet, bright lighting, empty room',
+                    'plumbing auger tool positioned near toilet, professional equipment display, no people',
+                    'toilet maintenance tools neatly arranged on bathroom floor, wrench, plunger, clean view'
                 ],
                 '하수구막힘': [
-                    'overflowing floor drain in Korean wet room bathroom, soapy water puddle, typical Korean apartment shower area',
-                    'plumber using heavy duty flexible shaft machine for sewer cleaning, construction site dirty gloves, yellow equipment',
-                    'clean floor drain water flowing smoothly in Korean style bathroom, grey tiles, no water standing',
-                    'professional plumber checking sewer with flashlight, dirty pipes, working environment'
+                    'floor drain in Korean bathroom, soapy water, detail shot, no people',
+                    'industrial sewer cleaning machine yellow cable coiled, drain pipe close up, professional equipment',
+                    'clean floor drain water flowing smoothly in Korean style bathroom, grey tiles, empty',
+                    'flashlight beam illuminating inside of drain pipe, texture detail, no people'
                 ],
                 '싱크대막힘': [
-                    'kitchen sink filled with dirty yellowish water and food waste, typical Korean home kitchen sink strainer blocked',
-                    'plumber opening under sink cabinet revealing pvc grey pipes and P-trap, flashlight beam, tools on floor',
-                    'clean stainless steel kitchen sink empty and shiny, water running from faucet, clean kitchen counter',
-                    'removing large grease chunk from kitchen drain pipe, dirty grease, professional extraction'
+                    'kitchen sink drain close up, water swirling down, clean stainless steel, no people',
+                    'open under sink cabinet showing pvc grey pipes and P-trap, tools on floor, no humans',
+                    'clean kitchen counter and sink, bright window light, automatic faucet, empty kitchen',
+                    'grease trap cleaning equipment, professional tools, industrial kitchen setting, no people'
                 ],
                 '수도설비': [
-                    'leaking water pipe spraying water under sink, wet floor, panic emergency situation, water puddles',
-                    'professional installing new boiler connection pipes, insulation foam, neat work, wrench in hand',
-                    'newly replaced shiny silver water pipes, construction finished, neat organization, professional finish',
-                    'testing water pressure after faucet installation, clear running water, chrome finish'
+                    'newly installed brass water pipes, insulation foam, construction site detail, no people',
+                    'modern boiler connection pipes, neat arrangement, professional installation view',
+                    'shiny chrome faucet with running water, close up, water droplets, fresh look',
+                    'water pressure gauge showing normal reading, copper pipes, technical view'
                 ],
                 '배관청소': [
-                    'endoscope camera screen showing sludge gunk inside old rusty pipe, yellow grease, dirty disgusting view',
-                    'high pressure water jet cleaning rusty pipe interior, splashing water action shot, hydro jetting nozzle',
-                    'perfectly clean inside of pipe after cleaning, smooth surface, bright light reflection, like new pipe',
-                    'plumber carrying high pressure jetting equipment into a Korean building, heavy duty setup'
+                    'endoscope camera screen showing sludge gunk inside old pipe, technical screen view, no hands',
+                    'high pressure water jet nozzle spraying water, action shot, macro photography, no people',
+                    'perfectly clean inside of pipe after cleaning, smooth surface, bright light reflection, abstract view',
+                    'heavy duty drain cleaning machine on wheels, industrial setting, no people'
                 ],
                 '누수탐지': [
-                    'damp moldy water stain on beige wallpaper ceiling, water damage detail, peeling paint',
-                    'thermal imaging camera screen showing blue cold spot leak on floor, professional device screen',
-                    'plumber with headset listing to floor leak using acoustic detector device, concentration, professional equipment',
-                    'repairing small puncture in copper water pipe, specialized tools, precision work'
+                    'damp water stain on ceiling wall, peeling paint detail, home repair concept',
+                    'thermal imaging camera display showing blue cold spot leak on floor, device screen view',
+                    'acoustic leak detector device on floor, professional equipment, tech gadget',
+                    'copper water pipe with repair clamp, macro shot, maintenance detail, no people'
                 ]
             };
 
@@ -722,7 +767,7 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
             ];
 
             imageUrls = imagePrompts.map((p, index) => {
-                const promptEnc = encodeURIComponent(`${p}, realistic, photo, 4k, taken in Korea, highly detailed`);
+                const promptEnc = encodeURIComponent(`${p}, realistic, photo, 4k, taken in Korea, highly detailed, no people, empty room`);
                 const seed = Math.floor(Date.now() / 1000) + Math.floor(Math.random() * 100000) + (index * 5000);
                 return `https://image.pollinations.ai/prompt/${promptEnc}?width=1024&height=768&seed=${seed}&nologo=true`;
             });
@@ -848,15 +893,15 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
             // 썸네일은 고품질 스톡 이미지 느낌의 폴리네이션스 사용 (콘텐츠 내 이미지는 그래픽 카드)
             mainImageUrl = imageUrls[0];
         } else {
-            const replaceImage = (idx: number, alt: string) => {
+            const replaceImage = (idx: number, alt: string, overlayText: string) => {
                 if (!imageUrls[idx]) return '';
-                return `<img src="${imageUrls[idx]}" alt="${alt}" onerror="this.style.display='none'" style="width:100%; border-radius:10px; margin: 20px 0;" />`;
+                return generateOverlayImageHtml(imageUrls[idx], alt, overlayText);
             };
 
-            content = content.replace(/\[IMG_1\]/g, replaceImage(0, `${keyword} 현장 모습`));
-            content = content.replace(/\[IMG_2\]/g, replaceImage(1, `${keyword} 작업 과정`));
-            content = content.replace(/\[IMG_3\]/g, replaceImage(2, `${keyword} 집중 시공`));
-            content = content.replace(/\[IMG_4\]/g, replaceImage(3, `${keyword} 해결 완료`));
+            content = content.replace(/\[IMG_1\]/g, replaceImage(0, `${keyword} 현장`, `📍 ${fullLocation} ${service} 긴급 출동`));
+            content = content.replace(/\[IMG_2\]/g, replaceImage(1, `${keyword} 작업`, `🛠️ 최신 장비로 확실하게 해결!`));
+            content = content.replace(/\[IMG_3\]/g, replaceImage(2, `${keyword} 시공`, `✨ 꼼꼼한 원인 파악 및 시공`));
+            content = content.replace(/\[IMG_4\]/g, replaceImage(3, `${keyword} 완료`, `👍 ${service} 문제 완벽 해결!`));
         }
         content = content.replace(/\[IMG_[^\]]+\]/g, '');
 
