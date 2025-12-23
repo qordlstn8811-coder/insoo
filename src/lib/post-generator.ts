@@ -786,9 +786,6 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
             4. SEO 최적화를 위해 '${keyword}'를 본문에 자연스럽게 5회 이상 포함하세요.
             5. 마크다운이 아닌 HTML 태그만 출력하세요. (html, body 제외)
             `;
-            4. 말투는 친절하고 전문적이어야 하며, 공감을 이끌어내는 스토리텔링 방식을 사용하세요.
-            5. 마크다운이 아닌 적절한 HTML 포맷으로 출력해주세요. (html, head, body 태그 제외)
-                `;
         }
 
         // B. Gemini Model Fallback Strategy
@@ -803,113 +800,113 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
         for (const model of MODELS) {
             usedModel = model;
             try {
-                console.log(`[PostGen] Attempting with model: ${ model } `);
+                console.log(`[PostGen] Attempting with model: ${model} `);
                 const response = await fetchWithRetry(
                     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`,
-            {
-                method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{ text: prompt }]
-                    }],
-                    generationConfig: {
-                        temperature: 0.85,
-                        maxOutputTokens: 4000
-                    }
-                })
-            },
-            1
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{ text: prompt }]
+                            }],
+                            generationConfig: {
+                                temperature: 0.85,
+                                maxOutputTokens: 4000
+                            }
+                        })
+                    },
+                    1
                 );
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.warn(`[PostGen] ${model} failed with status ${response.status}: ${errorText.substring(0, 200)}`);
-                throw new Error(`Model ${model} Error: ${response.status} ${errorText}`);
-            }
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.warn(`[PostGen] ${model} failed with status ${response.status}: ${errorText.substring(0, 200)}`);
+                    throw new Error(`Model ${model} Error: ${response.status} ${errorText}`);
+                }
 
-            geminiData = (await response.json()) as GeminiResponse;
-            if (!geminiData || !geminiData.candidates || geminiData.candidates.length === 0) {
-                throw new Error(`Model ${model} returned no candidates`);
+                geminiData = (await response.json()) as GeminiResponse;
+                if (!geminiData || !geminiData.candidates || geminiData.candidates.length === 0) {
+                    throw new Error(`Model ${model} returned no candidates`);
+                }
+                console.log(`[PostGen] Success with model: ${model}`);
+                break; // Success
+            } catch (error: any) {
+                console.warn(`[PostGen] Error with ${model}: ${error.message.substring(0, 200)}...`);
+                lastError = error;
             }
-            console.log(`[PostGen] Success with model: ${model}`);
-            break; // Success
-        } catch (error: any) {
-            console.warn(`[PostGen] Error with ${model}: ${error.message.substring(0, 200)}...`);
-            lastError = error;
         }
-    }
 
         if (!geminiData || !geminiData.candidates || geminiData.candidates.length === 0) {
-        throw lastError || new Error('All Gemini models failed or returned empty response.');
-    }
+            throw lastError || new Error('All Gemini models failed or returned empty response.');
+        }
 
-    let rawText = geminiData.candidates[0].content?.parts?.[0]?.text || '내용 생성 실패';
+        let rawText = geminiData.candidates[0].content?.parts?.[0]?.text || '내용 생성 실패';
 
-    // Remove code blocks and common HTML wrappers
-    rawText = rawText
-        .replace(/```html\n ?/g, '')
-        .replace(/```\n?/g, '')
-        .replace(/<!DOCTYPE[^>]*>/gi, '')
-        .replace(/<html[^>]*>/gi, '')
-        .replace(/<head[^>]*>[\s\S]*?<\/head>/gi, '')
-        .replace(/<body[^>]*>/gi, '')
-        .replace(/<\/body>/gi, '')
-        .replace(/<\/html>/gi, '')
-        .trim();
+        // Remove code blocks and common HTML wrappers
+        rawText = rawText
+            .replace(/```html\n ?/g, '')
+            .replace(/```\n?/g, '')
+            .replace(/<!DOCTYPE[^>]*>/gi, '')
+            .replace(/<html[^>]*>/gi, '')
+            .replace(/<head[^>]*>[\s\S]*?<\/head>/gi, '')
+            .replace(/<body[^>]*>/gi, '')
+            .replace(/<\/body>/gi, '')
+            .replace(/<\/html>/gi, '')
+            .trim();
 
-    const lines = rawText.split('\n').map((l: string) => l.trim()).filter((l: string) => l.length > 0);
-    let title = lines[0] ? lines[0].replace(/<h1>|<\/h1>|제목:|# /g, '').trim() : `${keyword} 마스터 가이드`;
+        const lines = rawText.split('\n').map((l: string) => l.trim()).filter((l: string) => l.length > 0);
+        let title = lines[0] ? lines[0].replace(/<h1>|<\/h1>|제목:|# /g, '').trim() : `${keyword} 마스터 가이드`;
 
-    // [Fix] 지역명/키워드 중복 제거 (예: '전주 서신동 전주 서신동 ...')
-    const titleWords = title.split(' ');
-    const uniqueWords: string[] = [];
-    titleWords.forEach((word: string) => {
-        if (!uniqueWords.includes(word)) uniqueWords.push(word);
-    });
-    title = uniqueWords.join(' ');
+        // [Fix] 지역명/키워드 중복 제거 (예: '전주 서신동 전주 서신동 ...')
+        const titleWords = title.split(' ');
+        const uniqueWords: string[] = [];
+        titleWords.forEach((word: string) => {
+            if (!uniqueWords.includes(word)) uniqueWords.push(word);
+        });
+        title = uniqueWords.join(' ');
 
-    if (title.length > 70 || title.length < 5) {
-        title = keyword;
-    }
+        if (title.length > 70 || title.length < 5) {
+            title = keyword;
+        }
 
-    let content = lines.slice(1).join('\n').trim();
+        let content = lines.slice(1).join('\n').trim();
 
-    // [Safety] Strip accidental phone numbers
-    title = stripPhoneNumbers(title);
-    content = stripPhoneNumbers(content);
+        // [Safety] Strip accidental phone numbers
+        title = stripPhoneNumbers(title);
+        content = stripPhoneNumbers(content);
 
-    if (isInfoPost) {
-        // 정보성 글에서는 AI 이미지 대신 텍스트 중심의 "그래픽 카드" 생성
-        const subtopics = content.match(/<h2[^>]*>(.*?)<\/h2>/g)?.map(h => h.replace(/<[^>]*>/g, '')) || [keyword];
+        if (isInfoPost) {
+            // 정보성 글에서는 AI 이미지 대신 텍스트 중심의 "그래픽 카드" 생성
+            const subtopics = content.match(/<h2[^>]*>(.*?)<\/h2>/g)?.map(h => h.replace(/<[^>]*>/g, '')) || [keyword];
 
-        content = content.replace(/\[IMG_1\]/g, generateGraphicCardHtml(title, 1));
-        content = content.replace(/\[IMG_2\]/g, generateGraphicCardHtml(subtopics[0] || keyword, 2));
-        content = content.replace(/\[IMG_3\]/g, generateGraphicCardHtml(subtopics[1] || "기억해야 할 꿀팁!", 3));
-        content = content.replace(/\[IMG_4\]/g, ''); // 정보성은 3장만
+            content = content.replace(/\[IMG_1\]/g, generateGraphicCardHtml(title, 1));
+            content = content.replace(/\[IMG_2\]/g, generateGraphicCardHtml(subtopics[0] || keyword, 2));
+            content = content.replace(/\[IMG_3\]/g, generateGraphicCardHtml(subtopics[1] || "기억해야 할 꿀팁!", 3));
+            content = content.replace(/\[IMG_4\]/g, ''); // 정보성은 3장만
 
-        // 메인 썸네일로 가장 예쁜 첫번째 카드를 설정하고 싶지만, image_url에는 URL이 필요하므로 
-        // 썸네일은 고품질 스톡 이미지 느낌의 폴리네이션스 사용 (콘텐츠 내 이미지는 그래픽 카드)
-        mainImageUrl = imageUrls[0];
-    } else {
-        // [Modified] User Request: "Background + Topic" style (Graphic Card) for ALL body images
-        // We reuse generateGraphicCardHtml to create consistent, clean text-on-card images.
+            // 메인 썸네일로 가장 예쁜 첫번째 카드를 설정하고 싶지만, image_url에는 URL이 필요하므로 
+            // 썸네일은 고품질 스톡 이미지 느낌의 폴리네이션스 사용 (콘텐츠 내 이미지는 그래픽 카드)
+            mainImageUrl = imageUrls[0];
+        } else {
+            // [Modified] User Request: "Background + Topic" style (Graphic Card) for ALL body images
+            // We reuse generateGraphicCardHtml to create consistent, clean text-on-card images.
 
-        content = content.replace(/\[IMG_1\]/g, generateGraphicCardHtml(`📍 ${fullLocation} ${service}<br>긴급 출동 서비스`, 10));
-        content = content.replace(/\[IMG_2\]/g, generateGraphicCardHtml(`🛠️ ${service}<br>최신 장비로 완벽 해결`, 11));
-        content = content.replace(/\[IMG_3\]/g, generateGraphicCardHtml(`✨ 꼼꼼한 원인 파악<br>및 확실한 시공`, 12));
-        content = content.replace(/\[IMG_4\]/g, generateGraphicCardHtml(`👍 ${service} 작업 완료<br>A/S 철저 보장!`, 13));
-    }
-    content = content.replace(/\[IMG_[^\]]+\]/g, '');
+            content = content.replace(/\[IMG_1\]/g, generateGraphicCardHtml(`📍 ${fullLocation} ${service}<br>긴급 출동 서비스`, 10));
+            content = content.replace(/\[IMG_2\]/g, generateGraphicCardHtml(`🛠️ ${service}<br>최신 장비로 완벽 해결`, 11));
+            content = content.replace(/\[IMG_3\]/g, generateGraphicCardHtml(`✨ 꼼꼼한 원인 파악<br>및 확실한 시공`, 12));
+            content = content.replace(/\[IMG_4\]/g, generateGraphicCardHtml(`👍 ${service} 작업 완료<br>A/S 철저 보장!`, 13));
+        }
+        content = content.replace(/\[IMG_[^\]]+\]/g, '');
 
-    if (isInfoPost) {
-        content += `
+        if (isInfoPost) {
+            content += `
             <hr style="margin: 40px 0;" />
             <p style="color: #666; font-size: 0.9em;">※ 이 포스팅은 일상생활에 도움이 되는 배관 관리 꿀팁을 제공하기 위해 작성되었습니다. 더 전문적인 도움이 필요하실 경우 가까운 전문가와 상담하시기를 권장합니다.</p>
             `;
-    } else {
-        const placeUrl = NAVER_PLACE_URLS[service] || NAVER_PLACE_URLS['default'];
-        content += `
+        } else {
+            const placeUrl = NAVER_PLACE_URLS[service] || NAVER_PLACE_URLS['default'];
+            content += `
                 <hr style="margin: 40px 0;" />
                 <h3>📍 ${fullLocation} ${service} 해결 전문!</h3>
                 <p><strong>전북 전 지역(${city}${displayDistrict ? ', ' + displayDistrict : ''}) 30분 내 긴급 출동!</strong></p>
@@ -920,51 +917,51 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
                     </a>
                 </p>
             `;
-    }
+        }
 
-    const { error } = await supabase
-        .from('posts')
-        .insert([{
-            keyword,
-            title,
-            content,
-            image_url: mainImageUrl,
-            status: 'published',
-            category: category
-        }]);
+        const { error } = await supabase
+            .from('posts')
+            .insert([{
+                keyword,
+                title,
+                content,
+                image_url: mainImageUrl,
+                status: 'published',
+                category: category
+            }]);
 
-    if (error) throw error;
+        if (error) throw error;
 
-    // 성공 로그 기록
-    await supabase.from('cron_logs').insert([{
-        job_type: jobType,
-        status: 'success',
-        keyword: keyword,
-        title: title,
-        model_used: usedModel
-    }]);
-
-    console.log(`[PostGen] Successfully published: ${title}`);
-    return { success: true, keyword, title, imageUrl: mainImageUrl };
-
-} catch (error: any) {
-    console.error('Generation Error:', error);
-
-    // 실패 로그 기록 (Supabase 클라이언트 재초기화 필요할 수 있음)
-    try {
-        const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+        // 성공 로그 기록
         await supabase.from('cron_logs').insert([{
             job_type: jobType,
-            status: 'failure',
-            keyword: currentKeyword,
-            error_message: error.message || 'Unknown Error',
+            status: 'success',
+            keyword: keyword,
+            title: title,
             model_used: usedModel
         }]);
-    } catch (logError) {
-        console.error('[PostGen] Critical: Failed to record failure log!', logError);
-    }
 
-    return { success: false, error: error.message || '글 생성 중 오류 발생' };
-}
+        console.log(`[PostGen] Successfully published: ${title}`);
+        return { success: true, keyword, title, imageUrl: mainImageUrl };
+
+    } catch (error: any) {
+        console.error('Generation Error:', error);
+
+        // 실패 로그 기록 (Supabase 클라이언트 재초기화 필요할 수 있음)
+        try {
+            const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+            await supabase.from('cron_logs').insert([{
+                job_type: jobType,
+                status: 'failure',
+                keyword: currentKeyword,
+                error_message: error.message || 'Unknown Error',
+                model_used: usedModel
+            }]);
+        } catch (logError) {
+            console.error('[PostGen] Critical: Failed to record failure log!', logError);
+        }
+
+        return { success: false, error: error.message || '글 생성 중 오류 발생' };
+    }
 }
 
