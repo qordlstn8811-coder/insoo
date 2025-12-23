@@ -2,8 +2,7 @@ name: Blog Post Cron
 
 on:
   schedule:
-    # 15분마다 실행 (하루 96회 * 1개 = 약 100개 발행)
-    # 한 번에 많이 요청하는 것보다 자주 호출하여 타임아웃/Gemini 제한을 피하는 것이 훨씬 안정적입니다.
+    # 15분마다 실행 (하루 약 100개 목표)
     - cron: '*/15 * * * *'
   workflow_dispatch: # 수동 실행 버튼
 
@@ -11,15 +10,40 @@ jobs:
   trigger-cron:
     runs-on: ubuntu-latest
     steps:
-      - name: Call Vercel Cron API
+      - name: Call Vercel Cron API with Retries
         run: |
-          # [Fixed] Hardcoded domain to ensure stability
-          # Target: https://www.전북하수구막힘.com (Punycode: xn--2e0bm8utzck3fsyi7rvktd.com)
           URL="https://www.xn--2e0bm8utzck3fsyi7rvktd.com"
+          SECRET="${{ secrets.CRON_SECRET }}"
           
-          echo "Triggering Blog Post Generation to: $URL"
+          echo "Target Domain: $URL"
           
-          # 안정성을 위해 한 번에 1개씩만 생성 (15분 간격)
-          curl -X GET "$URL/api/cron?limit=1" \
-          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-          --fail || exit 1
+          # [Retry Logic] 5분 간격으로 최대 3번 시도
+          # 만약 401 에러가 나면 즉시 중단하고 원인 보고 가이드 출력
+          for i in {1..3}; do
+            echo "Attempt $i: Triggering Blog Post Generation..."
+            
+            # -f (fail correctly), -s (silent but show error), -S (show error)
+            # --retry 3 는 curl 자체 재시도, 여기선 로직으로 제어
+            RESPONSE=$(curl -s -w "%{http_code}" -X GET "$URL/api/cron?limit=1" \
+              -H "Authorization: Bearer $SECRET")
+            
+            HTTP_STATUS=${RESPONSE: -3}
+            BODY=${RESPONSE:0:${#RESPONSE}-3}
+            
+            if [ "$HTTP_STATUS" -eq 200 ]; then
+              echo "✅ Success: $BODY"
+              exit 0
+            elif [ "$HTTP_STATUS" -eq 401 ]; then
+              echo "❌ Error 401: Unauthorized. Please check if CRON_SECRET in GitHub Secrets matches Vercel."
+              exit 1
+            else
+              echo "⚠️ Attempt $i failed with status $HTTP_STATUS: $BODY"
+              if [ $i -lt 3 ]; then
+                echo "Waiting 60 seconds before next attempt..."
+                sleep 60
+              fi
+            fi
+          done
+          
+          echo "❌ All 3 attempts failed."
+          exit 1
