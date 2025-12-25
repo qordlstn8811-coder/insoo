@@ -16,7 +16,7 @@ export const TextRevealCard = ({
   className?: string;
 }) => {
   const [widthPercentage, setWidthPercentage] = useState(0);
-  const cardRef = useRef<HTMLDivElement | any>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [left, setLeft] = useState(0);
   const [localWidth, setLocalWidth] = useState(0);
   const [isMouseOver, setIsMouseOver] = useState(false);
@@ -30,7 +30,7 @@ export const TextRevealCard = ({
     }
   }, []);
 
-  function mouseMoveHandler(event: any) {
+  function mouseMoveHandler(event: React.MouseEvent<HTMLDivElement>) {
     event.preventDefault();
 
     const { clientX } = event;
@@ -81,12 +81,12 @@ export const TextRevealCard = ({
           animate={
             isMouseOver
               ? {
-                  opacity: widthPercentage > 0 ? 1 : 0,
-                  clipPath: `inset(0 ${100 - widthPercentage}% 0 0)`,
-                }
+                opacity: widthPercentage > 0 ? 1 : 0,
+                clipPath: `inset(0 ${100 - widthPercentage}% 0 0)`,
+              }
               : {
-                  clipPath: `inset(0 ${100 - widthPercentage}% 0 0)`,
-                }
+                clipPath: `inset(0 ${100 - widthPercentage}% 0 0)`,
+              }
           }
           transition={isMouseOver ? { duration: 0 } : { duration: 0.4 }}
           className="absolute bg-[#1d1c20] z-20  will-change-transform"
@@ -148,29 +148,54 @@ export const TextRevealCardDescription = ({
 };
 
 const Stars = () => {
-  const randomMove = () => Math.random() * 4 - 2;
-  const randomOpacity = () => Math.random();
-  const random = () => Math.random();
+  const [stars, setStars] = useState<
+    {
+      top: number;
+      left: number;
+      opacity: number;
+      duration: number;
+      moveTop: number;
+      moveLeft: number;
+    }[]
+  >([]);
+
+  useEffect(() => {
+    const randomMove = () => Math.random() * 4 - 2;
+    const randomOpacity = () => Math.random();
+    const random = () => Math.random();
+
+    const newStars = [...Array(80)].map(() => ({
+      top: random() * 100,
+      left: random() * 100,
+      opacity: randomOpacity(),
+      duration: random() * 10 + 20,
+      moveTop: randomMove(),
+      moveLeft: randomMove(),
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setStars(newStars);
+  }, []);
+
   return (
     <div className="absolute inset-0">
-      {[...Array(80)].map((_, i) => (
+      {stars.map((star, i) => (
         <motion.span
           key={`star-${i}`}
           animate={{
-            top: `calc(${random() * 100}% + ${randomMove()}px)`,
-            left: `calc(${random() * 100}% + ${randomMove()}px)`,
-            opacity: randomOpacity(),
+            top: `calc(${star.top}% + ${star.moveTop}px)`,
+            left: `calc(${star.left}% + ${star.moveLeft}px)`,
+            opacity: star.opacity,
             scale: [1, 1.2, 0],
           }}
           transition={{
-            duration: random() * 10 + 20,
+            duration: star.duration,
             repeat: Infinity,
             ease: "linear",
           }}
           style={{
             position: "absolute",
-            top: `${random() * 100}%`,
-            left: `${random() * 100}%`,
+            top: `${star.top}%`,
+            left: `${star.left}%`,
             width: `2px`,
             height: `2px`,
             backgroundColor: "white",

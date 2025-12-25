@@ -114,49 +114,7 @@ function generateGraphicCardHtml(text: string, seed: number): string {
     `;
 }
 
-/**
- * Generates an HTML Image with a stylish text overlay.
- */
-function generateOverlayImageHtml(imageUrl: string, altText: string, overlayText: string): string {
-    return `
-    <div style="
-        position: relative; 
-        margin: 30px 0; 
-        border-radius: 15px; 
-        overflow: hidden; 
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    ">
-        <img src="${imageUrl}" alt="${altText}" style="
-            width: 100%; 
-            height: auto; 
-            display: block; 
-            object-fit: cover;
-        " onerror="this.style.display='none'" />
-        
-        <div style="
-            position: absolute; 
-            bottom: 0; 
-            left: 0; 
-            right: 0; 
-            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%); 
-            padding: 40px 20px 20px; 
-            text-align: center;
-        ">
-            <p style="
-                color: #fff; 
-                font-size: clamp(18px, 4vw, 24px); 
-                font-weight: 800; 
-                margin: 0; 
-                text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-                word-break: keep-all;
-                line-height: 1.3;
-            ">
-                ${overlayText}
-            </p>
-        </div>
-    </div>
-    `;
-}
+
 
 const LOCATIONS = [
     '전주시', '전주', '완산구', '덕진구',
@@ -626,7 +584,7 @@ const INFO_TOPICS = [
     '배관 수리 완료 후 고객이 직접 확인해야 할 체크포인트 3가지'
 ];
 
-async function fetchWithRetry(url: string, options: any, maxRetries = 7) {
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 7) {
     for (let i = 0; i < maxRetries; i++) {
         try {
             const response = await fetch(url, options);
@@ -795,7 +753,7 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
             'gemini-1.5-pro'
         ];
         let geminiData: GeminiResponse | null = null;
-        let lastError: any = null;
+        let lastError: unknown = null;
 
         for (const model of MODELS) {
             usedModel = model;
@@ -831,8 +789,9 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
                 }
                 console.log(`[PostGen] Success with model: ${model}`);
                 break; // Success
-            } catch (error: any) {
-                console.warn(`[PostGen] Error with ${model}: ${error.message.substring(0, 200)}...`);
+            } catch (error) {
+                const err = error as Error;
+                console.warn(`[PostGen] Error with ${model}: ${err.message?.substring(0, 200)}...`);
                 lastError = error;
             }
         }
@@ -944,7 +903,8 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
         console.log(`[PostGen] Successfully published: ${title}`);
         return { success: true, keyword, title, imageUrl: mainImageUrl };
 
-    } catch (error: any) {
+    } catch (error) {
+        const err = error as Error;
         console.error('Generation Error:', error);
 
         // 실패 로그 기록 (Supabase 클라이언트 재초기화 필요할 수 있음)
@@ -954,14 +914,14 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
                 job_type: jobType,
                 status: 'failure',
                 keyword: currentKeyword,
-                error_message: error.message || 'Unknown Error',
+                error_message: err.message || 'Unknown Error',
                 model_used: usedModel
             }]);
         } catch (logError) {
             console.error('[PostGen] Critical: Failed to record failure log!', logError);
         }
 
-        return { success: false, error: error.message || '글 생성 중 오류 발생' };
+        return { success: false, error: err.message || '글 생성 중 오류 발생' };
     }
 }
 

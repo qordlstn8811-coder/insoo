@@ -675,4 +675,5 @@ export const seoKeywords = {
     ]
 };
 
-export default { blogPosts, hasuguPosts, sinkPosts, toiletPosts, highPressurePosts, cctvPosts, regionPosts, extendedFaq, seoKeywords };
+const blogData = { blogPosts, hasuguPosts, sinkPosts, toiletPosts, highPressurePosts, cctvPosts, regionPosts, extendedFaq, seoKeywords };
+export default blogData;

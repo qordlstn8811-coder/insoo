@@ -42,7 +42,7 @@ export default function AboutPage() {
                             />
                         </div>
                         <div>
-                            <h2 className="text-3xl font-bold text-gray-900 mb-6">"보이지 않는 곳까지<br />깨끗하게 책임지겠습니다"</h2>
+                            <h2 className="text-3xl font-bold text-gray-900 mb-6">&quot;보이지 않는 곳까지<br />깨끗하게 책임지겠습니다&quot;</h2>
                             <div className="space-y-4 text-gray-600 leading-relaxed font-medium">
                                 <p>
                                     안녕하십니까, 전북하수구막힘을 찾아주신 고객 여러분 진심으로 환영합니다.

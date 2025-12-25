@@ -1,5 +1,5 @@
 
-import { jeonbukRegions, getAllPaths } from '@/data/regions';
+import { jeonbukRegions } from '@/data/regions';
 import { serviceContent } from '@/data/content';
 import Header from '@/components/Header';
 import Link from 'next/link';

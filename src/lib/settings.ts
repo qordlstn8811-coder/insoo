@@ -47,7 +47,7 @@ export const SettingsService = {
     async updateSettings(client: SupabaseClient, newSettings: CronSettings): Promise<void> {
         try {
             // Upsert logic
-            const { data, error: fetchError } = await client
+            const { data } = await client
                 .from('posts')
                 .select('id')
                 .eq('title', 'SYSTEM_CRON_CONFIG')

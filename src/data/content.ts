@@ -190,5 +190,6 @@ export const regionSeoText = {
     gimje: '김제시 하수구막힘, 김제 변기막힘, 김제 싱크대막힘 24시 긴급출동. 김제시 전지역 신속 방문.'
 };
 
-export default { mainContent, serviceContent, faqContent, companyInfo, regionSeoText };
+const contentData = { mainContent, serviceContent, faqContent, companyInfo, regionSeoText };
+export default contentData;
 

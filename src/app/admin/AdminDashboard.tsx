@@ -1,12 +1,41 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { createClient } from '@/lib/supabase';
 import Image from 'next/image';
 import { SettingsService, CronSettings } from '@/lib/settings';
 
+// Types
+interface Post {
+    id: string;
+    created_at: string;
+    status: string;
+    title: string | null;
+    keyword: string | null;
+    image_url: string | null;
+}
+
+interface Log {
+    id: string;
+    created_at: string;
+    status: string;
+    job_type: string;
+    title?: string;
+    keyword?: string;
+    model_used?: string;
+    error_message?: string;
+}
+
+interface AutomationSettingsCardProps {
+    isActive: boolean;
+    targetCount: number;
+    startTime: string;
+    endTime: string;
+    onUpdate: (newSettings: CronSettings) => Promise<void>;
+}
+
 // 별도 컴포넌트로 분리하여 관리 (클린 코드)
-function AutomationSettingsCard({ isActive, targetCount, startTime, endTime, onUpdate }: any) {
+function AutomationSettingsCard({ isActive, targetCount, startTime, endTime, onUpdate }: AutomationSettingsCardProps) {
     const [localActive, setLocalActive] = useState(isActive);
     const [localTarget, setLocalTarget] = useState(targetCount);
     const [localStart, setLocalStart] = useState(startTime);
@@ -19,6 +48,7 @@ function AutomationSettingsCard({ isActive, targetCount, startTime, endTime, onU
         setLocalTarget(targetCount);
         setLocalStart(startTime);
         setLocalEnd(endTime);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isActive, targetCount, startTime, endTime]);
 
     const handleSave = async () => {
@@ -106,9 +136,9 @@ export default function AdminDashboard() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState('');
 
-    const [posts, setPosts] = useState<any[]>([]);
+    const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(false);
-    const [dbLogs, setDbLogs] = useState<any[]>([]);
+    const [dbLogs, setDbLogs] = useState<Log[]>([]);
 
     // Cron 설정 상태
     const [settings, setSettings] = useState<CronSettings>({
@@ -120,8 +150,7 @@ export default function AdminDashboard() {
 
     const [isLooping, setIsLooping] = useState(false);
     const [targetCount, setTargetCount] = useState<number>(1);
-    const [successCount, setSuccessCount] = useState(0);
-    const [failCount, setFailCount] = useState(0);
+
     const [logs, setLogs] = useState<string[]>([]);
     const [minDelay, setMinDelay] = useState(2); // 최소 간격 (초)
     const [maxDelay, setMaxDelay] = useState(5); // 최대 간격 (초)
@@ -134,14 +163,15 @@ export default function AdminDashboard() {
         e.preventDefault();
         if (password === '1234') {
             setIsAuthenticated(true);
-            fetchAllData();
+            fetchAllData(); // 로그인 성공 시 즉시 데이터 로드
+            fetchSettings(); // 설정도 같이 로드
         } else {
             alert('비밀번호가 틀렸습니다.');
         }
     };
 
     // 2. 데이터 불러오기
-    const fetchAllData = async () => {
+    const fetchAllData = useCallback(async () => {
         setLoading(true);
         // 게시글 목록
         const { data: postData } = await supabase
@@ -160,15 +190,15 @@ export default function AdminDashboard() {
         if (logData) setDbLogs(logData);
 
         setLoading(false);
-    };
+    }, [supabase]);
 
     const fetchPosts = fetchAllData; // 기존 코드 호환성 유지
 
     // 설정 불러오기
-    const fetchSettings = async () => {
+    const fetchSettings = useCallback(async () => {
         const current = await SettingsService.getSettings(supabase);
         setSettings(current);
-    };
+    }, [supabase]);
 
     // 설정 업데이트 핸들러
     const updateSettings = async (newSettings: CronSettings) => {
@@ -176,12 +206,12 @@ export default function AdminDashboard() {
         setSettings(newSettings);
     };
 
-    useEffect(() => {
-        if (isAuthenticated) {
-            fetchSettings();
-            fetchAllData();
-        }
-    }, [isAuthenticated]);
+    // useEffect(() => {
+    //     if (isAuthenticated) {
+    //         fetchSettings();
+    //         fetchAllData();
+    //     }
+    // }, [isAuthenticated]); // handleLogin에서 직접 호출하므로 useEffect 제거하여 중복 호출 방지 or keep it for safety if auth state persists
 
     // 3. 로그 추가 함수 (실시간 브라우저 내 로그)
     const addLog = (msg: string) => {
@@ -201,17 +231,15 @@ export default function AdminDashboard() {
             const data = await res.json();
 
             if (res.ok) {
-                addLog(`✅ 성공 (#${index}): ${data.keyword}`);
-                setSuccessCount((prev) => prev + 1);
+                addLog(`✅ 성공(#${index}): ${data.keyword}`);
                 return true;
             } else {
-                addLog(`❌ 실패 (#${index}): ${data.error}`);
-                setFailCount((prev) => prev + 1);
+                addLog(`❌ 실패(#${index}): ${data.error}`);
                 return false;
             }
-        } catch (e) {
-            addLog(`❌ 에러 (#${index}): 서버 연결 실패`);
-            setFailCount((prev) => prev + 1);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (e: any) {
+            addLog(`❌ 에러(#${index}): 서버 연결 실패`);
             return false;
         }
     };
@@ -221,12 +249,10 @@ export default function AdminDashboard() {
         if (!confirm(`${targetCount}개의 글 생성을 시작하시겠습니까?\n(중단 버튼으로 언제든 멈출 수 있습니다)`)) return;
 
         setIsLooping(true);
-        setSuccessCount(0);
-        setFailCount(0);
         setLogs([]);
         shouldStopRef.current = false;
 
-        addLog(`🚀 자동 생성 시작 (목표: ${targetCount}개, 간격: ${minDelay}~${maxDelay}초)`);
+        addLog(`🚀 자동 생성 시작(목표: ${targetCount}개, 간격: ${minDelay}~${maxDelay}초)`);
 
         for (let i = 1; i <= targetCount; i++) {
             // 중단 체크
@@ -329,7 +355,6 @@ export default function AdminDashboard() {
                     {/* 2. 글 생성 테스트 카드 (기존 기능) */}
                     <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
                         <h2 className="mb-4 text-xl font-bold text-gray-800">🧪 수동 테스트</h2>
-                        {/* ... 기존 수동 테스트 UI 유지 ... */}
                         <div className="space-y-4">
                             <div>
                                 <label className="mb-1 block text-sm font-bold text-gray-700">테스트 생성 갯수</label>
@@ -472,8 +497,7 @@ export default function AdminDashboard() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <span className={`px-2 py-0.5 text-[10px] font-bold rounded w-fit ${post.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                                                }`}>
+                                            <span className={`px-2 py-0.5 text-[10px] font-bold rounded w-fit ${post.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                                                 {post.status.toUpperCase()}
                                             </span>
                                             <span className="text-xs text-gray-400">
@@ -502,6 +526,7 @@ export default function AdminDashboard() {
 
                                                 addLog(`✅ 글 삭제 완료: ${post.title}`);
                                                 fetchPosts(); // 목록 새로고침
+                                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                             } catch (err: any) {
                                                 addLog(`❌ 삭제 실패: ${err.message}`);
                                             }

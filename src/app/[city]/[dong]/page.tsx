@@ -1,6 +1,5 @@
 
 import { jeonbukRegions } from '@/data/regions';
-import { serviceContent } from '@/data/content';
 import { generateRegionSEOContent, reviews } from '@/data/reviews';
 import Header from '@/components/Header';
 import Link from 'next/link';
@@ -144,7 +143,7 @@ export default async function DongPage({ params }: { params: Promise<{ city: str
                                                 </div>
                                                 <div className="text-yellow-500 text-sm">{'★'.repeat(review.rating)}</div>
                                             </div>
-                                            <p className="text-slate-600 leading-relaxed">"{review.content}"</p>
+                                            <p className="text-slate-600 leading-relaxed">&quot;{review.content}&quot;</p>
                                             <div className="mt-2 text-xs text-slate-500">{review.region} {review.dong} · {review.service} · {review.date}</div>
                                         </div>
                                     ))}

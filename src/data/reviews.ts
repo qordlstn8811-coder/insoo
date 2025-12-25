@@ -319,4 +319,5 @@ export const getRandomReviews = (count: number = 5) => {
     return shuffled.slice(0, count);
 };
 
-export default { reviews, generateRegionSEOContent, getReviewsByRegion, getRandomReviews };
+const reviewsData = { reviews, generateRegionSEOContent, getReviewsByRegion, getRandomReviews };
+export default reviewsData;

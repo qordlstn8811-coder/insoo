@@ -4,22 +4,23 @@ import { useState, useEffect } from 'react';
 
 export default function CallPopup() {
     const [isVisible, setIsVisible] = useState(false);
-    const [hasBeenClosed, setHasBeenClosed] = useState(false);
+    // Start as TRUE (hidden) to avoid flash. Only set to false if we confirm it's NOT closed.
+    const [hasBeenClosed, setHasBeenClosed] = useState(true);
 
     useEffect(() => {
-        // 이미 닫은 적이 있으면 표시하지 않음
+        // 이미 닫은 적이 있는지 확인
         const closed = sessionStorage.getItem('callPopupClosed');
-        if (closed) {
-            setHasBeenClosed(true);
-            return;
+
+        // 닫은 적이 없다면 (closed is null) -> 보여줄 준비
+        if (!closed) {
+            setHasBeenClosed(false);
+
+            // 5초 후에 팝업 표시
+            const timer = setTimeout(() => {
+                setIsVisible(true);
+            }, 5000);
+            return () => clearTimeout(timer);
         }
-
-        // 5초 후에 팝업 표시
-        const timer = setTimeout(() => {
-            setIsVisible(true);
-        }, 5000);
-
-        return () => clearTimeout(timer);
     }, []);
 
     const handleClose = () => {

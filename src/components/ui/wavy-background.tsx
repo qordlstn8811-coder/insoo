@@ -24,6 +24,7 @@ export const WavyBackground = ({
     blur?: number;
     speed?: "slow" | "fast";
     waveOpacity?: number;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
 }) => {
     const noise = createNoise3D(Math.random);
@@ -32,7 +33,9 @@ export const WavyBackground = ({
         nt: number,
         i: number,
         x: number,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ctx: any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         canvas: any;
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const getSpeed = () => {
@@ -86,7 +89,7 @@ export const WavyBackground = ({
             ctx.lineWidth = waveWidth || 50;
             ctx.strokeStyle = waveColors[i % waveColors.length];
             for (x = 0; x < w; x += 5) {
-                var y = noise(x / 800, 0.3 * i, nt) * 100;
+                const y = noise(x / 800, 0.3 * i, nt) * 100;
                 ctx.lineTo(x, y + h * 0.5); // Adjust height, 0.5 is middle
             }
             ctx.stroke();
@@ -115,6 +118,7 @@ export const WavyBackground = ({
                 cancelAnimationFrame(animationId.current);
             }
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const [isSafari, setIsSafari] = useState(false);
