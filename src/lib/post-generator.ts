@@ -116,17 +116,9 @@ function generateGraphicCardHtml(text: string, seed: number): string {
 
 
 
-const LOCATIONS = [
-    '전주시', '전주', '완산구', '덕진구',
-    '군산시', '군산', '익산시', '익산',
-    '정읍시', '정읍', '남원시', '남원',
-    '김제시', '김제', '완주군', '완주',
-    '진안군', '진안', '무주군', '무주',
-    '장수군', '장수', '임실군', '임실',
-    '순창군', '순창', '고창군', '고창',
-    '부안군', '부안',
-    '전북 전 지역', '전라북도'
-];
+import { jeonbukRegions } from '@/data/regions';
+// Removed hardcoded LOCATIONS array in favor of jeonbukRegions
+
 
 const SERVICES = ['변기막힘', '하수구막힘', '싱크대막힘', '수도설비', '배관청소', '누수탐지'];
 const NAVER_PLACE_URLS: Record<string, string> = {
@@ -641,7 +633,8 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
         let fullLocation = '';
         let service = '';
         let city = '';
-        let displayDistrict = '';
+        let dong = '';
+
 
         if (isInfoPost) {
             // [Type A] 정보성 글 (생활꿀팁)
@@ -686,15 +679,29 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
             `;
 
         } else {
-            // [Type B] 시공 사례 (기존 로직)
-            fullLocation = LOCATIONS[Math.floor(Math.random() * LOCATIONS.length)];
-            const parts = fullLocation.split(' ');
-            city = parts[0];
-            const district = parts.length > 2 ? parts[1] : '';
-            const dong = parts[parts.length - 1];
-            displayDistrict = (district && district !== city) ? district : '';
+            // [Type B] 시공 사례 (Real Region Data Integrated)
+
+            // 1. Select Random City/County
+            const randomRegion = jeonbukRegions[Math.floor(Math.random() * jeonbukRegions.length)];
+            city = randomRegion.name; // e.g., '전주시', '익산시', '완주군'
+
+            // 2. Select Random District (Dong/Eup/Myeon)
+            const randomDistrictName = randomRegion.districts[Math.floor(Math.random() * randomRegion.districts.length)];
+            dong = randomDistrictName;
+
+            // Determine full location string
+            fullLocation = `${city} ${dong}`; // e.g. "전주시 효자1동" or "완주군 봉동읍"
+
+            // For displayDistrict logic (used in Title mostly)
+            // If it's a Gu-level (like '완산구'), it might be redundant if we have '효자동'.
+            // But we don't have the mapping here easily. 
+            // Let's try to deduce usage.
+
+
+
+            // Construct Keyword
             service = SERVICES[Math.floor(Math.random() * SERVICES.length)];
-            keyword = `${fullLocation} ${service}`;
+            keyword = `${city} ${dong} ${service}`;
             currentKeyword = keyword;
 
             const template = ARTICLE_TEMPLATES[Math.floor(Math.random() * ARTICLE_TEMPLATES.length)];
@@ -722,27 +729,52 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
             });
             mainImageUrl = imageUrls[0];
 
+            // [Modified] User Request: "If keyword is Toilet Clogging, add region+dong... and simple tags"
+            // We apply strict title enforcement for '변기막힘'
+            let titleInstruction = '';
+            if (service === '변기막힘') {
+                titleInstruction = `
+            1. **제목(H1)**: 반드시 다음 형식을 따르세요.
+               "[${city}] [${dong}] ${service} - ${usageContext.substring(0, 15)}... 해결"
+               예시: "[전주시] [효자동] 변기막힘 - 휴지 뭉침으로 인한 역류 해결"
+               `;
+            } else {
+                titleInstruction = `
+            1. **제목(H1)**: 다음 형식을 유지하되, 자연스럽게 변형하세요.
+               "[${city}] [${dong}] ${service} - ${usageContext.substring(0, 15)}... 해결 사례"
+               `;
+            }
+
             prompt = `
             당신은 20년 경력의 베테랑 배관 전문가이자 블로그 마케팅 전문가입니다.
             아래 정보를 바탕으로 고객의 신뢰를 얻을 수 있는 전문적인 블로그 포스팅을 작성해주세요.
+            
+            [핵심 정보]
+            - 지역: ${city} ${dong} (${fullLocation})
+            - 서비스: ${service}
+            - 상황: ${usageContext}
+            - 타겟: ${targetAudience}
+            - 형식: ${template}
+            - 메인 키워드: ${keyword}
 
-            정보:
-            - 핵심 키워드: ${keyword}
-            - 글의 형식: ${template}
-            - 타겟 독자: ${targetAudience}
-            - 상황 연출: ${usageContext}
-            - 지역: ${fullLocation}
-
-            요청사항:
-            1. 글의 제목(<h1>)은 반드시 다음 형식을 정확히 지켜주세요:
-               "[${city}] [${displayDistrict}] [${dong} || ${parts[parts.length - 1]}] [${service}] + [${usageContext}]"
-               예시: "전주 완산구 효자동 싱크대막힘 + 신혼부부의 주말 비상상황 해결기"
-               (주의: 지역명과 키워드는 띄어쓰기로 구분하고, 뒤에 '+' 또는 '-' 기호와 함께 구체적인 상황/해결 내용을 붙여주세요)
-
-            2. 본문은 <h2>, <p>, <ul>, <li> 태그를 적절히 사용하여 가독성을 높여주세요.
-            3. [IMG_1], [IMG_2], [IMG_3], [IMG_4]를 적절한 위치에 삽입하여 현장감을 살려주세요.
-            4. SEO 최적화를 위해 '${keyword}'를 본문에 자연스럽게 5회 이상 포함하세요.
-            5. 마크다운이 아닌 HTML 태그만 출력하세요. (html, body 제외)
+            [작성 요청사항]
+            ${titleInstruction}
+            
+            2. **본문 구조**:
+               - 도입부: ${dong} 지역 주민의 공감을 얻는 인사와 상황 설명
+               - 문제 인식: ${usageContext} 디테일한 묘사
+               - 해결 과정: 전문가적인 장비 사용 및 해결 절차 (단계별 설명)
+               - 마무리: 관리 팁 및 신뢰를 주는 맺음말
+            
+            3. **SEO 및 포맷**:
+               - 키워드 '${keyword}'를 본문에 4~5회 자연스럽게 녹여내세요.
+               - <h2> 태그 3개 이상 사용
+               - <ul>, <li> 태그로 가독성 확보
+               - 중간중간 [IMG_1], [IMG_2], [IMG_3] 배치
+               - **주의**: 상호명, 전화번호, 외부 링크 절대 금지.
+            
+            4. **톤앤매너**: 친절하고 전문적이며, 불안해하는 고객을 안심시키는 어조.
+            5. 오직 HTML 태그(<p>, <h2>, <ul> 등)만 출력하세요. (Markdown 불가)
             `;
         }
 
@@ -851,10 +883,10 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
             // [Modified] User Request: "Background + Topic" style (Graphic Card) for ALL body images
             // We reuse generateGraphicCardHtml to create consistent, clean text-on-card images.
 
-            content = content.replace(/\[IMG_1\]/g, generateGraphicCardHtml(`📍 ${fullLocation} ${service}<br>긴급 출동 서비스`, 10));
-            content = content.replace(/\[IMG_2\]/g, generateGraphicCardHtml(`🛠️ ${service}<br>최신 장비로 완벽 해결`, 11));
-            content = content.replace(/\[IMG_3\]/g, generateGraphicCardHtml(`✨ 꼼꼼한 원인 파악<br>및 확실한 시공`, 12));
-            content = content.replace(/\[IMG_4\]/g, generateGraphicCardHtml(`👍 ${service} 작업 완료<br>A/S 철저 보장!`, 13));
+            content = content.replace(/\[IMG_1\]/g, generateGraphicCardHtml(`${city} ${service}`, 10));
+            content = content.replace(/\[IMG_2\]/g, generateGraphicCardHtml(`${dong} ${service}`, 11));
+            content = content.replace(/\[IMG_3\]/g, generateGraphicCardHtml(`${keyword}`, 12));
+            content = content.replace(/\[IMG_4\]/g, generateGraphicCardHtml(`${service} 해결`, 13));
         }
         content = content.replace(/\[IMG_[^\]]+\]/g, '');
 
@@ -868,7 +900,7 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
             content += `
                 <hr style="margin: 40px 0;" />
                 <h3>📍 ${fullLocation} ${service} 해결 전문!</h3>
-                <p><strong>전북 전 지역(${city}${displayDistrict ? ', ' + displayDistrict : ''}) 30분 내 긴급 출동!</strong></p>
+                <p><strong>전북 전 지역(${fullLocation}) 30분 내 긴급 출동!</strong></p>
                 <p>더 많은 시공 사례와 정확한 위치는 아래 지도에서 확인해주세요.</p>
                 <p style="text-align: center; margin-top: 20px;">
                     <a href="${placeUrl}" target="_blank" style="background-color: #03C75A; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1.1em;">
