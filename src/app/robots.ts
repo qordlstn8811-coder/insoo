@@ -8,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: '/',
             disallow: '/private/',
         },
-        sitemap: 'https://xn--2e0bm8utzck3fsyi7rvktd.com/sitemap.xml', // 도메인 설정 완료
+        sitemap: 'https://전북하수구막힘.com/sitemap.xml', // 도메인 설정 완료
     };
 }

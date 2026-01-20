@@ -26,16 +26,16 @@ export async function generateMetadata({ params }: { params: Promise<{ city: str
     const regionName = region?.name || city;
     const dongName = decodeURIComponent(dong);
 
-    // 키워드 다양화
-    const suffixKeywords = ['하수구막힘', '변기뚫음', '싱크대막힘', '24시 긴급출동', '배관수리'];
-    const randomSuffix = suffixKeywords[Math.floor(Math.random() * suffixKeywords.length)];
+    // 키워드 다양화 및 프론트 로딩
+    const services = ['변기막힘', '싱크대뚫음', '하수구뚫는곳', '고압세척', '배관수리'];
+    const randomService = services[Math.floor(Math.random() * services.length)];
 
     return {
-        title: `${dongName} ${randomSuffix} | ${regionName} 배관전문업체`,
-        description: `${regionName} ${dongName} 지역 ${randomSuffix} 24시 긴급출동. 최신 장비와 합리적인 정찰제 가격으로 확실하게 해결해 드립니다. 010-8184-3496`,
-        keywords: `${dongName}하수구, ${dongName}변기막힘, ${regionName} ${dongName}, ${dongName}싱크대막힘, ${dongName}고압세척`,
+        title: `${dongName} ${randomService} & 하수구막힘 | 24시 긴급출동 전북하수구막힘`,
+        description: `${regionName} ${dongName} 하수구막힘 변기/싱크대 뚫음 비용 확인! 30분 내 현장 도착, 최신 장비로 원인 완벽 해결. ☎010-8184-3496`,
+        keywords: `${dongName} 하수구, ${dongName} 변기막힘, ${dongName} 싱크대막힘, ${dongName} 고압세척, ${regionName} ${dongName} 배관업체, ${dongName} 하수구뚫는곳`,
         alternates: {
-            canonical: `https://xn--2e0bm8utzck3fsyi7rvktd.com/${city}/${dong}`,
+            canonical: `https://전북하수구막힘.com/${city}/${dong}`,
         },
     };
 }
@@ -68,6 +68,38 @@ export default async function DongPage({ params }: { params: Promise<{ city: str
         <>
             <Header />
 
+            {/* Localized JSON-LD */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                        '@context': 'https://schema.org',
+                        '@type': 'Service',
+                        'serviceType': 'PlumbingService',
+                        'provider': {
+                            '@type': 'LocalBusiness',
+                            'name': '전북하수구막힘',
+                            'telephone': '+82-10-8184-3496',
+                            'image': 'https://전북하수구막힘.com/images/hero.png'
+                        },
+                        'areaServed': {
+                            '@type': 'AdministrativeArea',
+                            'name': `${regionName} ${dongName}`
+                        },
+                        'description': `${regionName} ${dongName} 하수구막힘, 변기막힘, 싱크대막힘 24시 전문`,
+                        'hasOfferCatalog': {
+                            '@type': 'OfferCatalog',
+                            'name': `${dongName} 배관 서비스`,
+                            'itemListElement': [
+                                { '@type': 'Offer', 'itemOffered': { '@type': 'Service', 'name': `${dongName} 하수구 뚫음` } },
+                                { '@type': 'Offer', 'itemOffered': { '@type': 'Service', 'name': `${dongName} 변기 막힘` } },
+                                { '@type': 'Offer', 'itemOffered': { '@type': 'Service', 'name': `${dongName} 싱크대 막힘` } }
+                            ]
+                        }
+                    })
+                }}
+            />
+
             {/* 히어로 */}
             <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 pt-28 pb-12 lg:pt-36 lg:pb-16">
                 <div className="max-w-4xl mx-auto px-4 text-center">
@@ -81,7 +113,7 @@ export default async function DongPage({ params }: { params: Promise<{ city: str
 
                     <h1 className="text-2xl md:text-4xl font-extrabold text-white mb-4">
                         <span className="text-blue-400">{regionName} {dongName}</span><br />
-                        하수구막힘 · 변기막힘 전문
+                        하수구 · 변기 · 싱크대막힘 전문
                     </h1>
 
                     <p className="text-gray-300 mb-6">
@@ -104,7 +136,7 @@ export default async function DongPage({ params }: { params: Promise<{ city: str
                     <article className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden mb-8">
                         <div className="bg-blue-600 px-6 py-5">
                             <h2 className="text-xl md:text-2xl font-bold text-white">
-                                {regionName} {dongName} 하수구 고압세척 / 변기막힘 전문
+                                {regionName} {dongName} 하수구 고압세척 / 싱크대 · 변기막힘 전문
                             </h2>
                             <p className="text-blue-100 text-sm mt-1">우리 동네 가장 빠른 배관 전문 업체</p>
                         </div>

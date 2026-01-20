@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import Header from '@/components/Header';
 
 
@@ -35,7 +34,7 @@ export default function ContactPage() {
                 setStatus('error');
                 alert('문의 접수에 실패했습니다. 잠시 후 다시 시도해주세요.');
             }
-        } catch (error) {
+        } catch {
             setStatus('error');
             alert('오류가 발생했습니다.');
         } finally {

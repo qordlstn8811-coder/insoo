@@ -4,7 +4,7 @@ import { jeonbukRegions } from '@/data/regions';
 import { createClient } from '@/lib/supabase';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = 'https://xn--2e0bm8utzck3fsyi7rvktd.com';
+    const baseUrl = 'https://전북하수구막힘.com';
 
     // 1. 기본 페이지
     const routes = [
@@ -60,8 +60,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
                 priority: 0.6,
             }));
         }
-    } catch (error) {
-        console.error('Sitemap post fetch error:', error);
+    } catch {
+        // Silent fail - sitemap will have fewer entries
     }
 
     return [...routes, ...cityRoutes, ...dongRoutes, ...postRoutes];

@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase';
-import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
@@ -38,12 +38,12 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         creator: '전북하수구막힘',
         publisher: '전북하수구막힘',
         alternates: {
-            canonical: `https://xn--2e0bm8utzck3fsyi7rvktd.com/cases/${id}`
+            canonical: `https://전북하수구막힘.com/cases/${id}`
         },
         openGraph: {
             title: post.title,
             description: cleanDescription,
-            url: `https://xn--2e0bm8utzck3fsyi7rvktd.com/cases/${id}`,
+            url: `https://전북하수구막힘.com/cases/${id}`,
             siteName: '전북하수구막힘',
             images: post.image_url ? [{
                 url: post.image_url,
@@ -102,14 +102,14 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
                             author: {
                                 '@type': 'Organization',
                                 name: '전북하수구막힘',
-                                url: 'https://xn--2e0bm8utzck3fsyi7rvktd.com',
+                                url: 'https://전북하수구막힘.com',
                             },
                             publisher: {
                                 '@type': 'Organization',
                                 name: '전북하수구막힘',
                                 logo: {
                                     '@type': 'ImageObject',
-                                    url: 'https://xn--2e0bm8utzck3fsyi7rvktd.com/icon.png'
+                                    url: 'https://전북하수구막힘.com/icon.png'
                                 }
                             },
                             mainEntity: {
@@ -134,13 +134,13 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
                                     '@type': 'ListItem',
                                     position: 1,
                                     name: 'Home',
-                                    item: 'https://xn--2e0bm8utzck3fsyi7rvktd.com'
+                                    item: 'https://전북하수구막힘.com'
                                 },
                                 {
                                     '@type': 'ListItem',
                                     position: 2,
                                     name: '시공사례',
-                                    item: 'https://xn--2e0bm8utzck3fsyi7rvktd.com/cases'
+                                    item: 'https://전북하수구막힘.com/cases'
                                 },
                                 {
                                     '@type': 'ListItem',
@@ -176,7 +176,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
                     </h1>
                     {post.image_url && (
                         <div className="relative aspect-video w-full overflow-hidden rounded-2xl shadow-lg">
-                            <Image
+                            <SafeImage
                                 src={post.image_url}
                                 alt={post.title}
                                 fill

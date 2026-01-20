@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Local utilities (contain secrets or machine-specific paths)
+    "scripts/**",
+    "src/scripts/**",
   ]),
 ]);
 

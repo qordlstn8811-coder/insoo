@@ -10,8 +10,8 @@ import { Metadata } from 'next';
 import * as motion from 'motion/react-client';
 
 export const metadata: Metadata = {
-  title: '전북하수구막힘 | 하수구·변기·싱크대 막힘 24시간 긴급출동',
-  description: '전주, 군산, 익산 전 서비스 지역 30분 방문. 최신 내시경 장비 보유, 1년 A/S 보장. 막힌 곳 확실하게 뚫어드립니다.',
+  title: '전주 하수구 뚫음 비용 & 배관 청소 견적 | 전북하수구막힘',
+  description: '전주·군산·익산 하수구 뚫는 비용 궁금하세요? 정찰제로 투명하게 공개합니다. 최신 내시경 장비로 정확한 진단, 30분 내 방문. ☎010-8184-3496',
 };
 
 export default function Home() {

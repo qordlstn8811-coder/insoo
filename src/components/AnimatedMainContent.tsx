@@ -210,7 +210,7 @@ export default function AnimatedMainContent({
                         whileInView="visible"
                         viewport={{ once: true, margin: "-50px" }}
                     >
-                        {Object.entries(serviceDetails).map(([key, s], index) => (
+                        {Object.entries(serviceDetails).map(([key, s]) => (
                             <motion.div
                                 key={key}
                                 variants={itemVariants}

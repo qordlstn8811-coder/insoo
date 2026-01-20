@@ -14,6 +14,7 @@ export default function Chatbot() {
         { id: 1, text: '안녕하세요! 전북하수구막힘입니다. \n무엇을 도와드릴까요?', isUser: false },
     ]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const messageIdRef = useRef(2);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -25,8 +26,9 @@ export default function Chatbot() {
 
     const handleOptionClick = (option: string) => {
         // 사용자 질문 추가
-        const userMsgId = Date.now();
-        setMessages((prev) => [...prev, { id: userMsgId, text: option, isUser: true }]);
+        const userMsgId = messageIdRef.current++;
+        const userMsg: Message = { id: userMsgId, text: option, isUser: true };
+        setMessages((prev) => [...prev, userMsg]);
 
         // 답변 로직 (1초 딜레이 효과)
         setTimeout(() => {
@@ -47,7 +49,8 @@ export default function Chatbot() {
                 default:
                     answer = '상담원이 필요하시면 전화로 문의주세요.';
             }
-            setMessages((prev) => [...prev, { id: Date.now(), text: answer, isUser: false }]);
+            const botMsg: Message = { id: messageIdRef.current++, text: answer, isUser: false };
+            setMessages((prev) => [...prev, botMsg]);
         }, 500);
     };
 

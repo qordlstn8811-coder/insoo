@@ -9,8 +9,12 @@ export async function POST(request: Request) {
         const body = await request.json();
         const { password } = body;
 
-        // Simple security check
-        if (password !== '1234') {
+        const adminPassword = process.env.ADMIN_PASSWORD;
+        if (!adminPassword) {
+            return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+        }
+
+        if (password !== adminPassword) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
@@ -22,9 +26,9 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: result.error }, { status: 500 });
         }
 
-    } catch (error: any) {
-        console.error('Manual generation failed:', error);
-        return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
+    } catch (error) {
+        const message = error instanceof Error ? error.message : 'Internal Server Error';
+        return NextResponse.json({ error: message }, { status: 500 });
     }
 }
 

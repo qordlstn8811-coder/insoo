@@ -18,16 +18,16 @@ export async function generateMetadata({ params }: { params: Promise<{ city: str
     const region = jeonbukRegions.find(r => r.id === city);
     const regionName = region?.name || city;
 
-    // 키워드 다양화
-    const suffixKeywords = ['하수구막힘', '변기뚫음', '싱크대막힘', '배관고압세척', '24시 긴급출동'];
-    const randomSuffix = suffixKeywords[Math.floor(Math.random() * suffixKeywords.length)];
+    // 키워드 다양화 및 프론트 로딩
+    const services = ['하수구 뚫음', '배관 청소', '변기 막힘', '싱크대 뚫는곳', '고압 세척'];
+    const randomService = services[Math.floor(Math.random() * services.length)];
 
     return {
-        title: `${regionName} ${randomSuffix} | 전북하수구막힘 30분 내 방문`,
-        description: `${regionName} 지역 ${randomSuffix} 전문. 30분내 긴급출동! ${regionName} ${region?.districts.slice(0, 5).join(', ')} 등 전지역 출장 가능. 010-8184-3496`,
-        keywords: `${regionName}하수구, ${regionName}변기막힘, ${regionName}싱크대막힘, ${regionName}고압세척, ${regionName}배관청소`,
+        title: `${regionName} ${randomService} & 하수구막힘 | 30분 방문 전북하수구막힘`,
+        description: `${regionName} ${randomService} 해결 비용 확인! 24시 긴급출동, 확실한 정찰제 적용. ${regionName} ${region?.districts.slice(0, 3).join(', ')} 전지역 30분 내 방문. ☎010-8184-3496`,
+        keywords: `${regionName} 하수구 뚫음, ${regionName} 하수구막힘, ${regionName} 변기막힘, ${regionName} 싱크대막힘, ${regionName} 고압세척, ${regionName} 배관청소, ${regionName} 하수구 업체`,
         alternates: {
-            canonical: `https://xn--2e0bm8utzck3fsyi7rvktd.com/${city}`,
+            canonical: `https://전북하수구막힘.com/${city}`,
         },
     };
 }
@@ -51,6 +51,38 @@ export default async function CityPage({ params }: { params: Promise<{ city: str
         <>
             <Header />
 
+            {/* Localized JSON-LD */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                        '@context': 'https://schema.org',
+                        '@type': 'Service',
+                        'serviceType': 'PlumbingService',
+                        'provider': {
+                            '@type': 'LocalBusiness',
+                            'name': '전북하수구막힘',
+                            'telephone': '+82-10-8184-3496',
+                            'image': 'https://전북하수구막힘.com/images/hero.png'
+                        },
+                        'areaServed': {
+                            '@type': 'City',
+                            'name': region.name
+                        },
+                        'description': `${region.name} 전지역 하수구막힘, 변기막힘, 싱크대막힘, 고압세척 24시 긴급출동`,
+                        'hasOfferCatalog': {
+                            '@type': 'OfferCatalog',
+                            'name': `${region.name} 배관 서비스`,
+                            'itemListElement': [
+                                { '@type': 'Offer', 'itemOffered': { '@type': 'Service', 'name': `${region.name} 하수구 뚫음` } },
+                                { '@type': 'Offer', 'itemOffered': { '@type': 'Service', 'name': `${region.name} 변기 막힘` } },
+                                { '@type': 'Offer', 'itemOffered': { '@type': 'Service', 'name': `${region.name} 싱크대 막힘` } }
+                            ]
+                        }
+                    })
+                }}
+            />
+
             {/* 히어로 섹션 */}
             <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 pt-28 pb-16 lg:pt-36 lg:pb-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -61,7 +93,7 @@ export default async function CityPage({ params }: { params: Promise<{ city: str
 
                     <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
                         <span className="text-blue-400">{region.name}</span> 하수구막힘<br />
-                        싱크대·변기 긴급출동
+                        변기 · 싱크대 뚫음 긴급출동
                     </h1>
 
                     <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">

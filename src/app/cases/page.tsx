@@ -1,13 +1,13 @@
 import { createClient } from '@/lib/supabase';
 import Link from 'next/link';
-import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
     title: '시공사례 | 전북하수구막힘',
     description: '전북하수구막힘의 생생한 현장 시공 사례를 확인하세요. 변기, 하수구, 싱크대 막힘 해결 후기.',
     alternates: {
-        canonical: 'https://xn--2e0bm8utzck3fsyi7rvktd.com/cases',
+        canonical: 'https://전북하수구막힘.com/cases',
     },
 };
 
@@ -56,7 +56,7 @@ export default async function CasesPage() {
                                 {/* 이미지 영역 */}
                                 <div className="relative aspect-video w-full overflow-hidden bg-gray-100">
                                     {post.image_url ? (
-                                        <Image
+                                        <SafeImage
                                             src={post.image_url}
                                             alt={post.title}
                                             fill

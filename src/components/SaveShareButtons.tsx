@@ -5,22 +5,29 @@ import { useState } from 'react';
 export default function SaveShareButtons({ title }: { title: string }) {
     const [copied, setCopied] = useState(false);
 
-    const handleCopyLink = () => {
+    const handleCopyLink = async () => {
         const url = window.location.href;
-        navigator.clipboard.writeText(url).then(() => {
+        try {
+            await navigator.clipboard.writeText(url);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
-            alert('🔗 주소가 복사되었습니다! 필요한 곳에 붙여넣기 하세요.');
-        });
+            alert('주소가 복사되었습니다! 필요한 곳에 붙여넣기 하세요.');
+        } catch {
+            // Fallback: do nothing if clipboard fails
+        }
     };
 
-    const handleShare = () => {
+    const handleShare = async () => {
         if (navigator.share) {
-            navigator.share({
-                title: title,
-                text: `${title} - 전북하수구막힘 시공사례`,
-                url: window.location.href,
-            }).catch((error) => console.log('공유 실패', error));
+            try {
+                await navigator.share({
+                    title: title,
+                    text: `${title} - 전북하수구막힘 시공사례`,
+                    url: window.location.href,
+                });
+            } catch {
+                handleCopyLink();
+            }
         } else {
             handleCopyLink();
         }

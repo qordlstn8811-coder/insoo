@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState, memo } from "react";
+import React, { useEffect, useMemo, useRef, useState, memo } from "react";
 import { motion } from "motion/react";
 import { twMerge } from "tailwind-merge";
 import { cn } from "@/lib/utils";
@@ -148,32 +148,24 @@ export const TextRevealCardDescription = ({
 };
 
 const Stars = () => {
-  const [stars, setStars] = useState<
-    {
-      top: number;
-      left: number;
-      opacity: number;
-      duration: number;
-      moveTop: number;
-      moveLeft: number;
-    }[]
-  >([]);
+  const stars = useMemo(() => {
+    const pseudoRandom = (seed: number) => {
+      const value = Math.sin(seed) * 10000;
+      return value - Math.floor(value);
+    };
 
-  useEffect(() => {
-    const randomMove = () => Math.random() * 4 - 2;
-    const randomOpacity = () => Math.random();
-    const random = () => Math.random();
-
-    const newStars = [...Array(80)].map(() => ({
-      top: random() * 100,
-      left: random() * 100,
-      opacity: randomOpacity(),
-      duration: random() * 10 + 20,
-      moveTop: randomMove(),
-      moveLeft: randomMove(),
-    }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    setStars(newStars);
+    return [...Array(80)].map((_, index) => {
+      const seed = index + 1;
+      const random = (offset: number) => pseudoRandom(seed * 10 + offset);
+      return {
+        top: random(1) * 100,
+        left: random(2) * 100,
+        opacity: random(3),
+        duration: random(4) * 10 + 20,
+        moveTop: random(5) * 4 - 2,
+        moveLeft: random(6) * 4 - 2,
+      };
+    });
   }, []);
 
   return (

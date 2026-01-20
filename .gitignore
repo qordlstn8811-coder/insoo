@@ -52,3 +52,20 @@ keys.js
 
 .vercel
 .env*.local
+
+# local tooling / artifacts
+nul
+.claude/
+full_history.txt
+git_log.txt
+lint_report.json
+
+# generated assets
+public/.netlify/
+public/images/generated/
+public/workimages/
+public/icon.png
+
+# local scripts (contain secrets or machine-specific paths)
+scripts/
+src/scripts/

@@ -90,10 +90,11 @@ export const BackgroundBeams = React.memo(
           ))}
           <defs>
             {paths.map((path, index) => {
-              // Generate stable random values for each path
-              const randomDuration = React.useMemo(() => Math.random() * 10 + 10, []);
-              const randomDelay = React.useMemo(() => Math.random() * 10, []);
-              const randomY2 = React.useMemo(() => 93 + Math.random() * 8, []);
+              // Generate semi-stable values based on index to avoid hydration mismatch
+              // and ensure consistent look between SSR and CSR
+              const randomDuration = 10 + (index % 10); // Consistent but looks random
+              const randomDelay = (index % 7);
+              const randomY2 = 93 + (index % 8);
 
               return (
                 <motion.linearGradient

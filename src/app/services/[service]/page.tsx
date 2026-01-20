@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ service: 
     }
 
     const keywords = seoKeywords[serviceParam] || '';
-    const baseUrl = 'https://xn--2e0bm8utzck3fsyi7rvktd.com';
+    const baseUrl = 'https://전북하수구막힘.com';
 
     return {
         title: `${service.title} | 전북 ${service.title} 24시 긴급출동 - 전북하수구막힘`,

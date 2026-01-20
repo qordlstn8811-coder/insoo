@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react';
 
 export default function CallPopup() {
     const [isVisible, setIsVisible] = useState(false);
-    // Start as TRUE (hidden) to avoid flash. Only set to false if we confirm it's NOT closed.
-    const [hasBeenClosed, setHasBeenClosed] = useState(true);
 
     useEffect(() => {
         // 이미 닫은 적이 있는지 확인
@@ -13,8 +11,6 @@ export default function CallPopup() {
 
         // 닫은 적이 없다면 (closed is null) -> 보여줄 준비
         if (!closed) {
-            setHasBeenClosed(false);
-
             // 5초 후에 팝업 표시
             const timer = setTimeout(() => {
                 setIsVisible(true);
@@ -25,11 +21,10 @@ export default function CallPopup() {
 
     const handleClose = () => {
         setIsVisible(false);
-        setHasBeenClosed(true);
         sessionStorage.setItem('callPopupClosed', 'true');
     };
 
-    if (!isVisible || hasBeenClosed) return null;
+    if (!isVisible) return null;
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 animate-fadeIn">
