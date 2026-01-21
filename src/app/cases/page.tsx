@@ -18,6 +18,8 @@ const CACHE_SECONDS = 60;
 
 const isPollinationsUrl = (value: string) =>
     value.startsWith('https://image.pollinations.ai/');
+const BLUR_DATA_URL =
+    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iNyIgdmlld0JveD0iMCAwIDEwIDciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjciIGZpbGw9IiNlNWU3ZWIiLz48L3N2Zz4=';
 
 const getPostsPage = unstable_cache(
     async (page: number) => {
@@ -95,6 +97,8 @@ export default async function CasesPage({ searchParams }: CasesPageProps) {
                                             sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                                             className="object-cover transition-transform duration-300 group-hover:scale-105"
                                             unoptimized={isPollinationsUrl(post.image_url)}
+                                            placeholder="blur"
+                                            blurDataURL={BLUR_DATA_URL}
                                         />
                                     ) : (
                                         <div className="flex h-full w-full items-center justify-center text-gray-300">
