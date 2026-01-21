@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Metadata } from 'next';
+import { unstable_cache } from 'next/cache';
 
 export const metadata: Metadata = {
     title: '시공사례 | 전북하수구막힘',
@@ -12,12 +13,32 @@ export const metadata: Metadata = {
 };
 
 // 동적 데이터 페칭 설정 (캐시 방지)
-const PAGE_SIZE = 24;
+const PAGE_SIZE = 12;
+const CACHE_SECONDS = 60;
 
 const isPollinationsUrl = (value: string) =>
     value.startsWith('https://image.pollinations.ai/');
 
-export const revalidate = 0;
+const getPostsPage = unstable_cache(
+    async (page: number) => {
+        const supabase = createClient();
+        const from = (page - 1) * PAGE_SIZE;
+        const to = from + PAGE_SIZE - 1;
+
+        const { data: posts } = await supabase
+            .from('posts')
+            .select('id,title,content,created_at,image_url,category,keyword')
+            .eq('status', 'published')
+            .order('created_at', { ascending: false })
+            .range(from, to);
+
+        return posts ?? [];
+    },
+    ['cases-page'],
+    { revalidate: CACHE_SECONDS }
+);
+
+export const revalidate = 60;
 
 type CasesPageProps = {
     searchParams?: {
@@ -27,17 +48,9 @@ type CasesPageProps = {
 
 export default async function CasesPage({ searchParams }: CasesPageProps) {
 
-    const supabase = createClient();
     const page = Math.max(1, Number(searchParams?.page ?? '1') || 1);
-    const from = (page - 1) * PAGE_SIZE;
-    const to = from + PAGE_SIZE - 1;
     // 게시글 가져오기 (최신순)
-    const { data: posts } = await supabase
-        .from('posts')
-        .select('id,title,content,created_at,image_url,category,keyword')
-        .eq('status', 'published')
-        .order('created_at', { ascending: false })
-        .range(from, to);
+    const posts = await getPostsPage(page);
 
     const hasPrevPage = page > 1;
     const hasNextPage = (posts?.length ?? 0) === PAGE_SIZE;
