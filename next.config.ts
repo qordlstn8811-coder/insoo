@@ -9,6 +9,21 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'xn--2e0bm8utzck3fsyi7rvktd.com',
+          },
+        ],
+        destination: 'https://전북하수구막힘.com/:path*',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 export const InfiniteMovingCards = ({
     items,
@@ -22,10 +22,25 @@ export const InfiniteMovingCards = ({
 }) => {
     const containerRef = React.useRef<HTMLDivElement>(null);
     const scrollerRef = React.useRef<HTMLUListElement>(null);
+    const [reduceMotion, setReduceMotion] = useState(false);
 
     const hasClonedRef = React.useRef(false);
 
     useEffect(() => {
+        const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+        const update = () => setReduceMotion(mediaQuery.matches);
+        update();
+        mediaQuery.addEventListener("change", update);
+
+        return () => {
+            mediaQuery.removeEventListener("change", update);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (reduceMotion) {
+            return;
+        }
         if (!containerRef.current || !scrollerRef.current || hasClonedRef.current) {
             return;
         }
@@ -38,9 +53,12 @@ export const InfiniteMovingCards = ({
         });
 
         hasClonedRef.current = true;
-    }, []);
+    }, [reduceMotion]);
 
     useEffect(() => {
+        if (reduceMotion) {
+            return;
+        }
         if (containerRef.current) {
             if (direction === "left") {
                 containerRef.current.style.setProperty(
@@ -54,9 +72,12 @@ export const InfiniteMovingCards = ({
                 );
             }
         }
-    }, [direction]);
+    }, [direction, reduceMotion]);
 
     useEffect(() => {
+        if (reduceMotion) {
+            return;
+        }
         if (containerRef.current) {
             if (speed === "fast") {
                 containerRef.current.style.setProperty("--animation-duration", "20s");
@@ -66,7 +87,7 @@ export const InfiniteMovingCards = ({
                 containerRef.current.style.setProperty("--animation-duration", "80s");
             }
         }
-    }, [speed]);
+    }, [speed, reduceMotion]);
 
     return (
         <div
@@ -80,7 +101,7 @@ export const InfiniteMovingCards = ({
                 ref={scrollerRef}
                 className={cn(
                     "flex min-w-full shrink-0 gap-4 py-4 w-max flex-nowrap",
-                    "animate-scroll",
+                    !reduceMotion && "animate-scroll",
                     pauseOnHover && "hover:[animation-play-state:paused]"
                 )}
             >

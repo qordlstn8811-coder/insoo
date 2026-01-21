@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -62,6 +62,8 @@ export default function AnimatedMainContent({
     faqContent,
     companyInfo
 }: AnimatedMainContentProps) {
+    const reduceMotion = useReducedMotion();
+
     return (
         <main className="bg-slate-50">
             {/* 2. Problem Section (문제 제기) */}
@@ -382,11 +384,11 @@ export default function AnimatedMainContent({
                             >
                                 <motion.div
                                     className="text-4xl mb-4"
-                                    animate={{
+                                    animate={reduceMotion ? undefined : {
                                         rotate: [0, 10, -10, 0],
                                         scale: [1, 1.1, 1]
                                     }}
-                                    transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+                                    transition={reduceMotion ? undefined : { duration: 2, repeat: Infinity, delay: i * 0.3 }}
                                 >
                                     {item.icon}
                                 </motion.div>
@@ -417,7 +419,7 @@ export default function AnimatedMainContent({
                         전화 한 통이면 전문 상담원이 친절하게 안내해 드립니다.
                     </p>
                     <motion.div
-                        animate={{
+                        animate={reduceMotion ? undefined : {
                             scale: [1, 1.02, 1],
                             boxShadow: [
                                 '0 0 0 0 rgba(59, 130, 246, 0.4)',
@@ -425,7 +427,7 @@ export default function AnimatedMainContent({
                                 '0 0 0 0 rgba(59, 130, 246, 0)',
                             ],
                         }}
-                        transition={{ duration: 2, repeat: Infinity }}
+                        transition={reduceMotion ? undefined : { duration: 2, repeat: Infinity }}
                         className="inline-block rounded-2xl"
                     >
                         <Button size="lg" className="px-10 py-6 text-xl font-bold shadow-xl shadow-blue-200 hover:scale-105 transition-all" asChild>

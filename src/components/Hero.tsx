@@ -4,11 +4,13 @@ import Image from 'next/image';
 import { mainContent } from '@/data/content';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Spotlight } from '@/components/ui/spotlight';
 import { WavyBackground } from '@/components/ui/wavy-background';
 
 export default function Hero() {
+    const reduceMotion = useReducedMotion();
+
     return (
         <div className="relative overflow-hidden min-h-screen">
             <WavyBackground
@@ -36,8 +38,8 @@ export default function Hero() {
                             <Badge variant="outline" className="inline-flex items-center gap-2 bg-blue-500/20 border-blue-400/30 text-blue-200 px-4 py-2 mb-6 text-sm backdrop-blur-md">
                                 <motion.span
                                     className="w-2 h-2 bg-green-400 rounded-full"
-                                    animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
-                                    transition={{ duration: 1.5, repeat: Infinity }}
+                                    animate={reduceMotion ? undefined : { scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
+                                    transition={reduceMotion ? undefined : { duration: 1.5, repeat: Infinity }}
                                 />
                                 전북 전지역 24시간 긴급출동
                             </Badge>
@@ -51,8 +53,8 @@ export default function Hero() {
                         >
                             <motion.span
                                 className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-cyan-300 to-blue-300 mb-2 text-xl md:text-2xl lg:text-3xl font-bold"
-                                animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
-                                transition={{ duration: 5, repeat: Infinity }}
+                                animate={reduceMotion ? undefined : { backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
+                                transition={reduceMotion ? undefined : { duration: 5, repeat: Infinity }}
                                 style={{ backgroundSize: '200% auto' }}
                             >
                                 {mainContent.hero.title}
@@ -92,7 +94,7 @@ export default function Hero() {
                             transition={{ duration: 0.6, delay: 1.4 }}
                         >
                             <motion.div
-                                animate={{
+                                animate={reduceMotion ? undefined : {
                                     scale: [1, 1.02, 1],
                                     boxShadow: [
                                         '0 0 0 0 rgba(59, 130, 246, 0.4)',
@@ -100,7 +102,7 @@ export default function Hero() {
                                         '0 0 0 0 rgba(59, 130, 246, 0)',
                                     ],
                                 }}
-                                transition={{ duration: 2, repeat: Infinity }}
+                                transition={reduceMotion ? undefined : { duration: 2, repeat: Infinity }}
                                 className="rounded-xl"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
@@ -112,8 +114,8 @@ export default function Hero() {
                                             fill="none"
                                             stroke="currentColor"
                                             viewBox="0 0 24 24"
-                                            animate={{ rotate: [0, 10, -10, 0] }}
-                                            transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 2 }}
+                                            animate={reduceMotion ? undefined : { rotate: [0, 10, -10, 0] }}
+                                            transition={reduceMotion ? undefined : { duration: 0.5, repeat: Infinity, repeatDelay: 2 }}
                                         >
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                         </motion.svg>
@@ -154,8 +156,8 @@ export default function Hero() {
                     >
                         <div className="relative">
                             <motion.div
-                                animate={{ y: [0, -15, 0] }}
-                                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+                                animate={reduceMotion ? undefined : { y: [0, -15, 0] }}
+                                transition={reduceMotion ? undefined : { duration: 5, repeat: Infinity, ease: 'easeInOut' }}
                             >
                                 <Image
                                     src="/images/van.png"
@@ -177,8 +179,8 @@ export default function Hero() {
                                 <div className="flex items-center gap-4">
                                     <motion.div
                                         className="bg-gradient-to-br from-green-400 to-green-500 p-3 rounded-xl"
-                                        animate={{ scale: [1, 1.1, 1] }}
-                                        transition={{ duration: 2, repeat: Infinity }}
+                                        animate={reduceMotion ? undefined : { scale: [1, 1.1, 1] }}
+                                        transition={reduceMotion ? undefined : { duration: 2, repeat: Infinity }}
                                     >
                                         <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
@@ -201,8 +203,8 @@ export default function Hero() {
                             >
                                 <motion.div
                                     className="flex items-center gap-2"
-                                    animate={{ x: [0, 3, 0] }}
-                                    transition={{ duration: 2, repeat: Infinity }}
+                                    animate={reduceMotion ? undefined : { x: [0, 3, 0] }}
+                                    transition={reduceMotion ? undefined : { duration: 2, repeat: Infinity }}
                                 >
                                     <span className="text-xl">🔔</span>
                                     <span className="text-sm font-medium">실시간 예약 접수중</span>
@@ -215,8 +217,8 @@ export default function Hero() {
                 {/* 스크롤 인디케이터 */}
                 <motion.div
                     className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
-                    animate={{ y: [0, 12, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
+                    animate={reduceMotion ? undefined : { y: [0, 12, 0] }}
+                    transition={reduceMotion ? undefined : { duration: 1.5, repeat: Infinity }}
                 >
                     <div className="flex flex-col items-center text-white/60">
                         <span className="text-xs mb-2 tracking-widest">SCROLL</span>
@@ -225,8 +227,8 @@ export default function Hero() {
                         >
                             <motion.div
                                 className="w-1.5 h-1.5 bg-white rounded-full"
-                                animate={{ y: [0, 16, 0] }}
-                                transition={{ duration: 1.5, repeat: Infinity }}
+                                animate={reduceMotion ? undefined : { y: [0, 16, 0] }}
+                                transition={reduceMotion ? undefined : { duration: 1.5, repeat: Infinity }}
                             />
                         </motion.div>
                     </div>

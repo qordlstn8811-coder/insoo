@@ -7,7 +7,6 @@ import { serviceDetails } from '@/data/services';
 import { jeonbukRegions } from '@/data/regions';
 import { faqContent, companyInfo } from '@/data/content';
 import { Metadata } from 'next';
-import * as motion from 'motion/react-client';
 
 export const metadata: Metadata = {
   title: '전주 하수구 뚫음 비용 & 배관 청소 견적 | 전북하수구막힘',
@@ -16,22 +15,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <motion.main
-      animate={{
-        backgroundColor: [
-          '#f8fafc', // slate-50
-          '#f0f9ff', // sky-50
-          '#f5f3ff', // violet-50
-          '#fdf2f8', // pink-50
-          '#f8fafc',
-        ],
-      }}
-      transition={{
-        duration: 20,
-        repeat: Infinity,
-        ease: "linear"
-      }}
-    >
+    <main className="bg-gradient-to-b from-slate-50 via-sky-50 to-pink-50">
       <Header />
       <Hero />
       <LiveReviewFeed />
@@ -42,6 +26,6 @@ export default function Home() {
         faqContent={faqContent}
         companyInfo={companyInfo}
       />
-    </motion.main>
+    </main>
   );
 }
