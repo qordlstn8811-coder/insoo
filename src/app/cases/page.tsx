@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase';
 import Link from 'next/link';
-import SafeImage from '@/components/SafeImage';
+import Image from 'next/image';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -12,17 +12,35 @@ export const metadata: Metadata = {
 };
 
 // 동적 데이터 페칭 설정 (캐시 방지)
+const PAGE_SIZE = 24;
+
+const isPollinationsUrl = (value: string) =>
+    value.startsWith('https://image.pollinations.ai/');
+
 export const revalidate = 0;
 
-export default async function CasesPage() {
+type CasesPageProps = {
+    searchParams?: {
+        page?: string;
+    };
+};
+
+export default async function CasesPage({ searchParams }: CasesPageProps) {
 
     const supabase = createClient();
+    const page = Math.max(1, Number(searchParams?.page ?? '1') || 1);
+    const from = (page - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
     // 게시글 가져오기 (최신순)
     const { data: posts } = await supabase
         .from('posts')
-        .select('*')
+        .select('id,title,content,created_at,image_url,category,keyword')
         .eq('status', 'published')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .range(from, to);
+
+    const hasPrevPage = page > 1;
+    const hasNextPage = (posts?.length ?? 0) === PAGE_SIZE;
 
     return (
         <main className="min-h-screen bg-gray-50 pb-20 pt-24">
@@ -51,16 +69,19 @@ export default async function CasesPage() {
                             <Link
                                 key={post.id}
                                 href={`/cases/${post.id}`}
+                                prefetch={false}
                                 className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-all hover:-translate-y-1 hover:shadow-xl"
                             >
                                 {/* 이미지 영역 */}
                                 <div className="relative aspect-video w-full overflow-hidden bg-gray-100">
                                     {post.image_url ? (
-                                        <SafeImage
+                                        <Image
                                             src={post.image_url}
                                             alt={post.title}
                                             fill
+                                            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                                             className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                            unoptimized={isPollinationsUrl(post.image_url)}
                                         />
                                     ) : (
                                         <div className="flex h-full w-full items-center justify-center text-gray-300">
@@ -95,6 +116,37 @@ export default async function CasesPage() {
                                 </div>
                             </Link>
                         ))}
+                    </div>
+                )}
+                {(hasPrevPage || hasNextPage) && (
+                    <div className="mt-10 flex items-center justify-center gap-4 text-sm">
+                        {hasPrevPage ? (
+                            <Link
+                                href={`/cases?page=${page - 1}`}
+                                prefetch={false}
+                                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-gray-700 shadow-sm transition hover:bg-gray-50"
+                            >
+                                이전
+                            </Link>
+                        ) : (
+                            <span className="rounded-lg border border-gray-200 px-4 py-2 text-gray-300">
+                                이전
+                            </span>
+                        )}
+                        <span className="text-gray-500">페이지 {page}</span>
+                        {hasNextPage ? (
+                            <Link
+                                href={`/cases?page=${page + 1}`}
+                                prefetch={false}
+                                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-gray-700 shadow-sm transition hover:bg-gray-50"
+                            >
+                                다음
+                            </Link>
+                        ) : (
+                            <span className="rounded-lg border border-gray-200 px-4 py-2 text-gray-300">
+                                다음
+                            </span>
+                        )}
                     </div>
                 )}
             </div>
