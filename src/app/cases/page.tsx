@@ -1,27 +1,34 @@
-import { createClient } from '@/lib/supabase';
+﻿import { createClient } from '@/lib/supabase';
 import Link from 'next/link';
-import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import { Metadata } from 'next';
 import { unstable_cache } from 'next/cache';
 
 export const metadata: Metadata = {
     title: '시공사례 | 전북하수구막힘',
-    description: '전북하수구막힘의 생생한 현장 시공 사례를 확인하세요. 변기, 하수구, 싱크대 막힘 해결 후기.',
+    description: '전북하수구막힘의 생생한 현장 시공 사례를 확인하세요. 변기, 하수구, 싱크대 막힘 해결 전문가.',
     alternates: {
         canonical: 'https://전북하수구막힘.com/cases',
     },
 };
 
-// 동적 데이터 페칭 설정 (캐시 방지)
+// 동적 데이터 페이징 설정 (캐시 방식)
 const PAGE_SIZE = 12;
 const CACHE_SECONDS = 60;
 
 const isPollinationsUrl = (value: string) =>
-    value.startsWith('https://image.pollinations.ai/');
+    value && value.startsWith('https://image.pollinations.ai/');
 const BLUR_DATA_URL =
     'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iNyIgdmlld0JveD0iMCAwIDEwIDciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjciIGZpbGw9IiNlNWU3ZWIiLz48L3N2Zz4=';
 
-const getPostsPage = unstable_cache(
+const getSafeImageUrl = (url: string | null): string => {
+    if (!url || url.trim().length === 0) return '/images/hero.png';
+    if (isPollinationsUrl(url)) return '/images/hero.png';
+    return url;
+};
+
+// 페이지별 캐시 함수
+const getPostsPageData = unstable_cache(
     async (page: number) => {
         const supabase = createClient();
         const from = (page - 1) * PAGE_SIZE;
@@ -36,26 +43,51 @@ const getPostsPage = unstable_cache(
 
         return posts ?? [];
     },
-    ['cases-page'],
+    ['cases-posts-page'],
+    { revalidate: CACHE_SECONDS }
+);
+
+// 총 개수 조회 함수
+const getTotalCount = unstable_cache(
+    async () => {
+        const supabase = createClient();
+        const { count } = await supabase
+            .from('posts')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'published');
+        return count ?? 0;
+    },
+    ['cases-total-count'],
     { revalidate: CACHE_SECONDS }
 );
 
 export const revalidate = 60;
 
 type CasesPageProps = {
-    searchParams?: {
+    searchParams?: Promise<{
         page?: string;
-    };
+    }>;
 };
 
 export default async function CasesPage({ searchParams }: CasesPageProps) {
+    const params = await searchParams;
+    const page = Math.max(1, Number(params?.page ?? '1') || 1);
 
-    const page = Math.max(1, Number(searchParams?.page ?? '1') || 1);
-    // 게시글 가져오기 (최신순)
-    const posts = await getPostsPage(page);
+    // 게시글 및 총 개수 가져오기
+    const [posts, totalCount] = await Promise.all([
+        getPostsPageData(page),
+        getTotalCount()
+    ]);
 
+    const totalPages = Math.ceil(totalCount / PAGE_SIZE);
     const hasPrevPage = page > 1;
-    const hasNextPage = (posts?.length ?? 0) === PAGE_SIZE;
+    const hasNextPage = page < totalPages;
+
+    // 페이지 번호 범위 계산 (현재 페이지 기준 최대 10개)
+    const maxVisiblePages = 10;
+    let startPage = Math.max(1, page - Math.floor(maxVisiblePages / 2));
+    const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    startPage = Math.max(1, endPage - maxVisiblePages + 1);
 
     return (
         <main className="min-h-screen bg-gray-50 pb-20 pt-24">
@@ -66,7 +98,7 @@ export default async function CasesPage({ searchParams }: CasesPageProps) {
                 </h1>
                 <p className="mx-auto max-w-2xl text-lg text-blue-100">
                     전북하수구막힘이 직접 해결한 다양한 현장 이야기를 만나보세요.<br />
-                    고객님의 고민과 비슷한 사례를 찾아보실 수 있습니다.
+                    고객님의 고민과 비슷한 사례를 찾아보다 좋습니다.
                 </p>
             </section>
 
@@ -74,7 +106,7 @@ export default async function CasesPage({ searchParams }: CasesPageProps) {
             <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
                 {!posts || posts.length === 0 ? (
                     <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-20 text-center shadow-sm">
-                        <div className="mb-4 text-6xl">📝</div>
+                        <div className="mb-4 text-6xl">📋</div>
                         <h3 className="text-xl font-bold text-gray-900">아직 등록된 시공사례가 없습니다.</h3>
                         <p className="mt-2 text-gray-500">곧 새로운 현장 이야기로 찾아뵙겠습니다!</p>
                     </div>
@@ -90,13 +122,12 @@ export default async function CasesPage({ searchParams }: CasesPageProps) {
                                 {/* 이미지 영역 */}
                                 <div className="relative aspect-video w-full overflow-hidden bg-gray-100">
                                     {post.image_url ? (
-                                        <Image
-                                            src={post.image_url}
+                                        <SafeImage
+                                            src={getSafeImageUrl(post.image_url)}
                                             alt={post.title}
                                             fill
                                             sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                                             className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                            unoptimized={isPollinationsUrl(post.image_url)}
                                             placeholder="blur"
                                             blurDataURL={BLUR_DATA_URL}
                                         />
@@ -115,8 +146,8 @@ export default async function CasesPage({ searchParams }: CasesPageProps) {
                                 <div className="flex flex-1 flex-col p-6">
                                     <div className="mb-2 flex items-center gap-2 text-xs text-gray-500">
                                         <span>{new Date(post.created_at).toLocaleDateString('ko-KR')}</span>
-                                        <span>•</span>
-                                        <span>{post.keyword || '배관설비'}</span>
+                                        <span>·</span>
+                                        <span>{post.keyword || '배관서비스'}</span>
                                     </div>
                                     <h2 className="mb-3 line-clamp-2 text-xl font-bold text-gray-900 group-hover:text-blue-600">
                                         {post.title}
@@ -127,7 +158,7 @@ export default async function CasesPage({ searchParams }: CasesPageProps) {
                                     <div className="mt-auto flex items-center font-medium text-blue-600">
                                         자세히 보기
                                         <svg className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m-4-4h14" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                                         </svg>
                                     </div>
                                 </div>
@@ -135,35 +166,70 @@ export default async function CasesPage({ searchParams }: CasesPageProps) {
                         ))}
                     </div>
                 )}
-                {(hasPrevPage || hasNextPage) && (
-                    <div className="mt-10 flex items-center justify-center gap-4 text-sm">
+
+                {/* 페이지네이션 */}
+                {totalPages > 1 && (
+                    <div className="mt-12 flex flex-wrap items-center justify-center gap-2">
+                        {/* 이전 버튼 */}
                         {hasPrevPage ? (
                             <Link
                                 href={`/cases?page=${page - 1}`}
-                                prefetch={false}
-                                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-gray-700 shadow-sm transition hover:bg-gray-50"
+                                className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition hover:bg-gray-50 hover:text-blue-600"
                             >
-                                이전
+                                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                </svg>
                             </Link>
                         ) : (
-                            <span className="rounded-lg border border-gray-200 px-4 py-2 text-gray-300">
-                                이전
-                            </span>
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-300 opacity-50 cursor-not-allowed">
+                                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </div>
                         )}
-                        <span className="text-gray-500">페이지 {page}</span>
+
+                        {/* 페이지 번호 (동적) */}
+                        {Array.from({ length: endPage - startPage + 1 }).map((_, i) => {
+                            const pageNum = startPage + i;
+                            const isActive = page === pageNum;
+                            return (
+                                <Link
+                                    key={pageNum}
+                                    href={`/cases?page=${pageNum}`}
+                                    className={`flex h-10 w-10 items-center justify-center rounded-lg border font-medium transition ${isActive
+                                            ? 'border-blue-600 bg-blue-600 text-white shadow-md shadow-blue-200'
+                                            : 'border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600'
+                                        }`}
+                                >
+                                    {pageNum}
+                                </Link>
+                            );
+                        })}
+
+                        {/* 다음 버튼 */}
                         {hasNextPage ? (
                             <Link
                                 href={`/cases?page=${page + 1}`}
-                                prefetch={false}
-                                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-gray-700 shadow-sm transition hover:bg-gray-50"
+                                className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition hover:bg-gray-50 hover:text-blue-600"
                             >
-                                다음
+                                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
                             </Link>
                         ) : (
-                            <span className="rounded-lg border border-gray-200 px-4 py-2 text-gray-300">
-                                다음
-                            </span>
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-300 opacity-50 cursor-not-allowed">
+                                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </div>
                         )}
+                    </div>
+                )}
+
+                {/* 총 페이지 정보 */}
+                {totalPages > 1 && (
+                    <div className="mt-4 text-center text-sm text-gray-500">
+                        {page} / {totalPages} 페이지 (총 {totalCount}개)
                     </div>
                 )}
             </div>

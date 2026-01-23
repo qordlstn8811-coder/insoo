@@ -19,7 +19,7 @@ export default function SafeImage({
   alt,
   ...props
 }: SafeImageProps) {
-  const initialSrc = src && src.trim().length > 0 ? src : fallbackSrc;
+  const initialSrc = (src && src.trim().length > 0 && !isPollinationsUrl(src)) ? src : fallbackSrc;
   const [currentSrc, setCurrentSrc] = useState(initialSrc);
 
   const handleError = () => {
@@ -33,7 +33,6 @@ export default function SafeImage({
       {...props}
       src={currentSrc}
       alt={alt}
-      unoptimized={isPollinationsUrl(currentSrc)}
       onError={handleError}
     />
   );

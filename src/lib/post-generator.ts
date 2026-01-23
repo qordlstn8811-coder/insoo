@@ -25,14 +25,14 @@ function cleanAiTraces(text: string): string {
         /^However, if you want.*$/gim,
         /^If you provide.*$/gim,
         /^Here are \d+ SEO hashtags.*$/gim,
-        /당신은\s+[\w\s]+입니다/g,
+        /당신은\s+[\w\s]+?입니다/g,
         /작성해\s?주세요/g,
         /지침에\s+따라/g,
         /키워드를\s+포함하여/g,
         /AI\s?모델로서/g,
         /블로그\s?포스팅을\s?시작합니다/g,
         /도움이\s?되시길\s?바랍니다/g,
-        /아래는\s+[\w\s]+내용입니다/g
+        /아래는\s+[\w\s]+?내용입니다/g
     ];
 
     fillerPatterns.forEach(pattern => {
@@ -69,7 +69,7 @@ function cleanAiTraces(text: string): string {
 
 const BLACK_KEYWORDS = [
     '무조건 해결', '주식', '코인', '대출', '성인', '도박',
-    '바카라', '카지노', '토토', '사설', '수익', '광고성', '홍보용', '도시가스'
+    '바카라', '카지노', '토토', '사설', '수익', '광고용', '홍보용', '도시가스'
 ];
 
 /**
@@ -129,7 +129,6 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
             .single();
 
         if (stateData) {
-            // User requested infinite incrementing (1001, 1002...) instead of resetting
             currentIndex = stateData.last_proecessed_index + 1;
         }
 
@@ -138,13 +137,11 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
             return { success: false, error: 'Location configuration error' };
         }
 
-        // Use modulo ONLY for location selection to cycle through districts
         const locationIndex = currentIndex % allDistricts.length;
         const selectedLocation = allDistricts[locationIndex];
         const city = selectedLocation.city;
         const dong = selectedLocation.dong;
 
-        // Save the ever-increasing index
         await supabase.from('cron_state').upsert({
             id: 'post_generator_global',
             last_proecessed_index: currentIndex,
@@ -178,21 +175,25 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
         const titleRes = await generateWithGroq({ prompt: titlePrompt, type: 'METADATA', temperature: 0.8 });
         usedModels.push(titleRes.model_used);
 
-        // Strict Title Extraction: take the first non-empty line and remove quotes
         const titleRaw = cleanAiTraces(titleRes.content);
         let title = titleRaw.split('\n').map(l => l.trim()).filter(l => l.length > 5)[0] || titleRaw;
-        title = title.replace(/^["'“”‘']|["'“”’']$/g, '').trim();
-        // Second pass filter for "or" in case it was missed by cleanAiTraces due to splitting
+        title = title.replace(/^["'『「‘“]|["'』」’ ”]$/g, '').trim();
         title = title.split(/\sor\s/i)[0].trim();
 
         // 4. IMAGE PREPARATION & ALT TEXT
-        const mainImagePath = await getRandomUserImage();
+        // Pick from local photos ONLY as requested.
+        let mainImagePath = await getRandomUserImage();
         let mainImageUrl = '';
         let altText = '';
 
+        if (!mainImagePath) {
+            // If random image selection fails, try once more or use a default one (not external)
+            mainImagePath = await getRandomUserImage();
+        }
+
         if (mainImagePath) {
-            const watermarkText = `전북배관 010-8184-3496`;
-            mainImageUrl = await processImageWithWatermark(mainImagePath, watermarkText);
+            // Synthesize the title onto the local image
+            mainImageUrl = await processImageWithWatermark(mainImagePath, title);
 
             // Generate ALT text for SEO
             const altPrompt = `Summarize this image for SEO in ONE Korean sentence. Context: ${keyword} service. 
@@ -200,17 +201,10 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
             1. PURE KOREAN ONLY.
             2. ONLY output the sentence. NO intro, NO outro, NO English, NO translations.`;
             const altRes = await generateWithGroq({ prompt: altPrompt, type: 'METADATA' });
-            altText = cleanAiTraces(altRes.content).split('\n')[0].replace(/^["'“”‘']|["'“”’']$/g, '').trim();
+            altText = cleanAiTraces(altRes.content).split('\n')[0].replace(/^["'『「‘“]|["'』」’ ”]$/g, '').trim();
         } else {
-            // Fallback strategy with randomness to avoid 402/Cache issues
-            const seed = Math.floor(Math.random() * 1000000);
-            const imagePromptRes = await generateWithGroq({
-                prompt: `Clean, high-quality photograph of plumbing equipment, professional drain cleaning tools, wrench and pipes. No people, bright lighting.`,
-                type: 'IMAGE_PROMPT'
-            });
-            const promptEnc = encodeURIComponent(imagePromptRes.content.substring(0, 100));
-            // Use pollinations with seed and fallback to a placeholder if it fails (client side handling)
-            mainImageUrl = `https://image.pollinations.ai/prompt/${promptEnc}?width=800&height=600&nologo=true&seed=${seed}`;
+            // True Fallback: If absolutely no local images, use a local placeholder (ensure this exists in public/images)
+            mainImageUrl = '/images/hero.png';
             altText = `${city} ${dong} ${service} 현장 사진`;
         }
 
@@ -237,10 +231,10 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
         3. <h3> (Deep dive / Process / Diagnosis) </h3>
         4. (Use <ul>, <li>, <strong> for readability)
         5. (Mention equipment: Ridgid K-60, 내시경 카메라, 고압세척기)
+        6. NO Markdown symbols (##, **). Use HTML only.
         
         [Constraints]
         - DO NOT mention being an AI.
-        - NO Markdown symbols (##, **). Use HTML only.
         - Add <br> for comfortable mobile reading.
         - E-E-A-T: Show actual 'Experience' and 'Expertise'.
         `;
@@ -264,7 +258,7 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
         const placeUrl = NAVER_PLACE_URLS[service] || NAVER_PLACE_URLS['default'];
         const footerHtml = `
             <div class="post-footer" style="margin-top: 40px; padding: 25px; border: 2px solid #03C75A; border-radius: 15px; background-color: #f0fff4;">
-                <h3 style="color: #03C75A; margin-bottom: 15px;">🚀 ${city} ${dong} 배관 전문가 '전북배관'</h3>
+                <h3 style="color: #03C75A; margin-bottom: 15px;">🔍 ${city} ${dong} 배관 전문가 '전북배관'</h3>
                 <p><strong>전화 문의: <a href="tel:010-8184-3496" style="color: #d32f2f; text-decoration: underline;">010-8184-3496</a></strong></p>
                 <ul style="list-style: none; padding-left: 0;">
                     <li>✅ 24시간 긴급 출동 대기 (전북 전 지역)</li>

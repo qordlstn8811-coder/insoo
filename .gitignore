@@ -59,6 +59,7 @@ nul
 full_history.txt
 git_log.txt
 lint_report.json
+lighthouse-*.html
 
 # generated assets
 public/.netlify/

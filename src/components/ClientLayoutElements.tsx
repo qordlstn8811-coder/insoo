@@ -7,6 +7,7 @@ const Chatbot = dynamic(() => import('@/components/Chatbot'), { ssr: false });
 const FloatingButtons = dynamic(() => import('@/components/FloatingButtons'), { ssr: false });
 const CallPopup = dynamic(() => import('@/components/CallPopup'), { ssr: false });
 const StickyCallBar = dynamic(() => import('@/components/StickyCallBar'), { ssr: false });
+const ClickTracker = dynamic(() => import('@/components/ClickTracker'), { ssr: false });
 
 export default function ClientLayoutElements() {
     const pathname = usePathname();
@@ -18,6 +19,7 @@ export default function ClientLayoutElements() {
 
     return (
         <>
+            <ClickTracker />
             <Chatbot />
             <FloatingButtons />
             <CallPopup />

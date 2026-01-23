@@ -35,8 +35,11 @@ export const metadata: Metadata = {
   creator: "전북하수구막힘",
   publisher: "전북하수구막힘",
   icons: {
-    icon: '/icon.png',
-    apple: '/icon.png',
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.png', type: 'image/png', sizes: '32x32' },
+    ],
+    apple: '/apple-icon.png',
   },
   formatDetection: {
     telephone: true,
@@ -147,7 +150,6 @@ export default function RootLayout({
       <head>
         <meta name="naver-site-verification" content="b8a6791951a6258cdf21d6f27ac056f93e1aad99" />
         <meta name="google-site-verification" content="FiHPYcjLehLtiuxnpgBlMONppK_l4AWasa-lryKV_2g" />
-        <link rel="canonical" href="https://bananajeonju.netlify.app" />
       </head>
       <body className={inter.className}>
         <script

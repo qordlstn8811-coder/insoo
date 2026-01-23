@@ -38,7 +38,6 @@
     "next": "16.0.10",
     "openai": "^6.13.0",
     "p-retry": "^7.1.1",
-    "puppeteer": "^24.33.0",
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "server-only": "^0.0.1",
