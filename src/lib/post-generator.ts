@@ -122,6 +122,7 @@ export async function generatePostAction(jobType: 'auto' | 'manual' = 'auto') {
         });
 
         let currentIndex = 0;
+        // Note: 'proecessed' is intentional typo matching DB column name
         const { data: stateData } = await supabase
             .from('cron_state')
             .select('last_proecessed_index')
